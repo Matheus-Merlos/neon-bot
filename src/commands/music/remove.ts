@@ -28,5 +28,7 @@ export default async function remove(message: Message) {
 
     const realPosition: number = position + posicaoAtual;
 
+    message.reply(`**Removido** :notes: __**${songNames[realPosition]}**__ da fila`);
+
     removeFromQueue(realPosition);
 }

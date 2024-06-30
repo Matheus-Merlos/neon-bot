@@ -4,6 +4,7 @@ import skip from './commands/music/skip';
 import queue from './commands/music/queue';
 import disconnect from './commands/music/disconnect';
 import remove from './commands/music/remove';
+import roll from './commands/rpg/roll';
 import dotenv from 'dotenv';
 
 const prefix = ';';
@@ -47,6 +48,11 @@ client.on(Events.MessageCreate, async (message: Message) => {
         }
         case 'remove': {
             await remove(message);
+            break;
+        }
+
+        case 'roll': {
+            roll(message);
             break;
         }
     }
