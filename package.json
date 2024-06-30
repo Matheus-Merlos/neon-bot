@@ -14,7 +14,8 @@
     "discord.js": "^14.15.3",
     "drizzle-orm": "^0.31.2",
     "postgres": "^3.4.4",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "ytdl-core": "^4.11.5"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",

@@ -6,11 +6,17 @@ import {
     createAudioResource,
     AudioPlayer,
     AudioResource,
-    entersState,
-    VoiceConnectionStatus,
     StreamType,
     AudioPlayerStatus,
 } from '@discordjs/voice';
+import ytdl from 'ytdl-core';
+import axios from 'axios';
+import dotenv from 'dotenv';
+
+let fila: Array<AudioResource> = [];
+let posicaoAtual: number = 0;
+
+const player: AudioPlayer = createAudioPlayer();
 
 export default async function play(message: Message): Promise<void> {
     const msg_author: GuildMember | null = message.member;
@@ -30,33 +36,56 @@ export default async function play(message: Message): Promise<void> {
         return;
     }
 
-    const connection: VoiceConnection = joinVoiceChannel({
-        channelId: msg_author.voice.channel.id,
-        guildId: msg_author.voice.channel.guild.id,
-        adapterCreator: message.guild!.voiceAdapterCreator!,
+    const query: string = message.content.split(' ').slice(1).join(' ');
+
+    if (fila.length === 0) {
+        const connection: VoiceConnection = joinVoiceChannel({
+            channelId: msg_author.voice.channel.id,
+            guildId: msg_author.voice.channel.guild.id,
+            adapterCreator: message.guild!.voiceAdapterCreator!,
+        });
+
+        connection.subscribe(player);
+
+        fila.push(
+            createAudioResource(ytdl(await getSong(query, message), { filter: 'audioonly' }), {
+                inputType: StreamType.Arbitrary,
+            }),
+        );
+
+        player.play(fila[0]);
+
+        message.reply('Tocando agora!');
+
+        player.on(AudioPlayerStatus.Idle, () => {
+            posicaoAtual++;
+            if (posicaoAtual > fila.length - 1) {
+                connection.disconnect();
+                fila = [];
+                return;
+            }
+            player.play(fila[posicaoAtual]);
+        });
+    }
+}
+
+async function getSong(songQuery: string, message: Message): Promise<string> {
+    dotenv.config();
+
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+        params: {
+            part: 'snippet',
+            q: songQuery,
+            type: 'video',
+            key: process.env.YOUTUBE_API_KEY,
+        },
     });
 
-    try {
-        await entersState(connection, VoiceConnectionStatus.Ready, 30_000);
-    } catch (error) {
-        connection.destroy();
-        throw error;
+    if (response.data.items.length > 0) {
+        const videoId = response.data.items[0].id.videoId;
+        const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        return videoUrl;
     }
-
-    const player: AudioPlayer = createAudioPlayer();
-
-    connection.subscribe(player);
-
-    const resource: AudioResource = createAudioResource(
-        '/home/matheus/projetos/neon-bot/src/commands/music/teste.mp3',
-        {
-            inputType: StreamType.Arbitrary,
-        },
-    );
-
-    player.play(resource);
-
-    entersState(player, AudioPlayerStatus.Playing, 5000);
-
-    message.reply('Tocando agora!');
+    message.reply('Não encontrei nenhuma música!');
+    throw new Error();
 }
