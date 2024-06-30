@@ -13,7 +13,8 @@ import ytdl from 'ytdl-core';
 import axios from 'axios';
 import dotenv from 'dotenv';
 
-let fila: Array<AudioResource> = [];
+let queue: Array<AudioResource> = [];
+const songNames: Array<string> = [];
 let posicaoAtual: number = 0;
 
 const player: AudioPlayer = createAudioPlayer();
@@ -42,11 +43,13 @@ export default async function play(message: Message): Promise<void> {
     const song: AudioResource = createAudioResource(ytdl(songUrl, { filter: 'audioonly' }), {
         inputType: StreamType.Arbitrary,
     });
-    fila.push(song);
+    queue.push(song);
 
     const songInfo = await getSongInfo(songUrl);
 
-    if (fila.length === 1) {
+    songNames.push(songInfo.videoTitle);
+
+    if (queue.length === 1) {
         const connection: VoiceConnection = joinVoiceChannel({
             channelId: msg_author.voice.channel.id,
             guildId: msg_author.voice.channel.guild.id,
@@ -55,28 +58,28 @@ export default async function play(message: Message): Promise<void> {
 
         connection.subscribe(player);
 
-        player.play(fila[0]);
+        player.play(queue[0]);
 
         message.reply(`**Tocando** :notes: __**${songInfo.videoTitle}**__ - Agora!`);
 
         player.on(AudioPlayerStatus.Idle, () => {
             posicaoAtual++;
-            if (posicaoAtual > fila.length - 1) {
+            if (posicaoAtual > queue.length - 1) {
                 connection.disconnect();
-                fila = [];
+                queue = [];
                 return;
             }
-            player.play(fila[posicaoAtual]);
+            player.play(queue[posicaoAtual]);
         });
     } else {
         const embed = new EmbedBuilder()
             .setColor('Blue')
-            .setAuthor({ name: 'Adicionado a fila' })
+            .setAuthor({ name: 'Adicionado a queue' })
             .setTitle(songInfo.videoTitle)
             .addFields(
                 { name: 'Canal', value: songInfo.channelName, inline: true },
                 { name: 'Duração', value: songInfo.videoDuration, inline: true },
-                { name: 'Posição em fila', value: fila.length.toString(), inline: true },
+                { name: 'Posição em queue', value: queue.length.toString(), inline: true },
             )
             .setThumbnail(songInfo.thumbnailUrl);
 
@@ -146,4 +149,4 @@ function increasePosition(): void {
     posicaoAtual++;
 }
 
-export { fila, increasePosition, player, posicaoAtual };
+export { queue, increasePosition, player, posicaoAtual, songNames };

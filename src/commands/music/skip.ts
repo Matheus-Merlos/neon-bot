@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { fila, increasePosition, player, posicaoAtual } from './play';
+import { queue, increasePosition, player, posicaoAtual } from './play';
 
 export default async function skip(message: Message): Promise<void> {
     if (message.member!.voice.channel === null) {
@@ -8,7 +8,7 @@ export default async function skip(message: Message): Promise<void> {
 
     player.stop();
     increasePosition();
-    player.play(fila[posicaoAtual]);
+    player.play(queue[posicaoAtual]);
 
     message.reply('Skippei a música');
 }
