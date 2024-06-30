@@ -11,10 +11,9 @@ import {
 } from '@discordjs/voice';
 import ytdl from 'ytdl-core';
 import axios from 'axios';
-import dotenv from 'dotenv';
 
 let queue: Array<AudioResource> = [];
-const songNames: Array<string> = [];
+let songNames: Array<string> = [];
 let posicaoAtual: number = 0;
 
 const player: AudioPlayer = createAudioPlayer();
@@ -58,9 +57,15 @@ export default async function play(message: Message): Promise<void> {
         message.reply('Não é possível atribuir currentTextChannel: não é um TextChannel.');
         return;
     }
-    currentTextChannel = message.channel;
 
-    const query: string = message.content.split(' ').slice(1).join(' ');
+    const msgArray = message.content.split(' ');
+    if (msgArray.length <= 1) {
+        message.reply('Não foi informado uma busca!');
+        return;
+    }
+    const query: string = msgArray.slice(1).join(' ');
+
+    currentTextChannel = message.channel;
 
     const songUrl = await getSongUrl(query, message);
     const song: AudioResource = createAudioResource(
@@ -110,8 +115,6 @@ export default async function play(message: Message): Promise<void> {
 }
 
 async function getSongUrl(songQuery: string, message: Message): Promise<string> {
-    dotenv.config();
-
     const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
         params: {
             part: 'snippet',
@@ -138,8 +141,6 @@ async function getSongInfo(songUrl: string): Promise<{
     thumbnailUrl: string;
 }> {
     const songId = songUrl.replace('https://www.youtube.com/watch?v=', '');
-
-    dotenv.config();
 
     const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
         params: {
@@ -173,6 +174,7 @@ function increasePosition(): void {
 
 function resetConnection(): void {
     queue = [];
+    songNames = [];
     posicaoAtual = 0;
     if (connection) {
         connection.disconnect();
@@ -180,4 +182,17 @@ function resetConnection(): void {
     }
 }
 
-export { queue, increasePosition, player, posicaoAtual, songNames, resetConnection };
+function removeFromQueue(index: number): void {
+    queue.splice(index, 1);
+    songNames.splice(index, 1);
+}
+
+export {
+    queue,
+    increasePosition,
+    player,
+    posicaoAtual,
+    songNames,
+    resetConnection,
+    removeFromQueue,
+};
