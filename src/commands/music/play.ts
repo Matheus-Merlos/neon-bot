@@ -1,4 +1,4 @@
-import { Message, GuildMember } from 'discord.js';
+import { Message, GuildMember, EmbedBuilder } from 'discord.js';
 import {
     joinVoiceChannel,
     VoiceConnection,
@@ -47,15 +47,17 @@ export default async function play(message: Message): Promise<void> {
 
         connection.subscribe(player);
 
-        fila.push(
-            createAudioResource(ytdl(await getSong(query, message), { filter: 'audioonly' }), {
-                inputType: StreamType.Arbitrary,
-            }),
-        );
+        const songUrl: string = await getSongUrl(query, message);
+
+        const song: AudioResource = createAudioResource(ytdl(songUrl, { filter: 'audioonly' }), {
+            inputType: StreamType.Arbitrary,
+        });
+        fila.push(song);
 
         player.play(fila[0]);
 
-        message.reply('Tocando agora!');
+        const songInfo = await getSongInfo(songUrl);
+        message.reply(`**Tocando** :notes: __**${songInfo.videoTitle}**__ - Agora!`);
 
         player.on(AudioPlayerStatus.Idle, () => {
             posicaoAtual++;
@@ -66,10 +68,31 @@ export default async function play(message: Message): Promise<void> {
             }
             player.play(fila[posicaoAtual]);
         });
+    } else {
+        const songUrl = await getSongUrl(query, message);
+        const song: AudioResource = createAudioResource(ytdl(songUrl, { filter: 'audioonly' }), {
+            inputType: StreamType.Arbitrary,
+        });
+        fila.push(song);
+
+        const songInfo = await getSongInfo(songUrl);
+
+        const embed = new EmbedBuilder()
+            .setColor('Blue')
+            .setAuthor({ name: 'Adicionado a fila' })
+            .setTitle(songInfo.videoTitle)
+            .addFields(
+                { name: 'Canal', value: songInfo.channelName, inline: true },
+                { name: 'Duração', value: songInfo.videoDuration, inline: true },
+                { name: 'Posição em fila', value: fila.length.toString(), inline: true },
+            )
+            .setThumbnail(songInfo.thumbnailUrl);
+
+        message.reply({ embeds: [embed] });
     }
 }
 
-async function getSong(songQuery: string, message: Message): Promise<string> {
+async function getSongUrl(songQuery: string, message: Message): Promise<string> {
     dotenv.config();
 
     const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
@@ -82,10 +105,47 @@ async function getSong(songQuery: string, message: Message): Promise<string> {
     });
 
     if (response.data.items.length > 0) {
-        const videoId = response.data.items[0].id.videoId;
-        const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        const videoId: string = response.data.items[0].id.videoId;
+        const videoUrl: string = `https://www.youtube.com/watch?v=${videoId}`;
+
         return videoUrl;
     }
     message.reply('Não encontrei nenhuma música!');
     throw new Error();
+}
+
+async function getSongInfo(songUrl: string): Promise<{
+    channelName: string;
+    videoTitle: string;
+    videoDuration: string;
+    thumbnailUrl: string;
+}> {
+    const songId = songUrl.replace('https://www.youtube.com/watch?v=', '');
+
+    dotenv.config();
+
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+        params: {
+            part: 'snippet,contentDetails',
+            id: songId,
+            type: 'video',
+            key: process.env.YOUTUBE_API_KEY,
+        },
+    });
+
+    const video = response.data.items[0];
+    const channelName: string = video.snippet.channelTitle;
+    const videoTitle: string = video.snippet.title;
+    const videoDuration: string = video.contentDetails.duration
+        .replace('PT', '')
+        .replace('M', ':')
+        .replace('S', '');
+    const thumbnailUrl: string = video.snippet.thumbnails.default.url;
+
+    return {
+        channelName,
+        videoTitle,
+        videoDuration,
+        thumbnailUrl,
+    };
 }
