@@ -1,4 +1,4 @@
-import { Message, GuildMember, EmbedBuilder } from 'discord.js';
+import { Message, GuildMember, EmbedBuilder, TextChannel } from 'discord.js';
 import {
     joinVoiceChannel,
     VoiceConnection,
@@ -20,6 +20,22 @@ let posicaoAtual: number = 0;
 const player: AudioPlayer = createAudioPlayer();
 let connection: VoiceConnection | null;
 
+let currentTextChannel: TextChannel;
+
+player.on(AudioPlayerStatus.Idle, () => {
+    posicaoAtual++;
+    if (posicaoAtual > queue.length - 1) {
+        player.stop();
+        resetConnection();
+
+        currentTextChannel.send('A fila acabou, desconectando');
+
+        return;
+    }
+    player.play(queue[posicaoAtual]);
+    currentTextChannel.send(`**Tocando** :notes: __**${songNames[posicaoAtual]}**__ - Agora!`);
+});
+
 export default async function play(message: Message): Promise<void> {
     const msg_author: GuildMember | null = message.member;
     if (!msg_author) {
@@ -37,6 +53,12 @@ export default async function play(message: Message): Promise<void> {
         message.reply('Não tenho permissão para entrar neste canal!');
         return;
     }
+
+    if (!(message.channel instanceof TextChannel)) {
+        message.reply('Não é possível atribuir currentTextChannel: não é um TextChannel.');
+        return;
+    }
+    currentTextChannel = message.channel;
 
     const query: string = message.content.split(' ').slice(1).join(' ');
 
@@ -70,31 +92,21 @@ export default async function play(message: Message): Promise<void> {
 
         player.play(queue[0]);
 
-        player.on(AudioPlayerStatus.Idle, () => {
-            posicaoAtual++;
-            if (posicaoAtual > queue.length - 1) {
-                player.stop();
-                resetConnection();
-                return;
-            }
-            player.play(queue[posicaoAtual]);
-        });
-
         message.reply(`**Tocando** :notes: __**${songInfo.videoTitle}**__ - Agora!`);
-    } else {
-        const embed = new EmbedBuilder()
-            .setColor('Blue')
-            .setAuthor({ name: 'Adicionado a fila:' })
-            .setTitle(songInfo.videoTitle)
-            .addFields(
-                { name: 'Canal', value: songInfo.channelName, inline: true },
-                { name: 'Duração', value: songInfo.videoDuration, inline: true },
-                { name: 'Posição em fila', value: queue.length.toString(), inline: true },
-            )
-            .setThumbnail(songInfo.thumbnailUrl);
-
-        message.reply({ embeds: [embed] });
+        return;
     }
+    const embed = new EmbedBuilder()
+        .setColor('Blue')
+        .setAuthor({ name: 'Adicionado a fila:' })
+        .setTitle(songInfo.videoTitle)
+        .addFields(
+            { name: 'Canal', value: songInfo.channelName, inline: true },
+            { name: 'Duração', value: songInfo.videoDuration, inline: true },
+            { name: 'Posição em fila', value: queue.length.toString(), inline: true },
+        )
+        .setThumbnail(songInfo.thumbnailUrl);
+
+    message.reply({ embeds: [embed] });
 }
 
 async function getSongUrl(songQuery: string, message: Message): Promise<string> {
@@ -109,14 +121,14 @@ async function getSongUrl(songQuery: string, message: Message): Promise<string> 
         },
     });
 
-    if (response.data.items.length > 0) {
-        const videoId: string = response.data.items[0].id.videoId;
-        const videoUrl: string = `https://www.youtube.com/watch?v=${videoId}`;
-
-        return videoUrl;
+    if (!(response.data.items.length > 0)) {
+        message.reply('Não encontrei nenhuma música!');
+        throw new Error();
     }
-    message.reply('Não encontrei nenhuma música!');
-    throw new Error();
+    const videoId: string = response.data.items[0].id.videoId;
+    const videoUrl: string = `https://www.youtube.com/watch?v=${videoId}`;
+
+    return videoUrl;
 }
 
 async function getSongInfo(songUrl: string): Promise<{
