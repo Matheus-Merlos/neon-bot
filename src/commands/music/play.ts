@@ -38,7 +38,15 @@ export default async function play(message: Message): Promise<void> {
 
     const query: string = message.content.split(' ').slice(1).join(' ');
 
-    if (fila.length === 0) {
+    const songUrl = await getSongUrl(query, message);
+    const song: AudioResource = createAudioResource(ytdl(songUrl, { filter: 'audioonly' }), {
+        inputType: StreamType.Arbitrary,
+    });
+    fila.push(song);
+
+    const songInfo = await getSongInfo(songUrl);
+
+    if (fila.length === 1) {
         const connection: VoiceConnection = joinVoiceChannel({
             channelId: msg_author.voice.channel.id,
             guildId: msg_author.voice.channel.guild.id,
@@ -47,16 +55,8 @@ export default async function play(message: Message): Promise<void> {
 
         connection.subscribe(player);
 
-        const songUrl: string = await getSongUrl(query, message);
-
-        const song: AudioResource = createAudioResource(ytdl(songUrl, { filter: 'audioonly' }), {
-            inputType: StreamType.Arbitrary,
-        });
-        fila.push(song);
-
         player.play(fila[0]);
 
-        const songInfo = await getSongInfo(songUrl);
         message.reply(`**Tocando** :notes: __**${songInfo.videoTitle}**__ - Agora!`);
 
         player.on(AudioPlayerStatus.Idle, () => {
@@ -69,14 +69,6 @@ export default async function play(message: Message): Promise<void> {
             player.play(fila[posicaoAtual]);
         });
     } else {
-        const songUrl = await getSongUrl(query, message);
-        const song: AudioResource = createAudioResource(ytdl(songUrl, { filter: 'audioonly' }), {
-            inputType: StreamType.Arbitrary,
-        });
-        fila.push(song);
-
-        const songInfo = await getSongInfo(songUrl);
-
         const embed = new EmbedBuilder()
             .setColor('Blue')
             .setAuthor({ name: 'Adicionado a fila' })
@@ -149,3 +141,9 @@ async function getSongInfo(songUrl: string): Promise<{
         thumbnailUrl,
     };
 }
+
+function increasePosition(): void {
+    posicaoAtual++;
+}
+
+export { fila, increasePosition, player, posicaoAtual };

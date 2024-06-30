@@ -1,5 +1,6 @@
 import { Client, IntentsBitField, Events, Message } from 'discord.js';
 import play from './commands/music/play';
+import skip from './commands/music/skip';
 import dotenv from 'dotenv';
 
 const prefix = ';';
@@ -25,6 +26,11 @@ client.on(Events.MessageCreate, async (message: Message) => {
         switch (msg_as_array[0].replace(prefix, '')) {
             case 'play': {
                 await play(message);
+                break;
+            }
+            case 'skip': {
+                await skip(message);
+                break;
             }
         }
     }
