@@ -3,16 +3,18 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "ts-node /home/matheus/projetos/neon-bot/src/main.ts"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@discordjs/voice": "^0.17.0",
     "axios": "^1.7.2",
     "discord.js": "^14.15.3",
     "drizzle-orm": "^0.31.2",
-    "postgres": "^3.4.4"
+    "postgres": "^3.4.4",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
