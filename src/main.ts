@@ -2,6 +2,7 @@ import { Client, IntentsBitField, Events, Message } from 'discord.js';
 import play from './commands/music/play';
 import skip from './commands/music/skip';
 import queue from './commands/music/queue';
+import disconnect from './commands/music/disconnect';
 import dotenv from 'dotenv';
 
 const prefix = ';';
@@ -35,6 +36,10 @@ client.on(Events.MessageCreate, async (message: Message) => {
             }
             case 'queue': {
                 await queue(message);
+                break;
+            }
+            case 'disconnect': {
+                await disconnect(message);
                 break;
             }
         }

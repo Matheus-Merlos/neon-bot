@@ -6,8 +6,13 @@ export default async function skip(message: Message): Promise<void> {
         message.reply('Você não está em um canal de voz!');
     }
 
-    player.stop();
+    if (posicaoAtual + 1 > queue.length - 1) {
+        message.reply('Não há mais músicas na fila!');
+        return;
+    }
+
     increasePosition();
+    player.stop();
     player.play(queue[posicaoAtual]);
 
     message.reply('Skippei a música');

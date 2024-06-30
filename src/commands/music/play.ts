@@ -18,6 +18,7 @@ const songNames: Array<string> = [];
 let posicaoAtual: number = 0;
 
 const player: AudioPlayer = createAudioPlayer();
+let connection: VoiceConnection | null;
 
 export default async function play(message: Message): Promise<void> {
     const msg_author: GuildMember | null = message.member;
@@ -40,9 +41,18 @@ export default async function play(message: Message): Promise<void> {
     const query: string = message.content.split(' ').slice(1).join(' ');
 
     const songUrl = await getSongUrl(query, message);
-    const song: AudioResource = createAudioResource(ytdl(songUrl, { filter: 'audioonly' }), {
-        inputType: StreamType.Arbitrary,
-    });
+    const song: AudioResource = createAudioResource(
+        ytdl(songUrl, {
+            filter: 'audioonly',
+            highWaterMark: 1 << 62,
+            liveBuffer: 1 << 62,
+            dlChunkSize: 0,
+            quality: 'lowestaudio',
+        }),
+        {
+            inputType: StreamType.Arbitrary,
+        },
+    );
     queue.push(song);
 
     const songInfo = await getSongInfo(songUrl);
@@ -50,7 +60,7 @@ export default async function play(message: Message): Promise<void> {
     songNames.push(songInfo.videoTitle);
 
     if (queue.length === 1) {
-        const connection: VoiceConnection = joinVoiceChannel({
+        connection = joinVoiceChannel({
             channelId: msg_author.voice.channel.id,
             guildId: msg_author.voice.channel.guild.id,
             adapterCreator: message.guild!.voiceAdapterCreator!,
@@ -60,26 +70,26 @@ export default async function play(message: Message): Promise<void> {
 
         player.play(queue[0]);
 
-        message.reply(`**Tocando** :notes: __**${songInfo.videoTitle}**__ - Agora!`);
-
         player.on(AudioPlayerStatus.Idle, () => {
             posicaoAtual++;
             if (posicaoAtual > queue.length - 1) {
-                connection.disconnect();
-                queue = [];
+                player.stop();
+                resetConnection();
                 return;
             }
             player.play(queue[posicaoAtual]);
         });
+
+        message.reply(`**Tocando** :notes: __**${songInfo.videoTitle}**__ - Agora!`);
     } else {
         const embed = new EmbedBuilder()
             .setColor('Blue')
-            .setAuthor({ name: 'Adicionado a queue' })
+            .setAuthor({ name: 'Adicionado a fila:' })
             .setTitle(songInfo.videoTitle)
             .addFields(
                 { name: 'Canal', value: songInfo.channelName, inline: true },
                 { name: 'Duração', value: songInfo.videoDuration, inline: true },
-                { name: 'Posição em queue', value: queue.length.toString(), inline: true },
+                { name: 'Posição em fila', value: queue.length.toString(), inline: true },
             )
             .setThumbnail(songInfo.thumbnailUrl);
 
@@ -149,4 +159,13 @@ function increasePosition(): void {
     posicaoAtual++;
 }
 
-export { queue, increasePosition, player, posicaoAtual, songNames };
+function resetConnection(): void {
+    queue = [];
+    posicaoAtual = 0;
+    if (connection) {
+        connection.disconnect();
+        connection = null;
+    }
+}
+
+export { queue, increasePosition, player, posicaoAtual, songNames, resetConnection };
