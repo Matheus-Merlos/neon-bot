@@ -24,23 +24,25 @@ export default function roll(message: Message) {
         message.reply(`O valor **${msgArray[1]}** não é um número válido`);
         return;
     }
-    const result: number = rollDice(dice);
 
     const operation: string = msgArray[2][0];
-
     if (!['+', '-', '*', '/'].includes(operation)) {
         message.reply('Sintaxe do comando errada/Operação não suportada');
         return;
     }
+    const result: number = rollDice(dice);
 
     const modifier: string = msgArray[2].replace(operation, '');
 
-    const expressionArray: Array<string> = msgArray.slice(3);
-    expressionArray.unshift(modifier);
+    const expression: string = `${modifier}${msgArray.slice(3).join('')}`;
 
-    const expression: string = expressionArray.join('');
-
-    const totalResult: number = eval(`${result}${operation}${expression}`);
+    let totalResult: number;
+    try {
+        totalResult = eval(`${result}${operation}${expression}`);
+    } catch (error) {
+        message.reply(`A operação \`${expression}\` não é uma operação válida`);
+        return;
+    }
 
     message.reply(
         `:game_die: | Você rolou um 1d${dice}... E conseguiu **${totalResult!}**!\n:nerd: | **${totalResult!}** > \`${result} ${operation}${expression}\``,
