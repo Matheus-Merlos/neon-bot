@@ -8,11 +8,6 @@ import {
     text,
     varchar,
 } from 'drizzle-orm/pg-core';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-
-const queryClient = postgres('postgres://postgres:postgres@0.0.0.0:5432/neon');
-const db = drizzle(queryClient);
 
 export const jogador = pgTable('jogador', {
     discordId: bigint('discord_id', { mode: 'number' }).notNull().primaryKey(),
@@ -56,13 +51,12 @@ export const item = pgTable('item', {
 });
 
 export const inventario = pgTable('inventario', {
+    id: serial('id'),
     idItem: integer('id_item')
         .notNull()
-        .primaryKey()
         .references(() => item.id),
     idPersonagem: integer('id_personagem')
         .notNull()
-        .primaryKey()
         .references(() => personagem.id),
     durabilidadeAtual: integer('durabilidade_atual').notNull(),
 });
@@ -73,14 +67,11 @@ export const rank = pgTable('rank', {
 });
 
 export const rankPersonagem = pgTable('rank_personagem', {
+    id: serial('id'),
     idRank: integer('id_rank')
         .notNull()
-        .primaryKey()
         .references(() => rank.id),
     idPersonagem: integer('id_personagem')
         .notNull()
-        .primaryKey()
         .references(() => personagem.id),
 });
-
-export default db;
