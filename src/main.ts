@@ -4,8 +4,9 @@ import skip from './commands/music/skip';
 import queue from './commands/music/queue';
 import disconnect from './commands/music/disconnect';
 import remove from './commands/music/remove';
-import roll from './commands/rpg/roll';
 import dotenv from 'dotenv';
+import Command from './commands/command';
+import { Roll } from './commands/rpg/roll';
 
 const prefix = ';';
 
@@ -23,40 +24,26 @@ const client: Client = new Client({
 
 const token: string | undefined = process.env.TOKEN;
 
-client.on(Events.MessageCreate, async (message: Message) => {
+client.on(Events.MessageCreate, handleCommands);
+
+async function handleCommands(message: Message): Promise<void> {
     if (!message.content.startsWith(prefix)) {
         return;
     }
-    const msg_as_array: Array<string> = message.content.split(' ');
+    const command: string = message.content.split(' ')[0];
 
-    switch (msg_as_array[0].replace(prefix, '')) {
-        case 'play': {
-            await play(message);
-            break;
-        }
-        case 'skip': {
-            await skip(message);
-            break;
-        }
-        case 'queue': {
-            await queue(message);
-            break;
-        }
-        case 'disconnect': {
-            await disconnect(message);
-            break;
-        }
-        case 'remove': {
-            await remove(message);
-            break;
-        }
+    const commands: Array<Command> = [];
 
-        case 'roll': {
-            roll(message);
-            break;
+    commands.push(new Roll(message, [';roll', ';rolar']));
+
+    for (const cmd of commands) {
+        if (cmd.commandSyntaxes.includes(command)) {
+            cmd.execute();
+            return;
         }
     }
-});
+    message.reply('Não existe um comando com essa sintaxe');
+}
 
 if (!token) {
     throw new Error('Auth token not found in environment variables!');
