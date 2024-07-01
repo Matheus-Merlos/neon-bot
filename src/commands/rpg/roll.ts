@@ -3,42 +3,32 @@ import Command from '../command';
 export class Roll extends Command {
     public async execute(): Promise<void> {
         const msgArray: Array<string> = this.message.content.split(' ');
+        const msgLenght = msgArray.length;
 
-        switch (msgArray.length) {
-            case 1: {
-                const result = this.rollDice(6);
-                this.sendBasicMessage(6, result);
-                break;
-            }
-            case 2: {
-                const dice: number = parseInt(msgArray[1]);
-                if (isNaN(dice)) {
-                    this.message.reply(`O valor **${msgArray[1]}** não é um número válido`);
-                    return;
-                }
-                const result: number = this.rollDice(dice);
+        if (msgLenght === 1) this.handleDiceRoll();
+        if (msgLenght === 2) this.handleCustomDiceRoll(msgArray);
+        else this.handleComplexOperation;
+    }
 
-                this.sendBasicMessage(dice, result);
-                break;
-            }
-            default: {
-                this.handleComplexOperation(msgArray);
-                break;
-            }
+    private handleDiceRoll(): void {
+        const result = this.rollDice(6);
+        this.sendBasicMessage(6, result);
+    }
+
+    private handleCustomDiceRoll(msgArray: Array<string>): void {
+        const dice: number = parseInt(msgArray[1]);
+        if (isNaN(dice) || dice < 1) {
+            this.message.reply(`O valor **${msgArray[1]}** não é um número válido`);
+            return;
         }
-    }
+        const result: number = this.rollDice(dice);
 
-    private rollDice(max: number): number {
-        return Math.floor(Math.random() * max + 1);
-    }
-
-    private sendBasicMessage(dice: number, result: number): void {
-        this.message.reply(`:game_die: | Você rolou um 1d${dice}... E conseguiu **${result}**`);
+        this.sendBasicMessage(dice, result);
     }
 
     private handleComplexOperation(msgArray: Array<string>): void {
         const dice: number = parseInt(msgArray[1]);
-        if (isNaN(dice)) {
+        if (isNaN(dice) || dice < 1) {
             this.message.reply(`O valor **${msgArray[1]}** não é um número válido`);
             return;
         }
@@ -65,5 +55,13 @@ export class Roll extends Command {
         this.message.reply(
             `:game_die: | Você rolou um 1d${dice}... E conseguiu **${totalResult!}**!\n:nerd: | **${totalResult!}** > \`${result} ${operation}${expression}\``,
         );
+    }
+
+    private rollDice(max: number): number {
+        return Math.floor(Math.random() * max + 1);
+    }
+
+    private sendBasicMessage(dice: number, result: number): void {
+        this.message.reply(`:game_die: | Você rolou um 1d${dice}... E conseguiu **${result}**`);
     }
 }

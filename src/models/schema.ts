@@ -1,9 +1,43 @@
-import { decimal, integer, pgTable, serial, smallserial, text, varchar } from 'drizzle-orm/pg-core';
+import {
+    bigint,
+    boolean,
+    integer,
+    pgTable,
+    serial,
+    smallserial,
+    text,
+    varchar,
+} from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
 const queryClient = postgres('postgres://postgres:postgres@0.0.0.0:5432/neon');
 const db = drizzle(queryClient);
+
+export const jogador = pgTable('jogador', {
+    discordId: bigint('discord_id', { mode: 'number' }).notNull().primaryKey(),
+});
+
+export const npc = pgTable('npc', {
+    id: serial('id').notNull().primaryKey(),
+    jogador: bigint('jogador', { mode: 'number' })
+        .notNull()
+        .references(() => jogador.discordId),
+    sintaxe: varchar('sintaxe', { length: 15 }).notNull(),
+    webhookDiscordId: text('webhook_discord_id').notNull(),
+    webhookToken: text('webhook_token').notNull(),
+});
+
+export const personagem = pgTable('personagem', {
+    id: serial('id').notNull().primaryKey(),
+    nome: varchar('nome', { length: 127 }).notNull(),
+    xp: integer('xp').notNull(),
+    gold: integer('gold').notNull(),
+    jogador: bigint('jogador', { mode: 'number' })
+        .notNull()
+        .references(() => jogador.discordId),
+    ativo: boolean('ativo').notNull(),
+});
 
 export const categoria = pgTable('categoria', {
     id: smallserial('id').primaryKey().notNull(),
@@ -14,9 +48,39 @@ export const item = pgTable('item', {
     id: serial('id').primaryKey().notNull(),
     nome: varchar('nome', { length: 127 }).notNull(),
     descricao: text('descricao').notNull(),
-    preco: decimal('preco', { precision: 10, scale: 2 }),
-    durabilidade: integer('durabilidade'),
-    categoria: integer('categoria'),
+    preco: integer('preco').notNull(),
+    durabilidade: integer('durabilidade').notNull(),
+    categoria: integer('categoria')
+        .notNull()
+        .references(() => categoria.id),
+});
+
+export const inventario = pgTable('inventario', {
+    idItem: integer('id_item')
+        .notNull()
+        .primaryKey()
+        .references(() => item.id),
+    idPersonagem: integer('id_personagem')
+        .notNull()
+        .primaryKey()
+        .references(() => personagem.id),
+    durabilidadeAtual: integer('durabilidade_atual').notNull(),
+});
+
+export const rank = pgTable('rank', {
+    id: smallserial('id').notNull().primaryKey(),
+    descricao: varchar('descricao', { length: 63 }).notNull(),
+});
+
+export const rankPersonagem = pgTable('rank_personagem', {
+    idRank: integer('id_rank')
+        .notNull()
+        .primaryKey()
+        .references(() => rank.id),
+    idPersonagem: integer('id_personagem')
+        .notNull()
+        .primaryKey()
+        .references(() => personagem.id),
 });
 
 export default db;
