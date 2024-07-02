@@ -10,12 +10,12 @@ import {
 } from 'drizzle-orm/pg-core';
 
 export const jogador = pgTable('jogador', {
-    discordId: bigint('discord_id', { mode: 'number' }).notNull().primaryKey(),
+    discordId: bigint('discord_id', { mode: 'bigint' }).notNull().primaryKey(),
 });
 
 export const npc = pgTable('npc', {
     id: serial('id').notNull().primaryKey(),
-    jogador: bigint('jogador', { mode: 'number' })
+    jogador: bigint('jogador', { mode: 'bigint' })
         .notNull()
         .references(() => jogador.discordId),
     sintaxe: varchar('sintaxe', { length: 15 }).notNull(),
@@ -28,7 +28,7 @@ export const personagem = pgTable('personagem', {
     nome: varchar('nome', { length: 127 }).notNull(),
     xp: integer('xp').notNull(),
     gold: integer('gold').notNull(),
-    jogador: bigint('jogador', { mode: 'number' })
+    jogador: bigint('jogador', { mode: 'bigint' })
         .notNull()
         .references(() => jogador.discordId),
     ativo: boolean('ativo').notNull(),

@@ -7,6 +7,7 @@ import remove from './commands/music/remove';
 import dotenv from 'dotenv';
 import Command from './commands/command';
 import { Roll } from './commands/rpg/roll';
+import StackRoll from './commands/rpg/stackroll';
 
 const prefix = ';';
 
@@ -35,6 +36,7 @@ async function handleCommands(message: Message): Promise<void> {
     const commands: Array<Command> = [];
 
     commands.push(new Roll(message, [';roll', ';rolar']));
+    commands.push(new StackRoll(message, [';stackroll', ';turnos']));
 
     for (const cmd of commands) {
         if (cmd.commandSyntaxes.includes(command)) {
