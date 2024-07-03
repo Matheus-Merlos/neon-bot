@@ -13,6 +13,7 @@ type PlayerCharacter = {
 type CharacterRoll = {
     characterName: string;
     result: number;
+    isFoe: boolean;
 };
 
 export default class StackRoll extends Command {
@@ -22,6 +23,10 @@ export default class StackRoll extends Command {
         const idList: Array<string> = msgArray
             .filter((element: string) => element.includes('@'))
             .map((element: string) => getIdFromMention(element));
+
+        const foeList: Array<string> = msgArray
+            .slice(1)
+            .filter((element: string) => !element.includes('@') && element !== '');
 
         const guild: Guild = this.message.guild!;
 
@@ -34,17 +39,24 @@ export default class StackRoll extends Command {
 
         const results: Array<CharacterRoll> = [];
 
-        for (const player of players) {
+        const combinedList = [...players, ...foeList];
+
+        combinedList.forEach((character) => {
             results.push({
-                characterName: player.characterName,
+                characterName: typeof character === 'string' ? character : character.characterName,
                 result: this.rollTurn(),
+                isFoe: typeof character === 'string', //Foe = String,
             });
-        }
+        });
 
         results.sort((a, b) => b.result - a.result);
 
         let message: string = '--TURNOS--\n\n';
         for (const result of results) {
+            if (result.isFoe) {
+                message += `**${result.characterName} - ${result.result}**\n`;
+                continue;
+            }
             message += `${result.characterName} - ${result.result}\n`;
         }
 
