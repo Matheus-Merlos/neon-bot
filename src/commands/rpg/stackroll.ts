@@ -1,9 +1,19 @@
-import { getIdFromMention } from '../../utils';
+import { addPlayerAndCharacterIfNotExists, getIdFromMention } from '../../utils';
 import { jogador, personagem } from '../../models/schema';
 import db from '../../models/db';
 import Command from '../command';
 import { eq } from 'drizzle-orm';
-import { Guild, GuildMember } from 'discord.js';
+import { Guild } from 'discord.js';
+
+type PlayerCharacter = {
+    playerId: bigint;
+    characterName: string;
+};
+
+type CharacterRoll = {
+    characterName: string;
+    result: number;
+};
 
 export default class StackRoll extends Command {
     public async execute(): Promise<void> {
@@ -13,69 +23,18 @@ export default class StackRoll extends Command {
             .filter((element: string) => element.includes('@'))
             .map((element: string) => getIdFromMention(element));
 
-        let jogadores = await db
-            .select({
-                playerId: jogador.discordId,
-                characterName: personagem.nome,
-            })
-            .from(jogador)
-            .innerJoin(personagem, eq(jogador.discordId, personagem.jogador))
-            .where(eq(personagem.ativo, true));
+        const guild: Guild = this.message.guild!;
 
-        let selectedPlayers = jogadores.filter((jogador) => {
+        const promises = idList.map((id) => addPlayerAndCharacterIfNotExists(id, guild));
+        await Promise.all(promises);
+
+        const players: Array<PlayerCharacter> = (await this.fetchPlayers()).filter((jogador) => {
             return idList.includes(jogador.playerId.toString());
         });
 
-        for (const id of idList) {
-            const playerExists = selectedPlayers.find(
-                (jogador) => jogador.playerId.toString() === id,
-            );
-            if (playerExists) {
-                console.log(playerExists);
-                continue;
-            }
-            const guild: Guild = this.message.guild!;
-            const member: GuildMember = await guild.members.fetch(id);
-
-            let nicknameArray: Array<string> | undefined = member.nickname?.split(' ');
-
-            if (!nicknameArray) {
-                nicknameArray = member.displayName.split(' ');
-            }
-
-            const characterName: string = nicknameArray[0].replace(',', '');
-
-            await db.insert(jogador).values({ discordId: BigInt(id) });
-            await db.insert(personagem).values({
-                nome: characterName,
-                xp: 0,
-                gold: 0,
-                jogador: BigInt(id),
-                ativo: true,
-            });
-
-            jogadores = await db
-                .select({
-                    playerId: jogador.discordId,
-                    characterName: personagem.nome,
-                })
-                .from(jogador)
-                .innerJoin(personagem, eq(jogador.discordId, personagem.jogador))
-                .where(eq(personagem.ativo, true));
-
-            selectedPlayers = jogadores.filter((jogador) => {
-                idList.includes(jogador.playerId.toString());
-            });
-        }
-
-        type CharacterRoll = {
-            characterName: string;
-            result: number;
-        };
-
         const results: Array<CharacterRoll> = [];
 
-        for (const player of selectedPlayers) {
+        for (const player of players) {
             results.push({
                 characterName: player.characterName,
                 result: this.rollTurn(),
@@ -90,6 +49,18 @@ export default class StackRoll extends Command {
         }
 
         this.message.reply(message);
+    }
+    private async fetchPlayers() {
+        const players: Array<PlayerCharacter> = await db
+            .select({
+                playerId: jogador.discordId,
+                characterName: personagem.nome,
+            })
+            .from(jogador)
+            .innerJoin(personagem, eq(jogador.discordId, personagem.jogador))
+            .where(eq(personagem.ativo, true));
+
+        return players;
     }
 
     private rollTurn(): number {
