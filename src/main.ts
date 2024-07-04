@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import Command from './commands/command';
 import { Roll } from './commands/rpg/roll';
 import StackRoll from './commands/rpg/stackroll';
+import AddGold from './commands/rpg/expgold';
 
 const prefix = ';';
 
@@ -37,6 +38,7 @@ async function handleCommands(message: Message): Promise<void> {
 
     commands.push(new Roll(message, [';roll', ';rolar']));
     commands.push(new StackRoll(message, [';stackroll', ';turnos']));
+    commands.push(new AddGold(message, [';addgold', ';add-gold', ';add-money', ';addmoney']));
 
     for (const cmd of commands) {
         if (cmd.commandSyntaxes.includes(command)) {
