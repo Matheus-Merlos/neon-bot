@@ -28,17 +28,15 @@ abstract class AddResource extends Command {
         const quantity: number = parseInt(msgArray[2]);
         if (isNaN(quantity)) {
             this.message.reply('A quantidade informada é inválida');
+            return;
         }
 
         const guild: Guild = this.message.guild!;
-        addPlayerAndCharacterIfNotExists(id, guild)
-            .then(async () => {
-                await this.add(id, quantity);
-                this.message.reply('Adicionado com sucesso!');
-            })
-            .catch((error: Error) => {
-                this.message.reply(`Houve um herro ao incluir o jogador: ${error.message}`);
-            });
+        await addPlayerAndCharacterIfNotExists(id, guild);
+
+        await this.add(id, quantity);
+
+        this.message.reply('Adicionado com sucesso!');
     }
     protected abstract add(playerId: string, quantity: number): Promise<void>;
 }

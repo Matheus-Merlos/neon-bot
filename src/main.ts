@@ -9,6 +9,7 @@ import Command from './commands/command';
 import { Roll } from './commands/rpg/roll';
 import StackRoll from './commands/rpg/stackroll';
 import { AddGold, AddExp } from './commands/rpg/expgold';
+import { StackAddExp, StackAddGold } from './commands/rpg/stackexpgold';
 
 const prefix = ';';
 
@@ -40,6 +41,8 @@ async function handleCommands(message: Message): Promise<void> {
     commands.push(new StackRoll(message, [';stackroll', ';turnos']));
     commands.push(new AddGold(message, [';addgold', ';add-gold', ';add-money', ';addmoney']));
     commands.push(new AddExp(message, [';addexp', ';add-exp', ';add-xp', ';addxp']));
+    commands.push(new StackAddGold(message, [';stackaddgold', ';stack-add-gold']));
+    commands.push(new StackAddExp(message, [';stackaddexp', ';stack-add-exp', ';stackaddxp']));
 
     for (const cmd of commands) {
         if (cmd.commandSyntaxes.includes(command)) {
