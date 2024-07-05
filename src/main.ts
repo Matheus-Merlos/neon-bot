@@ -8,8 +8,8 @@ import dotenv from 'dotenv';
 import Command from './commands/command';
 import { Roll } from './commands/rpg/roll';
 import StackRoll from './commands/rpg/stackroll';
-import { AddGold, AddExp } from './commands/rpg/expgold';
-import { StackAddExp, StackAddGold } from './commands/rpg/stackexpgold';
+import { AddGold, AddExp } from './commands/inventory/expgold';
+import { StackAddExp, StackAddGold } from './commands/inventory/stackexpgold';
 
 const prefix = ';';
 
