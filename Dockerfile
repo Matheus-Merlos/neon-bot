@@ -8,7 +8,4 @@ RUN npm install
 
 COPY . /bot/
 
-RUN npm run build
-RUN rm -rf /bot/src/
-
 CMD ["npm", "run", "start"]

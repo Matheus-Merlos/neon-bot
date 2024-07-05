@@ -7,7 +7,7 @@
     "start": "node dist/main.js",
     "execute": "ts-node src/main.ts",
     "makemigrations": "npx drizzle-kit generate",
-    "migrate": "ts-node /home/matheus/projetos/neon-bot/src/models/migrate.ts"
+    "migrate": "node dist/models/migrate.js"
   },
   "author": "",
   "license": "ISC",
