@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/main.js",
     "execute": "ts-node src/main.ts",
     "makemigrations": "npx drizzle-kit generate",
     "migrate": "ts-node /home/matheus/projetos/neon-bot/src/models/migrate.ts"
@@ -28,6 +30,7 @@
     "drizzle-kit": "^0.22.8",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.3.2"
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.3"
   }
 }

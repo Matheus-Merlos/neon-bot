@@ -7,7 +7,7 @@ export class Roll extends Command {
 
         if (msgLenght === 1) this.handleDiceRoll();
         if (msgLenght === 2) this.handleCustomDiceRoll(msgArray);
-        else this.handleComplexOperation;
+        else this.handleComplexOperation(msgArray);
     }
 
     private handleDiceRoll(): void {
