@@ -1,13 +1,24 @@
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq, gt } from 'drizzle-orm';
 import db from '../../models/db';
-import { personagem, inventario } from '../../models/schema';
+import { personagem, inventario, item } from '../../models/schema';
 import Command from '../command';
 import { EmbedBuilder } from 'discord.js';
-import { Character, getCurrentCharacterFromId, getIdFromMention } from '../../utils';
+import {
+    addPlayerAndCharacterIfNotExists,
+    Character,
+    getCurrentCharacterFromId,
+    getIdFromMention,
+} from '../../utils';
 
 type XpAndGold = {
     xp: number;
     gold: number;
+};
+
+type InventoryItem = {
+    itemQuantity: number;
+    itemName: string;
+    itemDescription: string;
 };
 
 export default class Inventory extends Command {
@@ -26,10 +37,13 @@ export default class Inventory extends Command {
             this.message.reply('Sintaxe do comando errada');
         }
 
+        await addPlayerAndCharacterIfNotExists(id!, this.message.guild!);
+
         const character: Character = await getCurrentCharacterFromId(id!);
         const characterFirstName: string = character.characterName.split(' ')[0];
 
         const characterXpAndGold: XpAndGold = await this.fetchXpAndGold(id!);
+        const characterItems: Array<InventoryItem> = await this.fetchItems(id!);
 
         const embed = new EmbedBuilder()
             .setColor('Gold')
@@ -37,6 +51,11 @@ export default class Inventory extends Command {
             .setFields(
                 { name: 'EXP', value: characterXpAndGold.xp.toString(), inline: true },
                 { name: 'Gold', value: characterXpAndGold.gold.toString(), inline: true },
+                ...characterItems.map((item: InventoryItem) => ({
+                    name: `${item.itemQuantity} - ${item.itemName}`,
+                    value: item.itemDescription,
+                    inline: false,
+                })),
             );
 
         this.message.reply({ embeds: [embed] });
@@ -57,5 +76,23 @@ export default class Inventory extends Command {
 
         const resources: XpAndGold = resourcesList[0];
         return resources;
+    }
+
+    public async fetchItems(playerId: string): Promise<Array<InventoryItem>> {
+        const itemList: Array<InventoryItem> = await db
+            .select({
+                itemQuantity: count(inventario.idItem),
+                itemName: item.nome,
+                itemDescription: item.descricao,
+            })
+            .from(inventario)
+            .innerJoin(personagem, eq(personagem.id, inventario.idPersonagem))
+            .innerJoin(item, eq(inventario.idItem, item.id))
+            .where(
+                and(gt(inventario.durabilidadeAtual, 0), eq(personagem.jogador, BigInt(playerId))),
+            )
+            .groupBy(item.nome, item.descricao);
+
+        return itemList;
     }
 }
