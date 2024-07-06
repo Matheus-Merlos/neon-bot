@@ -1,11 +1,10 @@
 import { and, eq, ilike } from 'drizzle-orm';
 import db from '../../models/db';
-import { inventario, item, personagem } from '../../models/schema';
+import { inventario, item, jogador, personagem } from '../../models/schema';
 import Command from '../command';
 
 type InventoryItem = {
     inventoryEntryId: number;
-    itemName: string;
     durability: number;
 };
 
@@ -48,11 +47,13 @@ export default class UseItem extends Command {
 
         let itemInventoryList: Array<InventoryItem>;
 
+        const id: string = this.message.author.id;
         try {
-            itemInventoryList = await this.getItemFromInventory(this.message.author.id, itemId);
+            itemInventoryList = await this.getItemFromInventory(id, itemId);
         } catch (error: unknown) {
             if (error instanceof ItemNotInInventoryError) {
                 this.message.reply(`Você não possui ${itemName} em seu inventário`);
+                return;
             }
             this.message.reply(`Houve um erro ao procurar item no inventário: **${error}**}`);
             return;
@@ -136,12 +137,10 @@ export default class UseItem extends Command {
         const inventoryItems: Array<InventoryItem> = await db
             .select({
                 inventoryEntryId: inventario.id,
-                itemName: item.nome,
                 durability: inventario.durabilidadeAtual,
             })
             .from(inventario)
-            .innerJoin(personagem, eq(personagem.jogador, BigInt(playerId)))
-            .innerJoin(item, eq(inventario.idItem, item.id))
+            .innerJoin(personagem, eq(inventario.idPersonagem, personagem.id))
             .where(
                 and(
                     eq(personagem.jogador, BigInt(playerId)),
@@ -150,8 +149,8 @@ export default class UseItem extends Command {
                 ),
             )
             .orderBy(inventario.id);
-
-        if (!inventoryItems) {
+]
+        if (inventoryItems.length === 0) {
             throw new ItemNotInInventoryError('Item not found in inventory');
         }
         return inventoryItems;
