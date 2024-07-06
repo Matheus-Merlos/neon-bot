@@ -52,7 +52,7 @@ export default class Inventory extends Command {
                 { name: 'EXP', value: characterXpAndGold.xp.toString(), inline: true },
                 { name: 'Gold', value: characterXpAndGold.gold.toString(), inline: true },
                 ...characterItems.map((item: InventoryItem) => ({
-                    name: `${item.itemQuantity} - ${item.itemName}`,
+                    name: `- ${item.itemName} [${item.itemQuantity}]`,
                     value: item.itemDescription,
                     inline: false,
                 })),

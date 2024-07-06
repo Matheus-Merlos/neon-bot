@@ -35,7 +35,7 @@ async function handleCommands(message: Message): Promise<void> {
     if (!message.content.startsWith(prefix)) {
         return;
     }
-    const command: string = message.content.split(' ')[0];
+    const command: string = message.content.split(' ')[0].toLowerCase();
 
     const commands: Array<Command> = [];
 

@@ -2,5 +2,6 @@
 .vscode
 *.env
 .env
-/migrations/
+migrations/
+meta/
 dist/
