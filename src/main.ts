@@ -14,6 +14,7 @@ import Inventory from './commands/inventory/inventory';
 import UseItem from './commands/inventory/useitem';
 import Shop from './commands/inventory/shop';
 import ClearChat from './commands/rpg/clearchat';
+import NewCharacter from './commands/rpg/newcharacter';
 
 const prefix = ';';
 
@@ -43,16 +44,17 @@ async function handleCommands(message: Message): Promise<void> {
 
     commands.push(new Roll(message, [';roll', ';rolar']));
     commands.push(new StackRoll(message, [';stackroll', ';turnos']));
+    commands.push(new ClearChat(message, [';limparchat', ';purge', ';limpar-chat', ';clearchat']));
+    commands.push(new NewCharacter(message, [';newcharacter', ';novopersonagem']));
+
     commands.push(new AddGold(message, [';addgold', ';add-gold', ';add-money', ';addmoney']));
     commands.push(new AddExp(message, [';addexp', ';add-exp', ';add-xp', ';addxp']));
     commands.push(new StackAddGold(message, [';stackaddgold', ';stack-add-gold']));
     commands.push(new StackAddExp(message, [';stackaddexp', ';stack-add-exp', ';stackaddxp']));
-    commands.push(new Inventory(message, [';inv', ';inventario', ';inventory']));
 
+    commands.push(new Inventory(message, [';inv', ';inventario', ';inventory']));
     commands.push(new UseItem(message, [';use-item', ';use', ';useitem', ';usar', ';usaritem']));
     commands.push(new Shop(message, [';shop', ';loja']));
-
-    commands.push(new ClearChat(message, [';limparchat', ';purge', ';limpar-chat', ';clearchat']));
 
     for (const cmd of commands) {
         if (cmd.commandSyntaxes.includes(command)) {
