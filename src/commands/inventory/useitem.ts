@@ -1,6 +1,6 @@
 import { and, eq, ilike } from 'drizzle-orm';
 import db from '../../models/db';
-import { inventario, item, jogador, personagem } from '../../models/schema';
+import { inventario, item, personagem } from '../../models/schema';
 import Command from '../command';
 
 type InventoryItem = {
@@ -18,15 +18,25 @@ export default class UseItem extends Command {
         const commandArgs: Array<string> = msgArray.slice(1);
 
         let quantityToUse: number;
-        let itemId: number;
 
-        isNaN(parseInt(commandArgs[0]))
-            ? (quantityToUse = this.getQuantityFromLastIndex(commandArgs))
-            : (quantityToUse = this.getQuantityFromFirstIndex(commandArgs));
+        const isFirstArgumentNumeric: boolean = !isNaN(parseInt(commandArgs[0]));
+        const isLastArgumentNumeric: boolean = !isNaN(
+            parseInt(commandArgs[commandArgs.length - 1]),
+        );
 
-        if (isNaN(quantityToUse)) {
+        const providedQuantity = !isLastArgumentNumeric && !isFirstArgumentNumeric;
+
+        if (!providedQuantity) {
             quantityToUse = 1;
         }
+
+        if (isFirstArgumentNumeric) {
+            quantityToUse = this.getQuantityFromFirstIndex(commandArgs);
+        } else {
+            quantityToUse = this.getQuantityFromLastIndex(commandArgs);
+        }
+
+        let itemId: number;
 
         let itemName = commandArgs.join(' ');
 
@@ -78,40 +88,41 @@ export default class UseItem extends Command {
                 quantityToUse -= item.durability;
                 continue;
             }
-            item.durability = item.durability - quantityToUse;
-            itemInventoryList[itemInventoryList.indexOf(item)] = item;
+            item.durability -= quantityToUse;
+
+            await this.updateInventoryEntry(item);
             break;
         }
-        inventoryEntriesToDelete.map((inventoryEntry) => {
-            itemInventoryList.splice(
-                itemInventoryList.indexOf(
-                    itemInventoryList.filter((item: InventoryItem) => {
-                        item.inventoryEntryId === inventoryEntry;
-                    })[0],
-                ),
-                1,
-            );
-        });
 
         if (inventoryEntriesToDelete) {
             await this.deleteInventoryEntries(inventoryEntriesToDelete);
         }
 
-        if (itemInventoryList) {
-            await this.updateInventoryEntries(itemInventoryList);
-        }
-
         await this.message.reply(':thumbsup:');
     }
+    private getUseQuantity(cmdArgs: Array<string>): number {
+        const isFirstArgumentNumeric: boolean = !isNaN(parseInt(cmdArgs[0]));
+        const isLastArgumentNumeric: boolean = !isNaN(parseInt(cmdArgs[cmdArgs.length - 1]));
+
+        const providedQuantity = !isLastArgumentNumeric && !isFirstArgumentNumeric;
+
+        if (!providedQuantity) {
+            return 1;
+        }
+
+        if (isFirstArgumentNumeric) {
+            return this.getQuantityFromFirstIndex(cmdArgs);
+        }
+        return this.getQuantityFromLastIndex(cmdArgs);
+    }
+
     private getQuantityFromLastIndex(cmdArray: Array<string>): number {
-        const quantity: number = parseInt(cmdArray[cmdArray.length - 1]);
-        cmdArray.splice(cmdArray.length - 1, 1);
+        const quantity: number = parseInt(cmdArray.pop()!);
 
         return quantity;
     }
     private getQuantityFromFirstIndex(cmdArray: Array<string>): number {
-        const quantity: number = parseInt(cmdArray[0]);
-        cmdArray.splice(0, 1);
+        const quantity: number = parseInt(cmdArray.shift()!);
 
         return quantity;
     }
@@ -149,7 +160,7 @@ export default class UseItem extends Command {
                 ),
             )
             .orderBy(inventario.id);
-]
+
         if (inventoryItems.length === 0) {
             throw new ItemNotInInventoryError('Item not found in inventory');
         }
@@ -174,12 +185,10 @@ export default class UseItem extends Command {
             await db.delete(inventario).where(eq(inventario.id, entry));
         });
     }
-    private async updateInventoryEntries(entryList: Array<InventoryItem>) {
-        entryList.forEach(async (item: InventoryItem) => {
-            await db
-                .update(inventario)
-                .set({ durabilidadeAtual: item.durability })
-                .where(eq(inventario.id, item.inventoryEntryId));
-        });
+    private async updateInventoryEntry(entry: InventoryItem) {
+        await db
+            .update(inventario)
+            .set({ durabilidadeAtual: entry.durability })
+            .where(eq(inventario.id, entry.inventoryEntryId));
     }
 }
