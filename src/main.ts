@@ -13,6 +13,7 @@ import { StackAddExp, StackAddGold } from './commands/inventory/stackexpgold';
 import Inventory from './commands/inventory/inventory';
 import UseItem from './commands/inventory/useitem';
 import Shop from './commands/inventory/shop';
+import ClearChat from './commands/rpg/clearchat';
 
 const prefix = ';';
 
@@ -50,6 +51,8 @@ async function handleCommands(message: Message): Promise<void> {
 
     commands.push(new UseItem(message, [';use-item', ';use', ';useitem', ';usar', ';usaritem']));
     commands.push(new Shop(message, [';shop', ';loja']));
+
+    commands.push(new ClearChat(message, [';limparchat', ';purge', ';limpar-chat', ';clearchat']));
 
     for (const cmd of commands) {
         if (cmd.commandSyntaxes.includes(command)) {

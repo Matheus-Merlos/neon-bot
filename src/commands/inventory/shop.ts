@@ -32,18 +32,12 @@ export default class Shop extends Command {
         const collector = sentMsg.createMessageComponentCollector({ time: 60_000 });
 
         collector.on('collect', (interaction) => {
-            switch (interaction.customId) {
-                case 'forward-shop': {
-                    currentPage++;
-                    break;
-                }
-                case 'backward-shop': {
-                    currentPage--;
-                    break;
-                }
-            }
+            if (interaction.customId === 'forward-shop') currentPage++;
+            if (interaction.customId === 'backward-shop') currentPage--;
+
             const editedEmbed = this.createOrUpdateShopList(items, currentPage);
             buttons = this.createOrUpdateButtons(items, currentPage);
+
             interaction.update({ embeds: [editedEmbed], components: [buttons] });
         });
     }
