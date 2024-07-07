@@ -31,9 +31,9 @@ export default class UseItem extends Command {
         }
 
         if (isFirstArgumentNumeric) {
-            quantityToUse = this.getQuantityFromFirstIndex(commandArgs);
+            quantityToUse = parseInt(commandArgs.shift()!);
         } else {
-            quantityToUse = this.getQuantityFromLastIndex(commandArgs);
+            quantityToUse = parseInt(commandArgs.pop()!);
         }
 
         let itemId: number;
@@ -99,32 +99,6 @@ export default class UseItem extends Command {
         }
 
         await this.message.reply(':thumbsup:');
-    }
-    private getUseQuantity(cmdArgs: Array<string>): number {
-        const isFirstArgumentNumeric: boolean = !isNaN(parseInt(cmdArgs[0]));
-        const isLastArgumentNumeric: boolean = !isNaN(parseInt(cmdArgs[cmdArgs.length - 1]));
-
-        const providedQuantity = !isLastArgumentNumeric && !isFirstArgumentNumeric;
-
-        if (!providedQuantity) {
-            return 1;
-        }
-
-        if (isFirstArgumentNumeric) {
-            return this.getQuantityFromFirstIndex(cmdArgs);
-        }
-        return this.getQuantityFromLastIndex(cmdArgs);
-    }
-
-    private getQuantityFromLastIndex(cmdArray: Array<string>): number {
-        const quantity: number = parseInt(cmdArray.pop()!);
-
-        return quantity;
-    }
-    private getQuantityFromFirstIndex(cmdArray: Array<string>): number {
-        const quantity: number = parseInt(cmdArray.shift()!);
-
-        return quantity;
     }
 
     private async getItemIdFromName(itemName: string): Promise<number> {
