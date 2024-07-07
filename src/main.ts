@@ -12,6 +12,7 @@ import { AddGold, AddExp } from './commands/inventory/expgold';
 import { StackAddExp, StackAddGold } from './commands/inventory/stackexpgold';
 import Inventory from './commands/inventory/inventory';
 import UseItem from './commands/inventory/useitem';
+import Shop from './commands/inventory/shop';
 
 const prefix = ';';
 
@@ -48,6 +49,7 @@ async function handleCommands(message: Message): Promise<void> {
     commands.push(new Inventory(message, [';inv', ';inventario', ';inventory']));
 
     commands.push(new UseItem(message, [';use-item', ';use', ';useitem', ';usar', ';usaritem']));
+    commands.push(new Shop(message, [';shop', ';loja']));
 
     for (const cmd of commands) {
         if (cmd.commandSyntaxes.includes(command)) {

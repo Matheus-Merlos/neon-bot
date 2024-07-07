@@ -45,6 +45,7 @@ export const item = pgTable('item', {
     descricao: text('descricao').notNull(),
     preco: integer('preco').notNull(),
     durabilidade: integer('durabilidade').notNull(),
+    disponivel: boolean('disponivel_para_venda').notNull(),
     categoria: integer('categoria')
         .notNull()
         .references(() => categoria.id),

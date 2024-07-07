@@ -8,6 +8,13 @@
       "when": 1719878850995,
       "tag": "0000_free_mikhail_rasputin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1720356507568,
+      "tag": "0001_modern_patriot",
+      "breakpoints": true
     }
   ]
 }

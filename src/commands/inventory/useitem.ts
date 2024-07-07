@@ -14,7 +14,6 @@ class ItemNotInInventoryError extends Error {}
 export default class UseItem extends Command {
     public async execute(): Promise<void> {
         const msgArray: Array<string> = this.message.content.split(' ');
-
         const commandArgs: Array<string> = msgArray.slice(1);
 
         let quantityToUse: number;
@@ -36,9 +35,8 @@ export default class UseItem extends Command {
             quantityToUse = parseInt(commandArgs.pop()!);
         }
 
-        let itemId: number;
-
         let itemName = commandArgs.join(' ');
+        let itemId: number;
 
         if (itemName === '') {
             itemName = msgArray[1];
@@ -74,7 +72,7 @@ export default class UseItem extends Command {
             (item: InventoryItem) => (totalAvailableDurability += item.durability),
         );
 
-        if (totalAvailableDurability < quantityToUse) {
+        if (quantityToUse > totalAvailableDurability) {
             this.message.reply(
                 `Você não possui durabilidade suficiente para utilizar esse item ${quantityToUse} vezes`,
             );
@@ -94,18 +92,14 @@ export default class UseItem extends Command {
             break;
         }
 
-        if (inventoryEntriesToDelete) {
-            await this.deleteInventoryEntries(inventoryEntriesToDelete);
-        }
+        if (inventoryEntriesToDelete) await this.deleteInventoryEntries(inventoryEntriesToDelete);
 
         await this.message.reply(':thumbsup:');
     }
 
     private async getItemIdFromName(itemName: string): Promise<number> {
         const items: Array<{ itemId: number }> = await db
-            .select({
-                itemId: item.id,
-            })
+            .select({ itemId: item.id })
             .from(item)
             .where(ilike(item.nome, `%${itemName}%`));
 
@@ -142,22 +136,25 @@ export default class UseItem extends Command {
     }
     private async deleteInventoryEntries(entryList: Array<number>) {
         entryList.forEach(async (entry) => {
-            const name = await db
-                .select({
-                    itemName: item.nome,
-                })
-                .from(inventario)
-                .innerJoin(item, eq(inventario.idItem, item.id))
-                .where(eq(inventario.id, entry));
+            const name = await this.getItemNameFromInventoryEntry(entry);
 
             await this.message.reply(
-                `O seu item **${name[0].itemName}** quebrou e foi removido do seu inventário`,
+                `O seu item **${name.itemName}** quebrou e foi removido do seu inventário`,
             );
         });
 
         entryList.forEach(async (entry: number) => {
             await db.delete(inventario).where(eq(inventario.id, entry));
         });
+    }
+    private async getItemNameFromInventoryEntry(entryId: number): Promise<{ itemName: string }> {
+        const names = await db
+            .select({ itemName: item.nome })
+            .from(inventario)
+            .innerJoin(item, eq(inventario.idItem, item.id))
+            .where(eq(inventario.id, entryId));
+
+        return names[0];
     }
     private async updateInventoryEntry(entry: InventoryItem) {
         await db

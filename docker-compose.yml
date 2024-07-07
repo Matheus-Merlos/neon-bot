@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  postgres:
+  postgres-discord-bot:
     image: 'postgres:latest'
     volumes:
       - "data:/var/lib/postgresql/data"
@@ -17,7 +17,7 @@ services:
     env_file:
       - ./.env
     environment:
-      - DB_HOST=postgres
+      - DB_HOST=postgres-discord-bot
 
     command: >
       /bin/bash -c "npm run makemigrations && npm run build && npm run migrate && npm run start"
