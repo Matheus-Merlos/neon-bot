@@ -3,5 +3,6 @@
 *.env
 .env
 migrations/
+migrations/meta/
 meta/
 dist/

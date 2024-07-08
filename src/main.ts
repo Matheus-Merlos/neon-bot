@@ -15,6 +15,7 @@ import UseItem from './commands/inventory/useitem';
 import Shop from './commands/inventory/shop';
 import ClearChat from './commands/rpg/clearchat';
 import NewCharacter from './commands/rpg/newcharacter';
+import EditCharacter from './commands/rpg/editcharacter';
 
 const prefix = ';';
 
@@ -46,6 +47,7 @@ async function handleCommands(message: Message): Promise<void> {
     commands.push(new StackRoll(message, [';stackroll', ';turnos']));
     commands.push(new ClearChat(message, [';limparchat', ';purge', ';limpar-chat', ';clearchat']));
     commands.push(new NewCharacter(message, [';newcharacter', ';novopersonagem']));
+    commands.push(new EditCharacter(message, [';editcharacter', ';editar-personagem']));
 
     commands.push(new AddGold(message, [';addgold', ';add-gold', ';add-money', ';addmoney']));
     commands.push(new AddExp(message, [';addexp', ';add-exp', ';add-xp', ';addxp']));
