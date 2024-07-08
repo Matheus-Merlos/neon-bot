@@ -76,3 +76,8 @@ export const rankPersonagem = pgTable('rank_personagem', {
         .notNull()
         .references(() => personagem.id),
 });
+
+export const role = pgTable('role', {
+    discordId: bigint('discord_id', { mode: 'bigint' }).notNull().primaryKey(),
+    nome: varchar('nome', { length: 63 }).notNull().unique(),
+});

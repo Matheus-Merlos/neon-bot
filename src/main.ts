@@ -16,6 +16,8 @@ import Shop from './commands/inventory/shop';
 import ClearChat from './commands/rpg/clearchat';
 import NewCharacter from './commands/rpg/newcharacter';
 import EditCharacter from './commands/rpg/editcharacter';
+import CreateRole from './commands/rpg/roles/createrole';
+import AddRole from './commands/rpg/roles/addrole';
 
 const prefix = ';';
 
@@ -48,6 +50,10 @@ async function handleCommands(message: Message): Promise<void> {
     commands.push(new ClearChat(message, [';limparchat', ';purge', ';limpar-chat', ';clearchat']));
     commands.push(new NewCharacter(message, [';newcharacter', ';novopersonagem']));
     commands.push(new EditCharacter(message, [';editcharacter', ';editar-personagem']));
+    commands.push(
+        new CreateRole(message, [';createrole', ';criarcargo', ';create-role', ';criar-cargo']),
+    );
+    commands.push(new AddRole(message, [';addrole', ';add-role', ';adicionar-cargo']));
 
     commands.push(new AddGold(message, [';addgold', ';add-gold', ';add-money', ';addmoney']));
     commands.push(new AddExp(message, [';addexp', ';add-exp', ';add-xp', ';addxp']));
