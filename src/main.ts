@@ -18,6 +18,7 @@ import NewCharacter from './commands/rpg/newcharacter';
 import EditCharacter from './commands/rpg/editcharacter';
 import CreateRole from './commands/rpg/roles/createrole';
 import AddRole from './commands/rpg/roles/addrole';
+import ClearRoles from './commands/rpg/roles/clearroles';
 
 const prefix = ';';
 
@@ -54,6 +55,7 @@ async function handleCommands(message: Message): Promise<void> {
         new CreateRole(message, [';createrole', ';criarcargo', ';create-role', ';criar-cargo']),
     );
     commands.push(new AddRole(message, [';addrole', ';add-role', ';adicionar-cargo']));
+    commands.push(new ClearRoles(message, [';clearroles', ';limparcargos']));
 
     commands.push(new AddGold(message, [';addgold', ';add-gold', ';add-money', ';addmoney']));
     commands.push(new AddExp(message, [';addexp', ';add-exp', ';add-xp', ';addxp']));
