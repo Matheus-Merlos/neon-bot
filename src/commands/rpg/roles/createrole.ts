@@ -15,7 +15,7 @@ export default class CreateRole extends Command {
         const roleId: string = this.getRoleIdFromMention(msgArray[1]);
 
         const role: Role | null = await this.message.guild!.roles.fetch(roleId);
-        const roleName = this.removeEmojis(role!.name).toLowerCase();
+        const roleName = this.removeEmojis(role!.name).toLowerCase().replaceAll(' ', '-');
 
         try {
             await this.addRole(roleId, roleName);

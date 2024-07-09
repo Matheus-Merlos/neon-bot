@@ -23,13 +23,23 @@ export default class AddRole extends Command {
         const playerId: string = getIdFromMention(msgArray[1]);
         msgArray.splice(0, 2);
 
-        const rolesToAdd: Array<Role> = await Promise.all(
-            msgArray.map(async (roleName: string) => await this.getRoleIdFromName(roleName)),
+        const rolesToAdd: Array<Role | null> = await Promise.all(
+            msgArray.map(async (roleName: string) => {
+                try {
+                    return await this.getRoleIdFromName(roleName);
+                } catch (error) {
+                    return null;
+                }
+            }),
+        );
+
+        const validRolesToAdd: Array<Role> = rolesToAdd.filter(
+            (role: Role | null) => role !== null,
         );
 
         const member: GuildMember | undefined = await this.message.guild?.members.fetch(playerId);
 
-        rolesToAdd.forEach((role: Role) => {
+        validRolesToAdd.forEach((role: Role) => {
             member!.roles.add(role);
         });
 
@@ -44,6 +54,7 @@ export default class AddRole extends Command {
             .where(ilike(role.nome, `%${roleName}%`));
 
         if (rolesId.length === 0) {
+            this.message.reply(`Não existe um cargo com o nome **${roleName}**`);
             throw new Error('Não existe um cargo com esse nome');
         }
         const roleId = rolesId[0].roleId.toString();
