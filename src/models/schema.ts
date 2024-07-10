@@ -7,6 +7,7 @@ import {
     serial,
     smallserial,
     text,
+    uniqueIndex,
     varchar,
 } from 'drizzle-orm/pg-core';
 
@@ -100,17 +101,28 @@ export const objetivo = pgTable('objetivo', {
         .references(() => tipoObjetivo.id),
 });
 
-export const objetivosSelecionados = pgTable('objetivos_selecionados', {
-    id: bigserial('id', { mode: 'bigint' }).notNull().primaryKey(),
+export const objetivosSelecionados = pgTable(
+    'objetivos_selecionados',
+    {
+        id: bigserial('id', { mode: 'bigint' }).notNull().primaryKey(),
 
-    idObjetivo: integer('id_objetivo')
-        .notNull()
-        .references(() => objetivo.id),
+        idObjetivo: integer('id_objetivo')
+            .notNull()
+            .references(() => objetivo.id),
 
-    idPersonagem: integer('id_personagem')
-        .notNull()
-        .references(() => personagem.id),
-});
+        idPersonagem: integer('id_personagem')
+            .notNull()
+            .references(() => personagem.id),
+    },
+    (table) => {
+        return {
+            uniqueSelectedObjetiveIndex: uniqueIndex('unique_objective_idx').on(
+                table.idObjetivo,
+                table.idPersonagem,
+            ),
+        };
+    },
+);
 
 export const objetivosConcluidos = pgTable('objetivos_concluidos', {
     id: bigserial('id', { mode: 'bigint' }).notNull().primaryKey(),
