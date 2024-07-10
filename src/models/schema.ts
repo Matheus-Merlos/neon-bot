@@ -1,5 +1,6 @@
 import {
     bigint,
+    bigserial,
     boolean,
     integer,
     pgTable,
@@ -80,4 +81,44 @@ export const rankPersonagem = pgTable('rank_personagem', {
 export const role = pgTable('role', {
     discordId: bigint('discord_id', { mode: 'bigint' }).notNull().primaryKey(),
     nome: varchar('nome', { length: 63 }).notNull().unique(),
+});
+
+//Tabelas para objetivos
+
+export const tipoObjetivo = pgTable('tipo_objetivo', {
+    id: smallserial('id').notNull().primaryKey(),
+    descricao: varchar('descricao', { length: 63 }).notNull().unique(),
+});
+
+export const objetivo = pgTable('objetivo', {
+    id: serial('id').notNull().primaryKey(),
+    nome: varchar('nome', { length: 63 }).notNull().unique(),
+    xp: integer('xp').notNull(),
+    gold: integer('xp').notNull(),
+    idTipo: integer('id_tipo')
+        .notNull()
+        .references(() => tipoObjetivo.id),
+});
+
+export const objetivosSelecionados = pgTable('objetivos_selecionados', {
+    id: bigserial('id', { mode: 'bigint' }).notNull().primaryKey(),
+
+    idObjetivo: integer('id_objetivo')
+        .notNull()
+        .references(() => objetivo.id),
+
+    idPersonagem: integer('id_personagem')
+        .notNull()
+        .references(() => personagem.id),
+});
+
+export const objetivosConcluidos = pgTable('objetivos_concluidos', {
+    id: bigserial('id', { mode: 'bigint' }).notNull().primaryKey(),
+    idObjetivo: integer('id_objetivo')
+        .notNull()
+        .references(() => objetivo.id),
+
+    idPersonagem: integer('id_personagem')
+        .notNull()
+        .references(() => personagem.id),
 });
