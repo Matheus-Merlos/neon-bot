@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres-discord-bot:
     image: 'postgres:latest'
@@ -23,7 +21,7 @@ services:
       /bin/bash -c "npm run makemigrations && npm run build && npm run migrate && npm run start"
 
     depends_on:
-      - postgres
+      - postgres-discord-bot
 
 volumes:
   data:
