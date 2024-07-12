@@ -1,7 +1,9 @@
-import { Collection, Message } from 'discord.js';
+import { Collection, Message, PermissionsBitField } from 'discord.js';
 import Command from '../command';
+import { hasPermission } from '../decorators';
 
 export default class ClearChat extends Command {
+    @hasPermission(PermissionsBitField.Flags.ManageMessages)
     public async execute(): Promise<void> {
         const messages: Collection<
             string,
