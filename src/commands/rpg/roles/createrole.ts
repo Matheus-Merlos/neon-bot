@@ -2,8 +2,10 @@ import { Role } from 'discord.js';
 import Command from '../../command';
 import db from '../../../models/db';
 import { role } from '../../../models/schema';
+import { hasPermission } from '../../decorators';
 
 export default class CreateRole extends Command {
+    @hasPermission
     public async execute(): Promise<void> {
         const msgArray: Array<string> = this.message.content.split(' ');
 

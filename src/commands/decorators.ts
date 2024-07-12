@@ -9,11 +9,12 @@ function hasPermission(
     const originalMethod = descriptor.value;
     return {
         value: async function (...args: Array<unknown>) {
-            const message: Message = target.message;
+            const message: Message = (this as Command).message;
             if (message.member!.permissions.has(PermissionsBitField.Flags.Administrator)) {
-                return await originalMethod(args);
+                return await originalMethod.apply(this, ...args);
             }
             message.reply('Você não tem permissão para isso!');
+            return;
         },
     };
 }

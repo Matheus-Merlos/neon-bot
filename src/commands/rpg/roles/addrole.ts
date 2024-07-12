@@ -4,14 +4,12 @@ import Command from '../../command';
 import db from '../../../models/db';
 import { role } from '../../../models/schema';
 import { ilike } from 'drizzle-orm';
-import { hasPermission } from '../../decorators';
 
 type DbRole = {
     roleId: bigint;
 };
 
 export default class AddRole extends Command {
-    @hasPermission
     public async execute(): Promise<void> {
         const msgArray: Array<string> = this.message.content.split(' ');
 
