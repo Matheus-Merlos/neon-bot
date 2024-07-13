@@ -57,7 +57,7 @@ export default class StackRoll extends Command {
                 message += `**${result.characterName} - ${result.result}**\n`;
                 continue;
             }
-            message += `${result.characterName} - ${result.result}\n`;
+            message += `${result.characterName.split(' ')[0]} - ${result.result}\n`;
         }
 
         this.message.reply(message);
