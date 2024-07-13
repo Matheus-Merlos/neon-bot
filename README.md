@@ -1,16 +1,14 @@
-<center>
-    <h1>
-        🌃
-        <span style="color: #3d0066;">N</span>
-        <span style="color: #5c0099;">E</span>
-        <span style="color: #c86bfa;">O</span>
-        <span style="color: #fdc500;">N</span>
-        <span style="color: #ffd500;">B</span>
-        <span style="color: #ffee32;">O</span>
-        <span style="color: #03071e;">T</span>
-        🌙
-    </h1>
-</center>
+<h1 align="center">
+  🌃
+  <span style="color: #3d0066;">N</span>
+  <span style="color: #5c0099;">E</span>
+  <span style="color: #c86bfa;">O</span>
+  <span style="color: #fdc500;">N</span>
+  <span style="color: #ffd500;">B</span>
+  <span style="color: #ffee32;">O</span>
+  <span style="color: #03071e;">T</span>
+  🌙
+</h1>
 
 <hr/>
 
