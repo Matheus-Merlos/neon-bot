@@ -1,11 +1,19 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    Message,
+    PermissionsBitField,
+} from 'discord.js';
 import { getCharacterNameFromId, getIdFromMention } from '../../utils';
 import Command from '../command';
 import db from '../../models/db';
 import { inventario, personagem } from '../../models/schema';
 import { eq } from 'drizzle-orm';
+import { hasPermission } from '../decorators';
 
 export default class NewCharacter extends Command {
+    @hasPermission(PermissionsBitField.Flags.Administrator)
     public async execute(): Promise<void> {
         const msgArray: Array<string> = this.message.content.split(' ');
 

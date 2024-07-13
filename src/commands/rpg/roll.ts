@@ -1,18 +1,34 @@
 import Command from '../command';
 
+const rollMessages = {
+    simpleRoll: (dice: number, result: number) =>
+        `:game_die: ➼ Um **d${dice}** foi rolado... O número obtido foi **${result}**`,
+    simpleCriticalRoll: (dice: number) =>
+        `:game_die: ➼ Um **d${dice}** foi rolado... **ACERTO CRÍTICO!** O número obtido foi **${dice}**`,
+    simpleFailedRoll: (dice: number) =>
+        `:game_die: ➼ Um **d${dice}** foi rolado... **FALHA CRÍTICA!** O número obtido foi **1**`,
+};
+
 export class Roll extends Command {
     public async execute(): Promise<void> {
         const msgArray: Array<string> = this.message.content.split(' ');
         const msgLenght = msgArray.length;
 
         if (msgLenght === 1) this.handleDiceRoll();
-        if (msgLenght === 2) this.handleCustomDiceRoll(msgArray);
+        else if (msgLenght === 2) this.handleCustomDiceRoll(msgArray);
         else this.handleComplexOperation(msgArray);
     }
 
     private handleDiceRoll(): void {
         const result = this.rollDice(6);
-        this.sendBasicMessage(6, result);
+
+        let message: string;
+
+        if (result === 1) message = rollMessages.simpleCriticalRoll(6);
+        else if (result === 6) message = rollMessages.simpleFailedRoll(6);
+        else message = rollMessages.simpleRoll(6, result);
+
+        this.message.reply(message!);
     }
 
     private handleCustomDiceRoll(msgArray: Array<string>): void {
@@ -23,7 +39,13 @@ export class Roll extends Command {
         }
         const result: number = this.rollDice(dice);
 
-        this.sendBasicMessage(dice, result);
+        let message: string;
+
+        if (result === 1) message = rollMessages.simpleCriticalRoll(dice);
+        else if (result === dice) message = rollMessages.simpleFailedRoll(dice);
+        else message = rollMessages.simpleRoll(dice, result);
+
+        this.message.reply(message!);
     }
 
     private handleComplexOperation(msgArray: Array<string>): void {
