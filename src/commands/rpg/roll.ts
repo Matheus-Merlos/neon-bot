@@ -2,11 +2,39 @@ import Command from '../command';
 
 const rollMessages = {
     simpleRoll: (dice: number, result: number) =>
-        `:game_die: ➼ Um **d${dice}** foi rolado... O número obtido foi **${result}**`,
+        `:game_die: **➼** Um **d${dice}** foi rolado... O número obtido foi **${result}**`,
     simpleCriticalRoll: (dice: number) =>
-        `:game_die: ➼ Um **d${dice}** foi rolado... **ACERTO CRÍTICO!** O número obtido foi **${dice}**`,
+        `:game_die: **➼** Um **d${dice}** foi rolado... **ACERTO CRÍTICO!** O número obtido foi **${dice}**`,
     simpleFailedRoll: (dice: number) =>
-        `:game_die: ➼ Um **d${dice}** foi rolado... **FALHA CRÍTICA!** O número obtido foi **1**`,
+        `:game_die: **➼** Um **d${dice}** foi rolado... **FALHA CRÍTICA!** O número obtido foi **1**`,
+
+    complexRoll: (
+        dice: number,
+        diceResult: number,
+        finalResult: number,
+        operation: string,
+        expression: string,
+    ) => `:game_die: ➼ Um **d${dice}** foi rolado... O número obtido foi **${finalResult}**
+:diamond_shape_with_a_dot_inside: **➼ ${finalResult}** ⟷ \`${dice}=${diceResult}\` ${operation} \`${expression}\`
+    `,
+    complexCriticalRoll: (
+        dice: number,
+        diceResult: number,
+        finalResult: number,
+        operation: string,
+        expression: string,
+    ) => `:game_die: ➼ Um **d${dice}** foi rolado... **ACERTO CRÍTICO!** O número obtido foi **${finalResult}**
+:diamond_shape_with_a_dot_inside: **➼ ${finalResult}** ⟷ \`${dice}=${diceResult}\` ${operation} \`${expression}\`
+    `,
+    complexFailedRoll: (
+        dice: number,
+        diceResult: number,
+        finalResult: number,
+        operation: string,
+        expression: string,
+    ) => `:game_die: ➼ Um **d${dice}** foi rolado... **FALHA CRÍTICA!** O número obtido foi **1**
+:diamond_shape_with_a_dot_inside: **➼ ${finalResult}** ⟷ \`${dice}=${diceResult}\` ${operation} \`${expression}\`
+    `,
 };
 
 export class Roll extends Command {
@@ -74,16 +102,30 @@ export class Roll extends Command {
             return;
         }
 
-        this.message.reply(
-            `:game_die: | Você rolou um 1d${dice}... E conseguiu **${totalResult!}**!\n:nerd: | **${totalResult!}** > \`${result} ${operation}${expression}\``,
-        );
+        let message: string;
+
+        if (result === 1)
+            message = rollMessages.complexFailedRoll(
+                dice,
+                result,
+                totalResult,
+                operation,
+                expression,
+            );
+        else if (result === dice)
+            message = rollMessages.complexCriticalRoll(
+                dice,
+                result,
+                totalResult,
+                operation,
+                expression,
+            );
+        else message = rollMessages.complexRoll(dice, result, totalResult, operation, expression);
+
+        this.message.reply(message!);
     }
 
     private rollDice(max: number): number {
         return Math.floor(Math.random() * max + 1);
-    }
-
-    private sendBasicMessage(dice: number, result: number): void {
-        this.message.reply(`:game_die: | Você rolou um 1d${dice}... E conseguiu **${result}**`);
     }
 }
