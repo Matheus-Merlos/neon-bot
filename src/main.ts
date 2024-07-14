@@ -19,6 +19,7 @@ import EditCharacter from './commands/rpg/editcharacter';
 import CreateRole from './commands/rpg/roles/createrole';
 import AddRole from './commands/rpg/roles/addrole';
 import ClearRoles from './commands/rpg/roles/clearroles';
+import Ban from './commands/moderation/ban';
 
 const prefix = ';';
 
@@ -45,6 +46,8 @@ async function handleCommands(message: Message): Promise<void> {
     const command: string = message.content.split(' ')[0].toLowerCase();
 
     const commands: Array<Command> = [];
+
+    commands.push(new Ban(message, [';ban', ';banir']));
 
     commands.push(new Roll(message, [';roll', ';rolar']));
     commands.push(new StackRoll(message, [';stackroll', ';turnos']));

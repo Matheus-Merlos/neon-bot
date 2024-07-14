@@ -32,7 +32,7 @@ const rollMessages = {
         finalResult: number,
         operation: string,
         expression: string,
-    ) => `:game_die: ➼ Um **d${dice}** foi rolado... **FALHA CRÍTICA!** O número obtido foi **1**
+    ) => `:game_die: ➼ Um **d${dice}** foi rolado... **FALHA CRÍTICA!** O número obtido foi **${finalResult}**
 :diamond_shape_with_a_dot_inside: **➼ ${finalResult}** ⟷ \`${dice}=${diceResult}\` ${operation} \`${expression}\`
     `,
 };
