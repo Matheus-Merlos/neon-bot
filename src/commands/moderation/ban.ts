@@ -3,31 +3,32 @@ import {
     ButtonBuilder,
     ButtonStyle,
     GuildMember,
+    Message,
     PermissionsBitField,
 } from 'discord.js';
-import Command from '../command';
+import { Command } from '../command';
 import { getIdFromMention } from '../../utils';
 import { hasPermission } from '../decorators';
 
-export default class Ban extends Command {
+export default class Ban implements Command {
     @hasPermission(PermissionsBitField.Flags.BanMembers)
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
         if (msgArray.length !== 2) {
-            this.message.reply('Sintaxe do comando errada!');
+            message.reply('Sintaxe do comando errada!');
             return;
         }
         if (!msgArray[1].includes('@')) {
-            this.message.reply('Sintaxe do comando errada!');
+            message.reply('Sintaxe do comando errada!');
             return;
         }
 
-        const memberToBan: GuildMember = await this.message.guild!.members.fetch(
+        const memberToBan: GuildMember = await message.guild!.members.fetch(
             getIdFromMention(msgArray[1]),
         );
 
         if (!memberToBan.bannable) {
-            this.message.reply(
+            message.reply(
                 'Não foi possível banir este usuário, meu cargo é menor ou igual ao cargo do usuário a ser punido!',
             );
             return;
@@ -46,14 +47,14 @@ export default class Ban extends Command {
         const row: ActionRowBuilder<ButtonBuilder> =
             new ActionRowBuilder<ButtonBuilder>().addComponents(confirmationButton, declineButton);
 
-        const confirmationMsg = await this.message.reply({
+        const confirmationMsg = await message.reply({
             content: `:bangbang: Atenção! Você está prestes a banir ${msgArray[1]}, tem certeza disso?`,
             components: [row],
         });
 
         try {
             const confirmation = await confirmationMsg.awaitMessageComponent({
-                filter: (i) => i.user.id === this.message.author.id,
+                filter: (i) => i.user.id === message.author.id,
                 time: 60_000,
             });
 
@@ -67,12 +68,12 @@ export default class Ban extends Command {
             }
             if (confirmation.customId === 'decline') {
                 await confirmationMsg.delete();
-                await this.message.delete();
-                await this.message.channel.send('Foi tudo um sonho!');
+                await message.delete();
+                await message.channel.send('Foi tudo um sonho!');
             }
         } catch (e) {
             await confirmationMsg.delete();
-            await this.message.delete();
+            await message.delete();
         }
     }
 }

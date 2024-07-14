@@ -1,5 +1,5 @@
-import { Guild } from 'discord.js';
-import Command from '../command';
+import { Guild, Message } from 'discord.js';
+import { Command } from '../command';
 import {
     addPlayerAndCharacterIfNotExists,
     Character,
@@ -10,33 +10,33 @@ import db from '../../models/db';
 import { personagem } from '../../models/schema';
 import { eq, sql } from 'drizzle-orm';
 
-abstract class AddResource extends Command {
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+abstract class AddResource implements Command {
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
         if (msgArray.length !== 3) {
-            this.message.reply('A sintaxe do comando está errada');
+            message.reply('A sintaxe do comando está errada');
             return;
         }
 
         const mention: string = msgArray[1];
         if (!mention.includes('@')) {
-            this.message.reply('O player informado não é um player válido');
+            message.reply('O player informado não é um player válido');
             return;
         }
 
         const id: string = getIdFromMention(mention);
         const quantity: number = parseInt(msgArray[2]);
         if (isNaN(quantity)) {
-            this.message.reply('A quantidade informada é inválida');
+            message.reply('A quantidade informada é inválida');
             return;
         }
 
-        const guild: Guild = this.message.guild!;
+        const guild: Guild = message.guild!;
         await addPlayerAndCharacterIfNotExists(id, guild);
 
         await this.add(id, quantity);
 
-        this.message.reply('Adicionado com sucesso!');
+        message.reply('Adicionado com sucesso!');
     }
     protected abstract add(playerId: string, quantity: number): Promise<void>;
 }

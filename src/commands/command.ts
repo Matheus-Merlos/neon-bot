@@ -1,13 +1,33 @@
 import { Message } from 'discord.js';
 
-export default abstract class Command {
-    public readonly message: Message;
-    public readonly commandSyntaxes: Array<string>;
+export interface Command {
+    execute(message: Message): Promise<void>;
+}
 
-    constructor(message: Message, commandSyntaxes: Array<string>) {
-        this.message = message;
-        this.commandSyntaxes = commandSyntaxes;
+//Invoker class of the Command Design Pattern
+export class App {
+    private commands: { [k: string]: Command } = {};
+
+    public addCommand(key: string | Array<string>, command: Command): void {
+        if (typeof key === 'string') {
+            this.addKey(key, command);
+        }
+
+        for (const k of key) {
+            this.addKey(k, command);
+        }
     }
 
-    public abstract execute(): Promise<void>;
+    public async executeCommand(key: string, message: Message): Promise<void> {
+        if (!this.commands[key]) {
+            throw new Error(`Key ${key} does not exist!`);
+        }
+        await this.commands[key].execute(message);
+    }
+
+    private addKey(key: string, command: Command): void {
+        if (key in this.commands) throw new Error(`Key ${key} already exists!`);
+        this.commands[key] = command;
+        return;
+    }
 }

@@ -5,7 +5,7 @@ import queue from './commands/music/queue';
 import disconnect from './commands/music/disconnect';
 import remove from './commands/music/remove';
 import dotenv from 'dotenv';
-import Command from './commands/command';
+import { App, Command } from './commands/command';
 import { Roll } from './commands/rpg/roll';
 import StackRoll from './commands/rpg/stackroll';
 import { AddGold, AddExp } from './commands/inventory/expgold';
@@ -39,16 +39,19 @@ const token: string | undefined = process.env.TOKEN;
 
 client.on(Events.MessageCreate, handleCommands);
 
+const app: App = new App();
+
 async function handleCommands(message: Message): Promise<void> {
     if (!message.content.startsWith(prefix)) {
         return;
     }
     const command: string = message.content.split(' ')[0].toLowerCase();
 
-    const commands: Array<Command> = [];
+    const BanCommand: Command = new Ban();
 
-    commands.push(new Ban(message, [';ban', ';banir']));
+    app.addCommand(';ban', BanCommand);
 
+    /*
     commands.push(new Roll(message, [';roll', ';rolar']));
     commands.push(new StackRoll(message, [';stackroll', ';turnos']));
     commands.push(new ClearChat(message, [';limparchat', ';purge', ';limpar-chat', ';clearchat']));
@@ -68,14 +71,13 @@ async function handleCommands(message: Message): Promise<void> {
     commands.push(new Inventory(message, [';inv', ';inventario', ';inventory']));
     commands.push(new UseItem(message, [';use-item', ';use', ';useitem', ';usar', ';usaritem']));
     commands.push(new Shop(message, [';shop', ';loja']));
+    */
 
-    for (const cmd of commands) {
-        if (cmd.commandSyntaxes.includes(command)) {
-            cmd.execute();
-            return;
-        }
+    try {
+        app.executeCommand(command, message);
+    } catch (e) {
+        message.reply('Não existe um comando com essa sintaxe!');
     }
-    message.reply('Não existe um comando com essa sintaxe');
 }
 
 if (!token) {
