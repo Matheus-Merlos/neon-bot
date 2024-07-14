@@ -1,14 +1,13 @@
 import { Collection, Message, PermissionsBitField } from 'discord.js';
-import Command from '../command';
+import { Command } from '../command';
 import { hasPermission } from '../decorators';
 
-export default class ClearChat extends Command {
+export default class ClearChat implements Command {
     @hasPermission(PermissionsBitField.Flags.ManageMessages)
-    public async execute(): Promise<void> {
-        const messages: Collection<
-            string,
-            Message<boolean>
-        > = await this.message.channel.messages.fetch({ limit: 100 });
+    public async execute(message: Message): Promise<void> {
+        const messages: Collection<string, Message<boolean>> = await message.channel.messages.fetch(
+            { limit: 100 },
+        );
 
         const deletePromises: Promise<unknown>[] = [];
         let total: number = 0;
@@ -24,6 +23,6 @@ export default class ClearChat extends Command {
 
         await Promise.all(deletePromises);
 
-        await this.message.channel.send(`**${total}** mensagens foram excluídas com sucesso.`);
+        await message.channel.send(`**${total}** mensagens foram excluídas com sucesso.`);
     }
 }

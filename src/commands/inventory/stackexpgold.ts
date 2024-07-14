@@ -6,22 +6,22 @@ import {
     getCurrentCharacterFromId,
     getIdFromMention,
 } from '../../utils';
-import Command from '../command';
+import { Command } from '../command';
 import db from '../../models/db';
-import { Guild } from 'discord.js';
+import { Guild, Message } from 'discord.js';
 
-abstract class StackAddResource extends Command {
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+abstract class StackAddResource implements Command {
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
 
         if (!(msgArray.length > 2)) {
-            this.message.reply('Sintaxe do comando errada!');
+            message.reply('Sintaxe do comando errada!');
             return;
         }
 
         const quantity: number = parseInt(msgArray[1]);
         if (isNaN(quantity)) {
-            this.message.reply('Quantidade inválida');
+            message.reply('Quantidade inválida');
         }
 
         const idList: Array<string> = msgArray
@@ -29,17 +29,17 @@ abstract class StackAddResource extends Command {
             .filter((mention: string) => mention.includes('@'))
             .map((mention: string) => getIdFromMention(mention));
 
-        const guild: Guild = this.message.guild!;
+        const guild: Guild = message.guild!;
         idList.forEach(async (id: string) => {
             await addPlayerAndCharacterIfNotExists(id, guild);
-            await this.add(id, quantity);
+            await this.add(id, quantity, message);
         });
     }
-    protected abstract add(playerId: string, quantity: number): Promise<void>;
+    protected abstract add(playerId: string, quantity: number, message: Message): Promise<void>;
 }
 
 export class StackAddGold extends StackAddResource {
-    protected async add(playerId: string, quantity: number) {
+    protected async add(playerId: string, quantity: number, message: Message) {
         const character: Character = await getCurrentCharacterFromId(playerId);
 
         const characterId = character.characterId;
@@ -49,14 +49,14 @@ export class StackAddGold extends StackAddResource {
             .set({ gold: sql`${personagem.gold}+ ${quantity}` })
             .where(eq(personagem.id, characterId));
 
-        this.message.channel.send(
+        message.channel.send(
             `${quantity} de gold adicionado com sucesso para **${character.characterName}**!`,
         );
     }
 }
 
 export class StackAddExp extends StackAddResource {
-    protected async add(playerId: string, quantity: number) {
+    protected async add(playerId: string, quantity: number, message: Message) {
         const character: Character = await getCurrentCharacterFromId(playerId);
 
         const characterId = character.characterId;
@@ -66,7 +66,7 @@ export class StackAddExp extends StackAddResource {
             .set({ xp: sql`${personagem.xp}+ ${quantity}` })
             .where(eq(personagem.id, characterId));
 
-        this.message.channel.send(
+        message.channel.send(
             `${quantity} de xp adicionado com sucesso para **${character.characterName}**!`,
         );
     }

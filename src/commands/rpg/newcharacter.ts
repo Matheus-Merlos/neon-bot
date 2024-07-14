@@ -6,33 +6,33 @@ import {
     PermissionsBitField,
 } from 'discord.js';
 import { getCharacterNameFromId, getIdFromMention } from '../../utils';
-import Command from '../command';
+import { Command } from '../command';
 import db from '../../models/db';
 import { inventario, personagem } from '../../models/schema';
 import { eq } from 'drizzle-orm';
 import { hasPermission } from '../decorators';
 
-export default class NewCharacter extends Command {
+export default class NewCharacter implements Command {
     @hasPermission(PermissionsBitField.Flags.Administrator)
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
 
         let id: string;
         let characterName: string;
         if (msgArray.length === 1) {
-            id = this.message.author.id;
-            characterName = await getCharacterNameFromId(id, this.message.guild!);
+            id = message.author.id;
+            characterName = await getCharacterNameFromId(id, message.guild!);
         } else if (msgArray.length === 2 && msgArray[1].includes('@')) {
             id = getIdFromMention(msgArray[1]);
-            characterName = await getCharacterNameFromId(id, this.message.guild!);
+            characterName = await getCharacterNameFromId(id, message.guild!);
         } else if (msgArray.length === 2) {
-            id = this.message.author.id;
+            id = message.author.id;
             characterName = msgArray[1];
         } else if (msgArray.length > 2 && msgArray[1].includes('@')) {
             id = getIdFromMention(msgArray[1]);
             characterName = msgArray.slice(2).join(' ');
         } else {
-            id = this.message.author.id;
+            id = message.author.id;
             characterName = msgArray.slice(1).join(' ');
         }
 
@@ -44,13 +44,13 @@ export default class NewCharacter extends Command {
         const buttonRow: ActionRowBuilder<ButtonBuilder> =
             new ActionRowBuilder<ButtonBuilder>().addComponents(confirmButton);
 
-        const confirmationMsg: Message = await this.message.reply({
+        const confirmationMsg: Message = await message.reply({
             content: 'Você tem certeza?',
             components: [buttonRow],
         });
 
         const confirmation = await confirmationMsg.awaitMessageComponent({
-            filter: (i) => i.user.id === this.message.author.id,
+            filter: (i) => i.user.id === message.author.id,
             time: 60_000,
         });
 

@@ -1,4 +1,5 @@
-import Command from '../command';
+import { Message } from 'discord.js';
+import { Command } from '../command';
 
 const rollMessages = {
     simpleRoll: (dice: number, result: number) =>
@@ -37,17 +38,17 @@ const rollMessages = {
     `,
 };
 
-export class Roll extends Command {
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+export class Roll implements Command {
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
         const msgLenght = msgArray.length;
 
-        if (msgLenght === 1) this.handleDiceRoll();
-        else if (msgLenght === 2) this.handleCustomDiceRoll(msgArray);
-        else this.handleComplexOperation(msgArray);
+        if (msgLenght === 1) this.handleDiceRoll(message);
+        else if (msgLenght === 2) this.handleCustomDiceRoll(message, msgArray);
+        else this.handleComplexOperation(message, msgArray);
     }
 
-    private handleDiceRoll(): void {
+    private handleDiceRoll(msg: Message): void {
         const result = this.rollDice(6);
 
         let message: string;
@@ -56,13 +57,13 @@ export class Roll extends Command {
         else if (result === 6) message = rollMessages.simpleFailedRoll(6);
         else message = rollMessages.simpleRoll(6, result);
 
-        this.message.reply(message!);
+        msg.reply(message!);
     }
 
-    private handleCustomDiceRoll(msgArray: Array<string>): void {
+    private handleCustomDiceRoll(msg: Message, msgArray: Array<string>): void {
         const dice: number = parseInt(msgArray[1]);
         if (isNaN(dice) || dice < 1) {
-            this.message.reply(`O valor **${msgArray[1]}** não é um número válido`);
+            msg.reply(`O valor **${msgArray[1]}** não é um número válido`);
             return;
         }
         const result: number = this.rollDice(dice);
@@ -73,19 +74,19 @@ export class Roll extends Command {
         else if (result === dice) message = rollMessages.simpleFailedRoll(dice);
         else message = rollMessages.simpleRoll(dice, result);
 
-        this.message.reply(message!);
+        msg.reply(message!);
     }
 
-    private handleComplexOperation(msgArray: Array<string>): void {
+    private handleComplexOperation(msg: Message, msgArray: Array<string>): void {
         const dice: number = parseInt(msgArray[1]);
         if (isNaN(dice) || dice < 1) {
-            this.message.reply(`O valor **${msgArray[1]}** não é um número válido`);
+            msg.reply(`O valor **${msgArray[1]}** não é um número válido`);
             return;
         }
 
         const operation: string = msgArray[2][0];
         if (!['+', '-', '*', '/'].includes(operation)) {
-            this.message.reply('Sintaxe do comando errada/Operação não suportada');
+            msg.reply('Sintaxe do comando errada/Operação não suportada');
             return;
         }
         const result: number = this.rollDice(dice);
@@ -98,7 +99,7 @@ export class Roll extends Command {
         try {
             totalResult = eval(`${result}${operation}${expression}`);
         } catch (error) {
-            this.message.reply(`A operação \`${expression}\` não é uma operação válida`);
+            msg.reply(`A operação \`${expression}\` não é uma operação válida`);
             return;
         }
 
@@ -122,7 +123,7 @@ export class Roll extends Command {
             );
         else message = rollMessages.complexRoll(dice, result, totalResult, operation, expression);
 
-        this.message.reply(message!);
+        msg.reply(message!);
     }
 
     private rollDice(max: number): number {

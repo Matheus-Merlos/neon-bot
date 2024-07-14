@@ -11,6 +11,7 @@ export class App {
     public addCommand(key: string | Array<string>, command: Command): void {
         if (typeof key === 'string') {
             this.addKey(key, command);
+            return;
         }
 
         for (const k of key) {

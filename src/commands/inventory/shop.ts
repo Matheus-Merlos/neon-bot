@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
 import db from '../../models/db';
 import { item } from '../../models/schema';
-import Command from '../command';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
+import { Command } from '../command';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Message } from 'discord.js';
 
 type Item = {
     itemName: string;
@@ -12,30 +12,30 @@ type Item = {
 
 const MAX_ITEMS_PER_PAGE = 5;
 
-export default class Shop extends Command {
-    public async execute(): Promise<void> {
+export default class Shop implements Command {
+    public async execute(message: Message): Promise<void> {
         let items: Array<Array<Item>>;
 
         try {
             items = await this.fetchItems();
         } catch (error) {
-            this.message.reply(`Houve um erro ao trazer os itens da base de dados: **${error}**`);
+            message.reply(`Houve um erro ao trazer os itens da base de dados: **${error}**`);
             return;
         }
 
         let currentPage: number = 0;
 
-        const embed = this.createOrUpdateShopList(items, currentPage);
+        const embed = this.createOrUpdateShopList(items, currentPage, message);
         let buttons = this.createOrUpdateButtons(items, currentPage);
 
-        const sentMsg = await this.message.reply({ embeds: [embed], components: [buttons] });
+        const sentMsg = await message.reply({ embeds: [embed], components: [buttons] });
         const collector = sentMsg.createMessageComponentCollector({ time: 60_000 });
 
         collector.on('collect', (interaction) => {
             if (interaction.customId === 'forward-shop') currentPage++;
             if (interaction.customId === 'backward-shop') currentPage--;
 
-            const editedEmbed = this.createOrUpdateShopList(items, currentPage);
+            const editedEmbed = this.createOrUpdateShopList(items, currentPage, message);
             buttons = this.createOrUpdateButtons(items, currentPage);
 
             interaction.update({ embeds: [editedEmbed], components: [buttons] });
@@ -62,10 +62,14 @@ export default class Shop extends Command {
 
         return row;
     }
-    private createOrUpdateShopList(items: Array<Array<Item>>, currentPage: number): EmbedBuilder {
+    private createOrUpdateShopList(
+        items: Array<Array<Item>>,
+        currentPage: number,
+        message: Message,
+    ): EmbedBuilder {
         const embed: EmbedBuilder = new EmbedBuilder()
             .setColor('Purple')
-            .setTitle(`Loja do server ${this.message.guild!.name}`)
+            .setTitle(`Loja do server ${message.guild!.name}`)
             .setDescription(
                 'Compre um item com o comando `;buy <nome_do_item>`\nPara mais informações de um item use o comando `;item <nome_do_item>`\nA loja só mostra itens que estão a venda, para ver todos os itens, use o comando `;items`',
             )

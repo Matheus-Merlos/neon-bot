@@ -1,7 +1,8 @@
 import { and, eq, ilike } from 'drizzle-orm';
 import db from '../../models/db';
 import { inventario, item, personagem } from '../../models/schema';
-import Command from '../command';
+import { Command } from '../command';
+import { Message } from 'discord.js';
 
 type InventoryItem = {
     inventoryEntryId: number;
@@ -11,9 +12,9 @@ type InventoryItem = {
 class ItemNotFoundError extends Error {}
 class ItemNotInInventoryError extends Error {}
 
-export default class UseItem extends Command {
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+export default class UseItem implements Command {
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
         const commandArgs: Array<string> = msgArray.slice(1);
 
         let quantityToUse: number;
@@ -46,24 +47,24 @@ export default class UseItem extends Command {
             itemId = await this.getItemIdFromName(itemName);
         } catch (error: unknown) {
             if (error instanceof ItemNotFoundError) {
-                this.message.reply(`Não existe um item com o nome **${itemName}**`);
+                message.reply(`Não existe um item com o nome **${itemName}**`);
                 return;
             }
-            this.message.reply(`Houve um erro ao procurar o item na base de dados: **${error}**`);
+            message.reply(`Houve um erro ao procurar o item na base de dados: **${error}**`);
             return;
         }
 
         let itemInventoryList: Array<InventoryItem>;
 
-        const id: string = this.message.author.id;
+        const id: string = message.author.id;
         try {
             itemInventoryList = await this.getItemFromInventory(id, itemId);
         } catch (error: unknown) {
             if (error instanceof ItemNotInInventoryError) {
-                this.message.reply(`Você não possui ${itemName} em seu inventário`);
+                message.reply(`Você não possui ${itemName} em seu inventário`);
                 return;
             }
-            this.message.reply(`Houve um erro ao procurar item no inventário: **${error}**}`);
+            message.reply(`Houve um erro ao procurar item no inventário: **${error}**}`);
             return;
         }
 
@@ -73,7 +74,7 @@ export default class UseItem extends Command {
         );
 
         if (quantityToUse > totalAvailableDurability) {
-            this.message.reply(
+            message.reply(
                 `Você não possui durabilidade suficiente para utilizar esse item ${quantityToUse} vezes`,
             );
             return;
@@ -92,9 +93,10 @@ export default class UseItem extends Command {
             break;
         }
 
-        if (inventoryEntriesToDelete) await this.deleteInventoryEntries(inventoryEntriesToDelete);
+        if (inventoryEntriesToDelete)
+            await this.deleteInventoryEntries(inventoryEntriesToDelete, message);
 
-        await this.message.reply(':thumbsup:');
+        await message.reply(':thumbsup:');
     }
 
     private async getItemIdFromName(itemName: string): Promise<number> {
@@ -134,11 +136,11 @@ export default class UseItem extends Command {
         }
         return inventoryItems;
     }
-    private async deleteInventoryEntries(entryList: Array<number>) {
+    private async deleteInventoryEntries(entryList: Array<number>, message: Message) {
         entryList.forEach(async (entry) => {
             const name = await this.getItemNameFromInventoryEntry(entry);
 
-            await this.message.reply(
+            await message.reply(
                 `O seu item **${name.itemName}** quebrou e foi removido do seu inventário`,
             );
         });

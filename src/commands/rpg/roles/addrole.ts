@@ -1,6 +1,6 @@
-import { GuildMember, Role } from 'discord.js';
+import { GuildMember, Message, Role } from 'discord.js';
 import { getIdFromMention } from '../../../utils';
-import Command from '../../command';
+import { Command } from '../../command';
 import db from '../../../models/db';
 import { role } from '../../../models/schema';
 import { ilike } from 'drizzle-orm';
@@ -9,14 +9,14 @@ type DbRole = {
     roleId: bigint;
 };
 
-export default class AddRole extends Command {
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+export default class AddRole implements Command {
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
 
         const isMentionInTheRightPlace: boolean = msgArray[1].includes('@');
 
         if (!isMentionInTheRightPlace) {
-            this.message.reply('Sintaxe do comando errada');
+            message.reply('Sintaxe do comando errada');
             return;
         }
 
@@ -26,7 +26,7 @@ export default class AddRole extends Command {
         const rolesToAdd: Array<Role | null> = await Promise.all(
             msgArray.map(async (roleName: string) => {
                 try {
-                    return await this.getRoleIdFromName(roleName);
+                    return await this.getRoleIdFromName(roleName, message);
                 } catch (error) {
                     return null;
                 }
@@ -37,15 +37,15 @@ export default class AddRole extends Command {
             (role: Role | null) => role !== null,
         );
 
-        const member: GuildMember | undefined = await this.message.guild?.members.fetch(playerId);
+        const member: GuildMember | undefined = await message.guild?.members.fetch(playerId);
 
         validRolesToAdd.forEach((role: Role) => {
             member!.roles.add(role);
         });
 
-        this.message.reply('Cargos adicionados com sucesso!');
+        message.reply('Cargos adicionados com sucesso!');
     }
-    private async getRoleIdFromName(roleName: string): Promise<Role> {
+    private async getRoleIdFromName(roleName: string, message: Message): Promise<Role> {
         const rolesId: Array<DbRole> = await db
             .select({
                 roleId: role.discordId,
@@ -54,12 +54,12 @@ export default class AddRole extends Command {
             .where(ilike(role.nome, `%${roleName}%`));
 
         if (rolesId.length === 0) {
-            this.message.reply(`Não existe um cargo com o nome **${roleName}**`);
+            message.reply(`Não existe um cargo com o nome **${roleName}**`);
             throw new Error('Não existe um cargo com esse nome');
         }
         const roleId = rolesId[0].roleId.toString();
 
-        const guildRole: Role | null | undefined = await this.message.guild?.roles.fetch(roleId);
+        const guildRole: Role | null | undefined = await message.guild?.roles.fetch(roleId);
         if (guildRole === null || guildRole === undefined) {
             throw new Error('Não existe um cargo com esse nome');
         }

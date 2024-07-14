@@ -39,17 +39,23 @@ const token: string | undefined = process.env.TOKEN;
 
 client.on(Events.MessageCreate, handleCommands);
 
+const banCommand: Command = new Ban();
+
+const rollCommand: Command = new Roll();
+
+const createRole: Command = new CreateRole();
+
 const app: App = new App();
+
+app.addCommand(';ban', banCommand);
+app.addCommand(';roll', rollCommand);
+app.addCommand(';createrole', createRole);
 
 async function handleCommands(message: Message): Promise<void> {
     if (!message.content.startsWith(prefix)) {
         return;
     }
     const command: string = message.content.split(' ')[0].toLowerCase();
-
-    const BanCommand: Command = new Ban();
-
-    app.addCommand(';ban', BanCommand);
 
     /*
     commands.push(new Roll(message, [';roll', ';rolar']));

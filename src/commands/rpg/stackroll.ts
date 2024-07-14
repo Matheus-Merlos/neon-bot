@@ -1,9 +1,9 @@
 import { addPlayerAndCharacterIfNotExists, getIdFromMention } from '../../utils';
 import { jogador, personagem } from '../../models/schema';
 import db from '../../models/db';
-import Command from '../command';
+import { Command } from '../command';
 import { eq } from 'drizzle-orm';
-import { Guild } from 'discord.js';
+import { Guild, Message } from 'discord.js';
 
 type PlayerCharacter = {
     playerId: bigint;
@@ -16,9 +16,9 @@ type CharacterRoll = {
     isFoe: boolean;
 };
 
-export default class StackRoll extends Command {
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+export default class StackRoll implements Command {
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
 
         const idList: Array<string> = msgArray
             .filter((element: string) => element.includes('@'))
@@ -28,7 +28,7 @@ export default class StackRoll extends Command {
             .slice(1)
             .filter((element: string) => !element.includes('@') && element !== '');
 
-        const guild: Guild = this.message.guild!;
+        const guild: Guild = message.guild!;
 
         const promises = idList.map((id) => addPlayerAndCharacterIfNotExists(id, guild));
         await Promise.all(promises);
@@ -51,16 +51,16 @@ export default class StackRoll extends Command {
 
         results.sort((a, b) => b.result - a.result);
 
-        let message: string = '--TURNOS--\n\n';
+        let msg: string = '--TURNOS--\n\n';
         for (const result of results) {
             if (result.isFoe) {
-                message += `**${result.characterName} - ${result.result}**\n`;
+                msg += `**${result.characterName} - ${result.result}**\n`;
                 continue;
             }
-            message += `${result.characterName.split(' ')[0]} - ${result.result}\n`;
+            msg += `${result.characterName.split(' ')[0]} - ${result.result}\n`;
         }
 
-        this.message.reply(message);
+        message.reply(msg);
     }
     private async fetchPlayers() {
         const players: Array<PlayerCharacter> = await db

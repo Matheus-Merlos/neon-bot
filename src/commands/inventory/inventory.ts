@@ -1,8 +1,8 @@
 import { and, count, eq, gt } from 'drizzle-orm';
 import db from '../../models/db';
 import { personagem, inventario, item } from '../../models/schema';
-import Command from '../command';
-import { EmbedBuilder } from 'discord.js';
+import { Command } from '../command';
+import { EmbedBuilder, Message } from 'discord.js';
 import {
     addPlayerAndCharacterIfNotExists,
     Character,
@@ -21,23 +21,23 @@ type InventoryItem = {
     itemDescription: string;
 };
 
-export default class Inventory extends Command {
-    public async execute(): Promise<void> {
-        const msgArray: Array<string> = this.message.content.split(' ');
+export default class Inventory implements Command {
+    public async execute(message: Message): Promise<void> {
+        const msgArray: Array<string> = message.content.split(' ');
 
         let id: string;
         if (msgArray.length === 1) {
-            id = this.message.author.id;
+            id = message.author.id;
         }
         if (msgArray.length === 2) {
             id = getIdFromMention(msgArray[1]);
         }
 
         if (![1, 2].includes(msgArray.length)) {
-            this.message.reply('Sintaxe do comando errada');
+            message.reply('Sintaxe do comando errada');
         }
 
-        await addPlayerAndCharacterIfNotExists(id!, this.message.guild!);
+        await addPlayerAndCharacterIfNotExists(id!, message.guild!);
 
         const character: Character = await getCurrentCharacterFromId(id!);
         const characterFirstName: string = character.characterName.split(' ')[0];
@@ -58,7 +58,7 @@ export default class Inventory extends Command {
                 })),
             );
 
-        this.message.reply({ embeds: [embed] });
+        message.reply({ embeds: [embed] });
     }
 
     public async fetchXpAndGold(playerId: string): Promise<XpAndGold> {
