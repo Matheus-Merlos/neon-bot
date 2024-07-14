@@ -23,6 +23,7 @@ export class App {
         if (!this.commands[key]) {
             throw new Error(`Key ${key} does not exist!`);
         }
+
         await this.commands[key].execute(message);
     }
 

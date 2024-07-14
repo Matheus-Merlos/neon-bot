@@ -11,11 +11,13 @@ function hasPermission(permission: bigint) {
         return {
             value: async function (...args: Array<unknown>) {
                 const message = args[0];
+
                 if (!(message instanceof Message)) {
-                    throw new Error();
+                    throw new Error('First argument must be a Message object');
                 }
+
                 if (message.member!.permissions.has(permission)) {
-                    return await originalMethod.apply(this, ...args);
+                    return await originalMethod.apply(this, [message, ...args]);
                 }
                 message.reply('Você não tem privilégios o suficiente para executar esse comando.');
                 return;

@@ -42,14 +42,46 @@ client.on(Events.MessageCreate, handleCommands);
 const banCommand: Command = new Ban();
 
 const rollCommand: Command = new Roll();
+const stackRollCommand: Command = new StackRoll();
+const clearChatCommand: Command = new ClearChat();
+const newCharacterCommand: Command = new NewCharacter();
+const editCharacterCommand: Command = new EditCharacter();
 
 const createRole: Command = new CreateRole();
+const addRoleCommand: Command = new AddRole();
+const clearRolesCommand: Command = new ClearRoles();
+
+const addGoldCommand = new AddGold();
+const addExpCommand = new AddExp();
+const stackAddGoldCommand = new StackAddGold();
+const stackAddExpCommand = new StackAddExp();
+
+const inventoryCommand: Command = new Inventory();
+const useItemCommand: Command = new UseItem();
+const shopCommand: Command = new Shop();
 
 const app: App = new App();
 
 app.addCommand(';ban', banCommand);
+
 app.addCommand(';roll', rollCommand);
+app.addCommand(';stackroll', stackRollCommand);
+app.addCommand([';clearchat', ';limparchat'], clearChatCommand);
+app.addCommand([';newcharacter', ';novopersonagem'], newCharacterCommand);
+app.addCommand([';editcharacter', ';editarpersonagem'], editCharacterCommand);
+
 app.addCommand(';createrole', createRole);
+app.addCommand(';addrole', addRoleCommand);
+app.addCommand(';clearroles', clearRolesCommand);
+
+app.addCommand([';addgold', ';add-gold', ';add-money', ';addmoney'], addGoldCommand);
+app.addCommand([';addexp', ';add-exp', ';add-xp', ';addxp'], addExpCommand);
+app.addCommand([';stackaddgold', ';stack-add-gold'], stackAddGoldCommand);
+app.addCommand([';stackaddexp', ';stack-add-exp', ';stackaddxp'], stackAddExpCommand);
+
+app.addCommand([';inv', ';inventory', ';inventario'], inventoryCommand);
+app.addCommand([';use-item', ';use', ';useitem', ';usar', ';usaritem'], useItemCommand);
+app.addCommand(';shop', shopCommand);
 
 async function handleCommands(message: Message): Promise<void> {
     if (!message.content.startsWith(prefix)) {
@@ -57,30 +89,8 @@ async function handleCommands(message: Message): Promise<void> {
     }
     const command: string = message.content.split(' ')[0].toLowerCase();
 
-    /*
-    commands.push(new Roll(message, [';roll', ';rolar']));
-    commands.push(new StackRoll(message, [';stackroll', ';turnos']));
-    commands.push(new ClearChat(message, [';limparchat', ';purge', ';limpar-chat', ';clearchat']));
-    commands.push(new NewCharacter(message, [';newcharacter', ';novopersonagem']));
-    commands.push(new EditCharacter(message, [';editcharacter', ';editar-personagem']));
-    commands.push(
-        new CreateRole(message, [';createrole', ';criarcargo', ';create-role', ';criar-cargo']),
-    );
-    commands.push(new AddRole(message, [';addrole', ';add-role', ';adicionar-cargo']));
-    commands.push(new ClearRoles(message, [';clearroles', ';limparcargos']));
-
-    commands.push(new AddGold(message, [';addgold', ';add-gold', ';add-money', ';addmoney']));
-    commands.push(new AddExp(message, [';addexp', ';add-exp', ';add-xp', ';addxp']));
-    commands.push(new StackAddGold(message, [';stackaddgold', ';stack-add-gold']));
-    commands.push(new StackAddExp(message, [';stackaddexp', ';stack-add-exp', ';stackaddxp']));
-
-    commands.push(new Inventory(message, [';inv', ';inventario', ';inventory']));
-    commands.push(new UseItem(message, [';use-item', ';use', ';useitem', ';usar', ';usaritem']));
-    commands.push(new Shop(message, [';shop', ';loja']));
-    */
-
     try {
-        app.executeCommand(command, message);
+        await app.executeCommand(command, message);
     } catch (e) {
         message.reply('Não existe um comando com essa sintaxe!');
     }
