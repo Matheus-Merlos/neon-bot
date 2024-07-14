@@ -26,6 +26,13 @@ export default class Ban extends Command {
             getIdFromMention(msgArray[1]),
         );
 
+        if (!memberToBan.bannable) {
+            this.message.reply(
+                'Não foi possível banir este usuário, meu cargo é menor ou igual ao cargo do usuário a ser punido!',
+            );
+            return;
+        }
+
         const confirmationButton = new ButtonBuilder()
             .setCustomId('confirmation')
             .setStyle(ButtonStyle.Danger)
@@ -66,7 +73,6 @@ export default class Ban extends Command {
         } catch (e) {
             await confirmationMsg.delete();
             await this.message.delete();
-            await this.message.channel.send('Foi tudo um sonho!');
         }
     }
 }
