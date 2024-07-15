@@ -1,16 +1,8 @@
-import { Message, EmbedBuilder } from 'discord.js';
-import { songNames, posicaoAtual } from './play';
+import { Message } from 'discord.js';
+import { AudioPlayerCommand } from './audio-player';
 
-export default async function queue(message: Message) {
-    const songs = songNames.slice(posicaoAtual);
-    const embed = new EmbedBuilder()
-        .setColor('Aqua')
-        .setTitle('Fila atual:')
-        .addFields(
-            songs.map((song, index) => {
-                return { name: `Musica ${index + 1}:`, value: song };
-            }),
-        );
-
-    message.reply({ embeds: [embed] });
+export class SongQueue extends AudioPlayerCommand {
+    public async execute(message: Message): Promise<void> {
+        this.player.songQueue(message);
+    }
 }

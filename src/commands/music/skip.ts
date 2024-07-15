@@ -1,19 +1,8 @@
 import { Message } from 'discord.js';
-import { queue, increasePosition, player, posicaoAtual } from './play';
+import { AudioPlayerCommand } from './audio-player';
 
-export default async function skip(message: Message): Promise<void> {
-    if (message.member!.voice.channel === null) {
-        message.reply('Você não está em um canal de voz!');
+export class Skip extends AudioPlayerCommand {
+    public async execute(message: Message): Promise<void> {
+        this.player.skip(message);
     }
-
-    if (posicaoAtual + 1 > queue.length - 1) {
-        message.reply('Não há mais músicas na fila!');
-        return;
-    }
-
-    increasePosition();
-    player.stop();
-    player.play(queue[posicaoAtual]);
-
-    message.reply('Skippei a música');
 }

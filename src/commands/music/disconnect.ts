@@ -1,9 +1,8 @@
 import { Message } from 'discord.js';
-import { player, resetConnection } from './play';
+import { AudioPlayerCommand } from './audio-player';
 
-export default async function disconnect(message: Message) {
-    player.stop();
-    resetConnection();
-
-    message.reply('Desconectado');
+export class Disconnect extends AudioPlayerCommand {
+    public async execute(message: Message): Promise<void> {
+        this.player.disconnect(message);
+    }
 }

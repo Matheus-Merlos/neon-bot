@@ -1,9 +1,4 @@
 import { Client, IntentsBitField, Events, Message } from 'discord.js';
-import play from './commands/music/play';
-import skip from './commands/music/skip';
-import queue from './commands/music/queue';
-import disconnect from './commands/music/disconnect';
-import remove from './commands/music/remove';
 import dotenv from 'dotenv';
 import { App, Command } from './commands/command';
 import { Roll } from './commands/rpg/roll';
@@ -20,6 +15,12 @@ import CreateRole from './commands/rpg/roles/createrole';
 import AddRole from './commands/rpg/roles/addrole';
 import ClearRoles from './commands/rpg/roles/clearroles';
 import Ban from './commands/moderation/ban';
+import AudioPlayer from './commands/music/audio-player';
+import { Disconnect } from './commands/music/disconnect';
+import { Play } from './commands/music/play';
+import { SongQueue } from './commands/music/queue';
+import { Remove } from './commands/music/remove';
+import { Skip } from './commands/music/skip';
 
 const prefix = ';';
 
@@ -38,6 +39,13 @@ const client: Client = new Client({
 const token: string | undefined = process.env.TOKEN;
 
 client.on(Events.MessageCreate, handleCommands);
+
+const audioPlayer: AudioPlayer = new AudioPlayer();
+const playCommand: Command = new Play(audioPlayer);
+const queueCommand: Command = new SongQueue(audioPlayer);
+const removeSongCommand: Command = new Remove(audioPlayer);
+const skipCommand: Command = new Skip(audioPlayer);
+const disconnectCommand: Command = new Disconnect(audioPlayer);
 
 const banCommand: Command = new Ban();
 
@@ -61,6 +69,12 @@ const useItemCommand: Command = new UseItem();
 const shopCommand: Command = new Shop();
 
 const app: App = new App();
+
+app.addCommand(';play', playCommand);
+app.addCommand([';queue', ';fila'], queueCommand);
+app.addCommand(';disconnect', disconnectCommand);
+app.addCommand(';remove', removeSongCommand);
+app.addCommand(';skip', skipCommand);
 
 app.addCommand(';ban', banCommand);
 
@@ -92,6 +106,7 @@ async function handleCommands(message: Message): Promise<void> {
     try {
         await app.executeCommand(command, message);
     } catch (e) {
+        console.log(e);
         message.reply('Não existe um comando com essa sintaxe!');
     }
 }
