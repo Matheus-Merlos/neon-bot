@@ -12,7 +12,6 @@ import {
 import axios from 'axios';
 import { Command } from '../command';
 import dotenv from 'dotenv';
-import ytdlDiscord from 'ytdl-core-discord';
 import ytdl from 'ytdl-core';
 
 export abstract class AudioPlayerCommand implements Command {
@@ -166,14 +165,18 @@ export default class AudioPlayer {
         this.currentTextChannel = message.channel;
 
         const songUrl = await this.getSongUrl(query, message);
-
-        const songStream = ytdl(songUrl, { filter: 'audioonly', highWaterMark: 1 << 25 });
-        songStream.on('error', (error) => {
-            console.log(error);
-        });
-        const song: AudioResource = createAudioResource(songStream, {
-            inputType: StreamType.Arbitrary,
-        });
+        const song: AudioResource = createAudioResource(
+            ytdl(songUrl, {
+                filter: 'audioonly',
+                highWaterMark: 1 << 62,
+                liveBuffer: 1 << 62,
+                dlChunkSize: 0,
+                quality: 'lowestaudio',
+            }),
+            {
+                inputType: StreamType.Arbitrary,
+            },
+        );
 
         this.queue.push(song);
 
