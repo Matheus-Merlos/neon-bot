@@ -79,6 +79,8 @@ export default class AudioPlayer {
         const videoId: string = response.data.items[0].id.videoId;
         const videoUrl: string = `https://www.youtube.com/watch?v=${videoId}`;
 
+        console.log(videoUrl);
+
         return videoUrl;
     }
     private async getSongInfo(songUrl: string): Promise<{
