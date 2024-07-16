@@ -11,7 +11,6 @@ import {
 } from '@discordjs/voice';
 import axios from 'axios';
 import { Command } from '../command';
-import dotenv from 'dotenv';
 import ytdl from 'ytdl-core';
 
 export abstract class AudioPlayerCommand implements Command {
@@ -69,6 +68,7 @@ export default class AudioPlayer {
                 q: songQuery,
                 type: 'video',
                 key: process.env.YOUTUBE_API_KEY,
+                maxresult: 5,
             },
         });
 
@@ -79,8 +79,6 @@ export default class AudioPlayer {
         const videoId: string = response.data.items[0].id.videoId;
         const videoUrl: string = `https://www.youtube.com/watch?v=${videoId}`;
 
-        console.log(videoUrl);
-
         return videoUrl;
     }
     private async getSongInfo(songUrl: string): Promise<{
@@ -89,7 +87,6 @@ export default class AudioPlayer {
         videoDuration: string;
         thumbnailUrl: string;
     }> {
-        dotenv.config();
         const songId = songUrl.replace('https://www.youtube.com/watch?v=', '');
 
         const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
@@ -97,7 +94,8 @@ export default class AudioPlayer {
                 part: 'snippet,contentDetails',
                 id: songId,
                 type: 'video',
-                key: process.env.YOUTUBE_API_KEY_2,
+                key: process.env.YOUTUBE_API_KEY,
+                maxresult: 5,
             },
         });
 
@@ -165,18 +163,21 @@ export default class AudioPlayer {
         this.currentTextChannel = message.channel;
 
         const songUrl = await this.getSongUrl(query, message);
-        const song: AudioResource = createAudioResource(
-            ytdl(songUrl, {
-                filter: 'audioonly',
-                highWaterMark: 1 << 62,
-                liveBuffer: 1 << 62,
-                dlChunkSize: 0,
-                quality: 'lowestaudio',
-            }),
-            {
-                inputType: StreamType.Arbitrary,
-            },
-        );
+
+        const audioStream = ytdl(songUrl, {
+            filter: 'audioonly',
+            highWaterMark: 1 << 62,
+            liveBuffer: 1 << 62,
+            dlChunkSize: 0,
+            quality: 'lowestaudio',
+        });
+
+        audioStream.on('error', (error) => {
+            console.log(error);
+        });
+        const song: AudioResource = createAudioResource(audioStream, {
+            inputType: StreamType.Arbitrary,
+        });
 
         this.queue.push(song);
 
