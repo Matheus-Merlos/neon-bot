@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import { App, Command } from './commands/command';
 import { Roll } from './commands/rpg/roll';
 import StackRoll from './commands/rpg/stackroll';
-import { AddGold } from './commands/inventory/expgold';
-import { AddExp } from './commands/inventory/expgold/addexp';
+import { AddGold, RemoveExp, RemoveGold } from './commands/inventory/expgold';
+import { AddExp } from './commands/inventory/expgold';
 import { StackAddExp, StackAddGold } from './commands/inventory/stackexpgold';
 import Inventory from './commands/inventory/inventory';
 import UseItem from './commands/inventory/useitem';
@@ -62,6 +62,9 @@ const clearRolesCommand: Command = new ClearRoles();
 
 const addGoldCommand = new AddGold();
 const addExpCommand = new AddExp();
+const removeGoldCommand = new RemoveGold();
+const removeExpCommand = new RemoveExp();
+
 const stackAddGoldCommand = new StackAddGold();
 const stackAddExpCommand = new StackAddExp();
 
@@ -91,6 +94,9 @@ app.addCommand(';clearroles', clearRolesCommand);
 
 app.addCommand([';addgold', ';add-gold', ';add-money', ';addmoney'], addGoldCommand);
 app.addCommand([';addexp', ';add-exp', ';add-xp', ';addxp'], addExpCommand);
+app.addCommand([';removegold', ';remove-gold', ';remove-money', ';removemoney'], removeGoldCommand);
+app.addCommand([';removeexp', ';remove-exp', ';remove-xp'], removeExpCommand);
+
 app.addCommand([';stackaddgold', ';stack-add-gold'], stackAddGoldCommand);
 app.addCommand([';stackaddexp', ';stack-add-exp', ';stackaddxp'], stackAddExpCommand);
 

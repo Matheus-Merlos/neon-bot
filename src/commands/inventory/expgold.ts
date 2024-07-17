@@ -1,68 +1,68 @@
-import { Guild, Message } from 'discord.js';
+import { Guild, Message, PermissionFlagsBits } from 'discord.js';
 import { Command } from '../command';
-import {
-    addPlayerAndCharacterIfNotExists,
-    Character,
-    getCurrentCharacterFromId,
-    getIdFromMention,
-} from '../../utils';
-import db from '../../models/db';
-import { personagem } from '../../models/schema';
-import { eq, sql } from 'drizzle-orm';
+import { addPlayerAndCharacterIfNotExists, getIdFromMention } from '../../utils';
+import { CharacterFactory, Character } from './character';
+import { hasPermission } from '../decorators';
 
-abstract class AddResource implements Command {
+async function handleCommand(
+    message: Message,
+    operation: (character: Character, quantity: number) => Promise<void>,
+): Promise<void> {
+    const msgArray: Array<string> = message.content.split(' ');
+    if (msgArray.length !== 3) {
+        message.reply('A sintaxe do comando está errada');
+        return;
+    }
+
+    const mention: string = msgArray[1];
+    if (!mention.includes('@')) {
+        message.reply('O player informado não é um player válido');
+        return;
+    }
+
+    const id: string = getIdFromMention(mention);
+
+    const quantity: number = parseInt(msgArray[2]);
+    if (isNaN(quantity)) {
+        message.reply('A quantidade informada é inválida');
+        return;
+    }
+
+    const guild: Guild = message.guild!;
+    await addPlayerAndCharacterIfNotExists(id, guild);
+
+    const character: Character = await CharacterFactory.retrieveFromId(BigInt(id));
+    await operation(character, quantity);
+}
+
+export class AddExp implements Command {
+    @hasPermission(PermissionFlagsBits.ManageChannels)
     public async execute(message: Message): Promise<void> {
-        const msgArray: Array<string> = message.content.split(' ');
-        if (msgArray.length !== 3) {
-            message.reply('A sintaxe do comando está errada');
-            return;
-        }
-
-        const mention: string = msgArray[1];
-        if (!mention.includes('@')) {
-            message.reply('O player informado não é um player válido');
-            return;
-        }
-
-        const id: string = getIdFromMention(mention);
-        const quantity: number = parseInt(msgArray[2]);
-        if (isNaN(quantity)) {
-            message.reply('A quantidade informada é inválida');
-            return;
-        }
-
-        const guild: Guild = message.guild!;
-        await addPlayerAndCharacterIfNotExists(id, guild);
-
-        await this.add(id, quantity);
-
+        await handleCommand(message, (character, quantity) => character.addExp(quantity));
         message.reply('Adicionado com sucesso!');
     }
-    protected abstract add(playerId: string, quantity: number): Promise<void>;
 }
 
-export class AddGold extends AddResource {
-    protected async add(playerId: string, quantity: number) {
-        const character: Character = await getCurrentCharacterFromId(playerId);
-
-        const characterId = character.characterId;
-
-        await db
-            .update(personagem)
-            .set({ gold: sql`${personagem.gold}+ ${quantity}` })
-            .where(eq(personagem.id, characterId));
+export class AddGold implements Command {
+    @hasPermission(PermissionFlagsBits.ManageChannels)
+    public async execute(message: Message): Promise<void> {
+        await handleCommand(message, (character, quantity) => character.addGold(quantity));
+        message.reply('Adicionado com sucesso!');
     }
 }
 
-export class AddExp extends AddResource {
-    protected async add(playerId: string, quantity: number) {
-        const character: Character = await getCurrentCharacterFromId(playerId);
+export class RemoveExp implements Command {
+    @hasPermission(PermissionFlagsBits.ManageChannels)
+    public async execute(message: Message): Promise<void> {
+        await handleCommand(message, (character, quantity) => character.removeExp(quantity));
+        message.reply('Removido com sucesso!');
+    }
+}
 
-        const characterId = character.characterId;
-
-        await db
-            .update(personagem)
-            .set({ xp: sql`${personagem.xp}+ ${quantity}` })
-            .where(eq(personagem.id, characterId));
+export class RemoveGold implements Command {
+    @hasPermission(PermissionFlagsBits.ManageChannels)
+    public async execute(message: Message): Promise<void> {
+        await handleCommand(message, (character, quantity) => character.removeGold(quantity));
+        message.reply('Removido com sucesso!');
     }
 }
