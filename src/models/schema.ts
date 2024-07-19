@@ -67,6 +67,7 @@ export const inventario = pgTable('inventario', {
 export const rank = pgTable('rank', {
     id: smallserial('id').notNull().primaryKey(),
     descricao: varchar('descricao', { length: 63 }).notNull(),
+    necessaryXp: integer('necessary_xp').notNull().unique(),
 });
 
 export const rankPersonagem = pgTable('rank_personagem', {

@@ -36,11 +36,6 @@ export type InventoryItem = {
     description: string;
 };
 
-type DistinctInventoryItem = {
-    inventoryEntryId: number;
-    durability: number;
-};
-
 export class Character implements Element {
     private id: number;
     private name: string;
