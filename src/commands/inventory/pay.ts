@@ -9,10 +9,6 @@ export default class Pay implements Command {
 
         const sender = message.author.id;
         const receiver = getIdFromMention(msgArray[1]);
-        if (!receiver.includes('@')) {
-            message.reply('Sintaxe do comando errada');
-            return;
-        }
 
         const quantity = parseInt(msgArray[2]);
         if (isNaN(quantity)) {
@@ -32,7 +28,7 @@ export default class Pay implements Command {
         }
 
         await senderCharacter.removeGold(quantity);
-        await senderCharacter.addGold(quantity);
+        await receiverCharacter.addGold(quantity);
 
         await message.reply(
             `Você pagou **$${quantity}** para **${receiverCharacter.playerMention()}**`,

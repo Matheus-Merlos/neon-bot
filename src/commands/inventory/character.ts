@@ -1,6 +1,6 @@
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq, gt } from 'drizzle-orm';
 import db from '../../models/db';
-import { personagem } from '../../models/schema';
+import { inventario, item, personagem } from '../../models/schema';
 import { Element } from '../element';
 
 function isNumber(value: unknown): value is number {
@@ -30,6 +30,17 @@ function numberMethodUpdate(
     };
 }
 
+export type InventoryItem = {
+    quantity: number;
+    name: string;
+    description: string;
+};
+
+type DistinctInventoryItem = {
+    inventoryEntryId: number;
+    durability: number;
+};
+
 export class Character implements Element {
     private id: number;
     private name: string;
@@ -37,6 +48,8 @@ export class Character implements Element {
     private gold: number;
     private active: boolean;
     private playerId: bigint;
+
+    private inventoryItems: Promise<Array<InventoryItem>>;
 
     constructor(
         id: number,
@@ -52,6 +65,12 @@ export class Character implements Element {
         this.gold = gold;
         this.active = active;
         this.playerId = playerId;
+
+        this.inventoryItems = this.getInventoryItems();
+    }
+
+    get characterName(): string {
+        return this.name;
     }
 
     get money(): number {
@@ -60,6 +79,10 @@ export class Character implements Element {
 
     get xp(): number {
         return this.exp;
+    }
+
+    get inventory(): Promise<Array<InventoryItem>> {
+        return this.inventoryItems;
     }
 
     @numberMethodUpdate
@@ -101,6 +124,21 @@ export class Character implements Element {
                 ativo: this.active,
             })
             .where(eq(personagem.id, this.id));
+    }
+
+    private async getInventoryItems(): Promise<Array<InventoryItem>> {
+        const result: Array<InventoryItem> = await db
+            .select({
+                quantity: count(item.nome),
+                name: item.nome,
+                description: item.descricao,
+            })
+            .from(inventario)
+            .innerJoin(item, eq(inventario.idItem, item.id))
+            .where(and(eq(inventario.idPersonagem, this.id), gt(inventario.durabilidadeAtual, 0)))
+            .groupBy(item.nome, item.descricao);
+
+        return result;
     }
 }
 
