@@ -22,6 +22,7 @@ import { Play } from './commands/music/play';
 import { SongQueue } from './commands/music/queue';
 import { Remove } from './commands/music/remove';
 import { Skip } from './commands/music/skip';
+import Pay from './commands/inventory/pay';
 
 const prefix = ';';
 
@@ -71,6 +72,7 @@ const stackAddExpCommand = new StackAddExp();
 const inventoryCommand: Command = new Inventory();
 const useItemCommand: Command = new UseItem();
 const shopCommand: Command = new Shop();
+const payCommand: Command = new Pay();
 
 const app: App = new App();
 
@@ -103,6 +105,7 @@ app.addCommand([';stackaddexp', ';stack-add-exp', ';stackaddxp'], stackAddExpCom
 app.addCommand([';inv', ';inventory', ';inventario'], inventoryCommand);
 app.addCommand([';use-item', ';use', ';useitem', ';usar', ';usaritem'], useItemCommand);
 app.addCommand(';shop', shopCommand);
+app.addCommand(';pay', payCommand);
 
 async function handleCommands(message: Message): Promise<void> {
     if (!message.content.startsWith(prefix)) {

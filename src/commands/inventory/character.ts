@@ -1,6 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 import db from '../../models/db';
 import { personagem } from '../../models/schema';
+import { Element } from '../element';
 
 function isNumber(value: unknown): value is number {
     return typeof value === 'number';
@@ -29,23 +30,28 @@ function numberMethodUpdate(
     };
 }
 
-interface Product {
-    update(): Promise<void>;
-}
-
-export class Character implements Product {
+export class Character implements Element {
     private id: number;
     private name: string;
     private exp: number;
     private gold: number;
     private active: boolean;
+    private playerId: bigint;
 
-    constructor(id: number, name: string, exp: number, gold: number, active: boolean) {
+    constructor(
+        id: number,
+        name: string,
+        exp: number,
+        gold: number,
+        active: boolean,
+        playerId: bigint,
+    ) {
         this.id = id;
         this.name = name;
         this.exp = exp;
         this.gold = gold;
         this.active = active;
+        this.playerId = playerId;
     }
 
     @numberMethodUpdate
@@ -73,6 +79,10 @@ export class Character implements Product {
         await this.update();
     }
 
+    public playerMention(): string {
+        return `<@${this.playerId}>`;
+    }
+
     public async update(): Promise<void> {
         await db
             .update(personagem)
@@ -95,6 +105,7 @@ export class CharacterFactory {
                 exp: personagem.xp,
                 gold: personagem.gold,
                 active: personagem.ativo,
+                playerId: personagem.jogador,
             })
             .from(personagem)
             .where(and(eq(personagem.jogador, playerId), eq(personagem.ativo, true)));
@@ -111,6 +122,7 @@ export class CharacterFactory {
             character.exp,
             character.gold,
             character.active,
+            character.playerId,
         );
     }
 }
