@@ -54,6 +54,14 @@ export class Character implements Element {
         this.playerId = playerId;
     }
 
+    get money(): number {
+        return this.gold;
+    }
+
+    get xp(): number {
+        return this.exp;
+    }
+
     @numberMethodUpdate
     public async addExp(quantity: number): Promise<void> {
         this.exp += quantity;
