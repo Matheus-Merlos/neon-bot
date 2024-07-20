@@ -1,12 +1,7 @@
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import db from './models/db';
 import { jogador, personagem } from './models/schema';
 import { Guild, GuildMember } from 'discord.js';
-
-type Character = {
-    characterId: number;
-    characterName: string;
-};
 
 function getIdFromMention(mention: string): string {
     return mention.slice(2, mention.length - 1);
@@ -52,28 +47,4 @@ async function insertPlayerAndCharacter(playerId: string, characterName: string)
     });
 }
 
-async function getCurrentCharacterFromId(playerId: string): Promise<Character> {
-    const characters: Array<Character> = await db
-        .select({
-            characterId: personagem.id,
-            characterName: personagem.nome,
-        })
-        .from(personagem)
-        .where(and(eq(personagem.jogador, BigInt(playerId)), eq(personagem.ativo, true)));
-
-    const character: Character = characters[0];
-
-    if (!character) {
-        throw new Error(`Character with ID ${playerId} does not exist`);
-    }
-
-    return character;
-}
-
-export {
-    Character,
-    getIdFromMention,
-    addPlayerAndCharacterIfNotExists,
-    getCharacterNameFromId,
-    getCurrentCharacterFromId,
-};
+export { getIdFromMention, addPlayerAndCharacterIfNotExists, getCharacterNameFromId };

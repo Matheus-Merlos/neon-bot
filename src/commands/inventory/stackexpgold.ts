@@ -1,14 +1,7 @@
-import { eq, sql } from 'drizzle-orm';
-import { personagem } from '../../models/schema';
-import {
-    addPlayerAndCharacterIfNotExists,
-    Character,
-    getCurrentCharacterFromId,
-    getIdFromMention,
-} from '../../utils';
+import { addPlayerAndCharacterIfNotExists, getIdFromMention } from '../../utils';
 import { Command } from '../command';
-import db from '../../models/db';
 import { Guild, Message } from 'discord.js';
+import { Character, CharacterFactory } from './character';
 
 abstract class StackAddResource implements Command {
     public async execute(message: Message): Promise<void> {
@@ -40,14 +33,9 @@ abstract class StackAddResource implements Command {
 
 export class StackAddGold extends StackAddResource {
     protected async add(playerId: string, quantity: number, message: Message) {
-        const character: Character = await getCurrentCharacterFromId(playerId);
+        const character: Character = await CharacterFactory.retrieveFromId(BigInt(playerId));
 
-        const characterId = character.characterId;
-
-        await db
-            .update(personagem)
-            .set({ gold: sql`${personagem.gold}+ ${quantity}` })
-            .where(eq(personagem.id, characterId));
+        await character.addGold(quantity);
 
         message.channel.send(
             `${quantity} de gold adicionado com sucesso para **${character.characterName}**!`,
@@ -57,17 +45,12 @@ export class StackAddGold extends StackAddResource {
 
 export class StackAddExp extends StackAddResource {
     protected async add(playerId: string, quantity: number, message: Message) {
-        const character: Character = await getCurrentCharacterFromId(playerId);
+        const character: Character = await CharacterFactory.retrieveFromId(BigInt(playerId));
 
-        const characterId = character.characterId;
-
-        await db
-            .update(personagem)
-            .set({ xp: sql`${personagem.xp}+ ${quantity}` })
-            .where(eq(personagem.id, characterId));
+        await character.addExp(quantity);
 
         message.channel.send(
-            `${quantity} de xp adicionado com sucesso para **${character.characterName}**!`,
+            `${quantity} de gold adicionado com sucesso para **${character.characterName}**!`,
         );
     }
 }

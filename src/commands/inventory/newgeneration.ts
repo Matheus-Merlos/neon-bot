@@ -46,6 +46,7 @@ export default class NewGeneration implements Command {
                 return;
             }
             case 'decline-button': {
+                message.delete();
                 confirmationMsg.delete();
                 return;
             }
