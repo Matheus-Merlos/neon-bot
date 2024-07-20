@@ -137,9 +137,18 @@ export class Character implements Element {
     }
 }
 
+type DatabaseCharacter = {
+    id: number;
+    characterName: string;
+    exp: number;
+    gold: number;
+    active: boolean;
+    playerId: bigint;
+};
+
 export class CharacterFactory {
-    public static async retrieveFromId(playerId: bigint): Promise<Character> {
-        const characters = await db
+    public static async retrieveFromId(playerDiscordId: bigint): Promise<Character> {
+        const characters: Array<DatabaseCharacter> = await db
             .select({
                 id: personagem.id,
                 characterName: personagem.nome,
@@ -149,21 +158,37 @@ export class CharacterFactory {
                 playerId: personagem.jogador,
             })
             .from(personagem)
-            .where(and(eq(personagem.jogador, playerId), eq(personagem.ativo, true)));
+            .where(and(eq(personagem.jogador, playerDiscordId), eq(personagem.ativo, true)));
 
         if (!characters) {
             throw new Error('Player does not have an active character');
         }
-
         const character = characters[0];
 
-        return new Character(
-            character.id,
-            character.characterName,
-            character.exp,
-            character.gold,
-            character.active,
-            character.playerId,
-        );
+        const { id, characterName, exp, gold, active, playerId } = character;
+
+        return new Character(id, characterName, exp, gold, active, playerId);
+    }
+
+    public static async retireveAllCharacters(): Promise<Array<Character>> {
+        const dbCharacters: Array<DatabaseCharacter> = await db
+            .select({
+                id: personagem.id,
+                characterName: personagem.nome,
+                exp: personagem.xp,
+                gold: personagem.gold,
+                active: personagem.ativo,
+                playerId: personagem.jogador,
+            })
+            .from(personagem)
+            .where(eq(personagem.ativo, true));
+
+        const characters: Array<Character> = dbCharacters.map((character: DatabaseCharacter) => {
+            const { id, characterName, exp, gold, active, playerId } = character;
+
+            return new Character(id, characterName, exp, gold, active, playerId);
+        });
+
+        return characters;
     }
 }
