@@ -24,6 +24,7 @@ import { Remove } from './commands/music/remove';
 import { Skip } from './commands/music/skip';
 import Pay from './commands/inventory/pay';
 import NewGeneration from './commands/inventory/newgeneration';
+import CreateRank from './commands/inventory/ranks/createrank';
 
 const prefix = ';';
 
@@ -77,6 +78,8 @@ const payCommand: Command = new Pay();
 
 const newGenCommand: Command = new NewGeneration();
 
+const createRankCommand: Command = new CreateRank();
+
 const app: App = new App();
 
 app.addCommand(';play', playCommand);
@@ -110,6 +113,8 @@ app.addCommand([';use-item', ';use', ';useitem', ';usar', ';usaritem'], useItemC
 app.addCommand(';shop', shopCommand);
 app.addCommand(';pay', payCommand);
 app.addCommand([';novagen', ';newgen'], newGenCommand);
+
+app.addCommand([';createrank', ';criar-rank'], createRankCommand);
 
 async function handleCommands(message: Message): Promise<void> {
     if (!message.content.startsWith(prefix)) {
