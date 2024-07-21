@@ -8,9 +8,20 @@ export default class CreateRank implements Command {
 
         const rankName: string = msgArray[1];
         const rankExp: number = parseInt(msgArray[2]);
-        const rankRoleId: bigint = BigInt(this.getRoleIdFromMention(msgArray[3]));
+        const rankRoleIdStr: string = this.getRoleIdFromMention(msgArray[3]);
 
-        const rank: Rank = await RankFactory.createRank(rankName, rankExp, rankRoleId);
+        if (isNaN(rankExp)) {
+            await message.reply(
+                'A segunda opção deve ser um número, representando o xp necessário para chegar no rank especificado',
+            );
+            return;
+        }
+        if (rankRoleIdStr.length !== 18) {
+            await message.reply('O cargo especificado para o rank é inválido');
+            return;
+        }
+
+        const rank: Rank = await RankFactory.createRank(rankName, rankExp, BigInt(rankRoleIdStr));
 
         await message.reply(`Rank ${rank.name} criado com sucesso!`);
     }
