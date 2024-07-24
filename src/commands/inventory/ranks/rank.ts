@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, ilike } from 'drizzle-orm';
 import db from '../../../models/db';
 import { rank } from '../../../models/schema';
 import { Element } from '../../element';
@@ -34,6 +34,25 @@ export class Rank implements Element {
 }
 
 export class RankFactory {
+    public static async retrieveByName(name: string): Promise<Rank> {
+        const ranks = await db
+            .select({
+                id: rank.id,
+                name: rank.descricao,
+                exp: rank.necessaryXp,
+                roleId: rank.roleId,
+            })
+            .from(rank)
+            .where(ilike(rank.descricao, `%${name}%`));
+
+        if (!ranks) {
+            throw new Error('Rank not found with this name');
+        }
+        const { id, name: rankName, exp, roleId } = ranks[0];
+
+        return new Rank(id, rankName, exp, roleId);
+    }
+
     public static async createRank(name: string, exp: number, roleId: bigint): Promise<Rank> {
         await db.insert(rank).values({
             descricao: name,
