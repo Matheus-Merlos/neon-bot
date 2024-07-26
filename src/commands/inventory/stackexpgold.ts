@@ -47,7 +47,7 @@ export class StackAddExp extends StackAddResource {
     protected async add(playerId: string, quantity: number, message: Message) {
         const character: Character = await CharacterFactory.retrieveFromId(BigInt(playerId));
 
-        await character.addExp(quantity);
+        await character.addExp(quantity, message);
 
         message.channel.send(
             `${quantity} de gold adicionado com sucesso para **${character.characterName}**!`,

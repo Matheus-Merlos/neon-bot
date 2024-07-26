@@ -34,6 +34,10 @@ export const personagem = pgTable('personagem', {
         .notNull()
         .references(() => jogador.discordId),
     ativo: boolean('ativo').notNull(),
+    rankId: integer('rank_id')
+        .notNull()
+        .references(() => rank.id)
+        .default(1),
 });
 
 export const categoria = pgTable('categoria', {
@@ -69,16 +73,6 @@ export const rank = pgTable('rank', {
     descricao: varchar('descricao', { length: 63 }).notNull(),
     necessaryXp: integer('necessary_xp').notNull().unique(),
     roleId: bigint('role_id', { mode: 'bigint' }).notNull().unique(),
-});
-
-export const rankPersonagem = pgTable('rank_personagem', {
-    id: serial('id'),
-    idRank: integer('id_rank')
-        .notNull()
-        .references(() => rank.id),
-    idPersonagem: integer('id_personagem')
-        .notNull()
-        .references(() => personagem.id),
 });
 
 export const role = pgTable('role', {

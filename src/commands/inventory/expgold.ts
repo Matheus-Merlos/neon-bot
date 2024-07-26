@@ -38,7 +38,7 @@ async function handleCommand(
 export class AddExp implements Command {
     @hasPermission(PermissionFlagsBits.ManageChannels)
     public async execute(message: Message): Promise<void> {
-        await handleCommand(message, (character, quantity) => character.addExp(quantity));
+        await handleCommand(message, (character, quantity) => character.addExp(quantity, message));
         message.reply('Adicionado com sucesso!');
     }
 }

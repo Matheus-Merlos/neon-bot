@@ -2,6 +2,9 @@ import { and, count, eq, gt } from 'drizzle-orm';
 import db from '../../models/db';
 import { inventario, item, personagem } from '../../models/schema';
 import { Element } from '../element';
+import { detectLevelUp } from './ranks/levelup';
+import { Message } from 'discord.js';
+import { Rank } from './ranks/rank';
 
 function isNumber(value: unknown): value is number {
     return typeof value === 'number';
@@ -43,6 +46,7 @@ export class Character implements Element {
     private gold: number;
     private active: boolean;
     private playerId: bigint;
+    private rankId: number;
 
     private inventoryItems: Promise<Array<InventoryItem>>;
 
@@ -53,6 +57,7 @@ export class Character implements Element {
         gold: number,
         active: boolean,
         playerId: bigint,
+        rankId: number,
     ) {
         this.id = id;
         this.name = name;
@@ -60,6 +65,7 @@ export class Character implements Element {
         this.gold = gold;
         this.active = active;
         this.playerId = playerId;
+        this.rankId = rankId;
 
         this.inventoryItems = this.getInventoryItems();
     }
@@ -80,8 +86,14 @@ export class Character implements Element {
         return this.inventoryItems;
     }
 
+    get currentRank(): number {
+        return this.rankId;
+    }
+
     @numberMethodUpdate
-    public async addExp(quantity: number): Promise<void> {
+    @detectLevelUp
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public async addExp(quantity: number, message: Message): Promise<void> {
         this.exp += quantity;
     }
 
@@ -109,6 +121,11 @@ export class Character implements Element {
         return `<@${this.playerId}>`;
     }
 
+    public async updateRank(rank: Rank): Promise<void> {
+        this.rankId = rank.id;
+        await this.update();
+    }
+
     public async update(): Promise<void> {
         await db
             .update(personagem)
@@ -117,6 +134,7 @@ export class Character implements Element {
                 xp: this.exp,
                 gold: this.gold,
                 ativo: this.active,
+                rankId: this.rankId,
             })
             .where(eq(personagem.id, this.id));
     }
@@ -144,6 +162,7 @@ type DatabaseCharacter = {
     gold: number;
     active: boolean;
     playerId: bigint;
+    rank: number;
 };
 
 export class CharacterFactory {
@@ -156,6 +175,7 @@ export class CharacterFactory {
                 gold: personagem.gold,
                 active: personagem.ativo,
                 playerId: personagem.jogador,
+                rank: personagem.rankId,
             })
             .from(personagem)
             .where(and(eq(personagem.jogador, playerDiscordId), eq(personagem.ativo, true)));
@@ -165,9 +185,9 @@ export class CharacterFactory {
         }
         const character = characters[0];
 
-        const { id, characterName, exp, gold, active, playerId } = character;
+        const { id, characterName, exp, gold, active, playerId, rank } = character;
 
-        return new Character(id, characterName, exp, gold, active, playerId);
+        return new Character(id, characterName, exp, gold, active, playerId, rank);
     }
 
     public static async retireveAllCharacters(): Promise<Array<Character>> {
@@ -179,14 +199,15 @@ export class CharacterFactory {
                 gold: personagem.gold,
                 active: personagem.ativo,
                 playerId: personagem.jogador,
+                rank: personagem.rankId,
             })
             .from(personagem)
             .where(eq(personagem.ativo, true));
 
         const characters: Array<Character> = dbCharacters.map((character: DatabaseCharacter) => {
-            const { id, characterName, exp, gold, active, playerId } = character;
+            const { id, characterName, exp, gold, active, playerId, rank } = character;
 
-            return new Character(id, characterName, exp, gold, active, playerId);
+            return new Character(id, characterName, exp, gold, active, playerId, rank);
         });
 
         return characters;

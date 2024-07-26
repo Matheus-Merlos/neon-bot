@@ -16,6 +16,14 @@ export class Rank implements Element {
         this.rankRoleId = roleId;
     }
 
+    get id() {
+        return this.rankId;
+    }
+
+    get roleId() {
+        return this.rankRoleId;
+    }
+
     get name() {
         return this.rankName;
     }
@@ -71,5 +79,23 @@ export class RankFactory {
         const { id } = rankDb;
 
         return new Rank(id, name, exp, roleId);
+    }
+
+    public static async retrieveAllRanks(): Promise<Array<Rank>> {
+        const dbRanks = await db
+            .select({
+                id: rank.id,
+                name: rank.descricao,
+                exp: rank.necessaryXp,
+                roleId: rank.roleId,
+            })
+            .from(rank)
+            .orderBy(rank.id);
+
+        const ranks: Array<Rank> = dbRanks.map(
+            (rank) => new Rank(rank.id, rank.name, rank.exp, rank.roleId),
+        );
+
+        return ranks;
     }
 }
