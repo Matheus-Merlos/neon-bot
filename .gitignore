@@ -11,3 +11,6 @@ drizzle
 
 terraform.tfstate
 .terraform
+*.tfvars
+
+*.pem
