@@ -26,6 +26,7 @@ export const character = sqliteTable('character', {
 });
 
 export const reachedRank = sqliteTable('reached_rank', {
+    id: int('id').primaryKey({ autoIncrement: true }),
     characterId: int('character_id')
         .notNull()
         .references(() => character.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
