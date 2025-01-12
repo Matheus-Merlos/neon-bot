@@ -1,0 +1,10 @@
+dist
+.env
+node_modules
+.vscode
+meta
+dist
+*.env
+*.sqlite3
+
+drizzle
