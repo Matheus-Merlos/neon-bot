@@ -1,7 +1,8 @@
 import { Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
-import { character, player } from '../../db/schema';
+import { character, rank, reachedRank } from '../../db/schema';
+import CharacterFactory from '../../factories/character-factory';
 import { getIdFromMention } from '../../utils';
 import Command from '../base-command';
 
@@ -15,27 +16,27 @@ export default class AddExp implements Command {
         const playerId = getIdFromMention(messageAsList[1]);
         const quantity = parseInt(messageAsList[2]);
 
-        let [char] = await db
-            .select()
-            .from(character)
-            .where(eq(character.player, BigInt(playerId)));
-        if (!char) {
-            const playerName = (await message.guild!.members.fetch(playerId)).nickname;
-            const charName = playerName?.split(' ')[0].replace(',', '');
+        const char = await CharacterFactory.getFromId(playerId, message);
 
-            await db.insert(player).values({ discordId: BigInt(playerId) });
+        const ranks = await db.select().from(rank);
+        const achievedRanks = (
+            await db
+                .select({ id: reachedRank.rankId })
+                .from(reachedRank)
+                .where(eq(reachedRank.characterId, char.id))
+        ).map((obj) => obj.id);
 
-            [char] = await db
-                .insert(character)
-                .values({
-                    name: charName!,
-                    xp: 0,
-                    gold: 0,
-                    active: true,
-                    player: BigInt(playerId),
-                })
-                .returning();
-        }
+        ranks.forEach(async (rank) => {
+            const xp = char.xp + quantity;
+            if (xp >= rank.necessaryXp) {
+                if (!achievedRanks.includes(rank.id)) {
+                    await db.insert(reachedRank).values({ characterId: char.id, rankId: rank.id });
+                    await message.reply(
+                        `Parabéns <@${char.player}>, você evoluiu para o rank **${rank.name}**. Seu personagem ganhou **+${rank.extraHabs}** slots de habilidade, e **+${rank.extraAttributes}** pontos de atributo.`,
+                    );
+                }
+            }
+        });
 
         await db
             .update(character)

@@ -4,6 +4,14 @@ export const player = sqliteTable('player', {
     discordId: blob('discord_id', { mode: 'bigint' }).primaryKey(),
 });
 
+export const rank = sqliteTable('rank', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    name: text('name').notNull(),
+    necessaryXp: int('xp').notNull(),
+    extraAttributes: int('extra_attributes').notNull(),
+    extraHabs: int('extra_habs').notNull(),
+});
+
 export const character = sqliteTable('character', {
     id: int('id').primaryKey({ autoIncrement: true }).notNull(),
     name: text('name').notNull(),
@@ -15,4 +23,13 @@ export const character = sqliteTable('character', {
             onDelete: 'cascade',
         })
         .notNull(),
+});
+
+export const reachedRank = sqliteTable('reached_rank', {
+    characterId: int('character_id')
+        .notNull()
+        .references(() => character.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    rankId: int('rank_id')
+        .notNull()
+        .references(() => rank.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 });
