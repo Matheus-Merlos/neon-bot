@@ -9,7 +9,14 @@ export default class Client {
 
     constructor(prefix: string) {
         this.token = process.env.DISCORD_TOKEN;
-        this.client = new DiscordClient({ intents: [GatewayIntentBits.MessageContent] });
+        this.client = new DiscordClient({
+            intents: [
+                GatewayIntentBits.MessageContent,
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.GuildMembers,
+            ],
+        });
         this.prefix = prefix;
 
         if (typeof this.token === 'undefined') {
@@ -20,24 +27,21 @@ export default class Client {
             console.log(`Bot Ready! Logged in as ${readyClient.user.tag}`);
         });
 
-        this.client.on(Events.MessageCreate, this.handleCommands);
-
         this.client.login(this.token);
-    }
+        this.client.on(Events.MessageCreate, async (message) => {
+            if (!message.content.startsWith(this.prefix)) {
+                return;
+            }
+            const commandAsList = message.content.split(' ');
+            const command = commandAsList[0].toLowerCase();
 
-    private async handleCommands(message: Message): Promise<void> {
-        if (!message.content.startsWith(this.prefix)) {
-            return;
-        }
-        const commandAsList = message.content.split(' ');
-        const command = commandAsList[0].toLowerCase();
-
-        try {
-            this.executeCommand(command, message, commandAsList);
-        } catch (e) {
-            console.log(e);
-            message.reply('Não existe um comando com essa sintaxe!');
-        }
+            try {
+                await this.executeCommand(command, message, commandAsList);
+            } catch (e) {
+                console.log(e);
+                await message.reply('Não existe um comando com essa sintaxe!');
+            }
+        });
     }
 
     public addCommand(key: string | Array<string>, command: Command): void {
