@@ -16,7 +16,20 @@ jobs:
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Add Environment variables and start the bot
-        run: ssh -i 'neon-bot-key-pair.pem' ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "sudo systemctl stop neon-bot && export DISCORD_TOKEN='${{ secrets.DISCORD_TOKEN }}' && export DB_FILE_NAME='file:db.sqlite3' && cd ~/neon-bot && git checkout master && git pull && npm install && npm run database:push && sudo systemctl start neon-bot"
+        run: ssh -i 'neon-bot-key-pair.pem' ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            sudo systemctl stop neon-bot
+            
+            export DISCORD_TOKEN='${{ secrets.DISCORD_TOKEN }}'
+            export DB_FILE_NAME='file:db.sqlite3'
+            
+            cd ~/neon-bot
+            git checkout master
+            git pull && npm install
+            
+            npm run database:push
+            
+            sudo systemctl start neon-bot"
+          EOF
 
       - name: Cleanup
         run: |
