@@ -8,18 +8,32 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Install SSH Keys
-        run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > neon-bot-key-pair.pem
-          chmod 400 neon-bot-key-pair.pem
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      - name: Add environment variables and start the bot
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo systemctl stop neon-bot
 
-      - name: Add Environment variables and start the bot
-        run: ssh -i 'neon-bot-key-pair.pem' ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "sudo systemctl stop neon-bot && cd ~/neon-bot && echo 'DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}\nDB_FILE_NAME=file:db.sqlite3\nACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}\nSECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}\nAWS_REGION=${{ secrets.AWS_REGION }}\nBUCKET_NAME=${{ secrets.BUCKET_NAME }}' > .env && git checkout master && git pull && npm install && npm run database:push && sudo systemctl start neon-bot"
+            cd ~/neon-bot
 
-      - name: Cleanup
-        run: |
-          rm -rf neon-bot-key-pair.pem
-          rm -rf ~/.ssh
+            echo "
+            DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}
 
+            DB_FILE_NAME=file:db.sqlite3
+
+            ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}
+            SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            BUCKET_NAME=${{ secrets.BUCKET_NAME }}
+            " > .env
+
+            git checkout master
+            git pull
+
+            npm install
+            npm run database:push
+
+            sudo systemctl start neon-bot
