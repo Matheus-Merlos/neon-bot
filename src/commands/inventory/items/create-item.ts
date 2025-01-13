@@ -12,13 +12,32 @@ export default class CreateItem implements Command {
         let url: string | null = null;
 
         if (typeof img !== 'undefined') {
-            const image = await axios.get(img!.url, { responseType: 'stream' });
+            let image;
+            try {
+                image = await axios.get(img!.url, { responseType: 'stream' });
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    message.reply(
+                        `Erro ao fazer o download da imagem: ${error.name}:${error.message}`,
+                    );
+                }
+                return;
+            }
 
-            url = await ImageFactory.uploadImage(
-                `items/${img!.name}`,
-                image.data,
-                img!.contentType!,
-            );
+            try {
+                url = await ImageFactory.uploadImage(
+                    `items/${img!.name}`,
+                    image.data,
+                    img!.contentType!,
+                );
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    message.reply(
+                        `Erro ao fazer o upload da imagem: ${error.name}:${error.message}`,
+                    );
+                }
+                return;
+            }
         }
 
         const priceIndex = messageAsList.findIndex(
@@ -49,7 +68,7 @@ export default class CreateItem implements Command {
             .returning();
 
         const itemEmbed = new EmbedBuilder()
-            .setColor(Colors.Aqua)
+            .setColor(Colors.DarkGreen)
             .setTitle(itemName)
             .setImage(url)
             .setFields(
@@ -64,14 +83,14 @@ export default class CreateItem implements Command {
                     inline: true,
                 },
                 {
-                    name: 'Descrição',
-                    value: description,
-                    inline: false,
-                },
-                {
                     name: 'Comprável?',
                     value: createdItem.canBuy === true ? 'Sim' : 'Não',
                     inline: true,
+                },
+                {
+                    name: 'Descrição',
+                    value: description,
+                    inline: false,
                 },
             );
 
