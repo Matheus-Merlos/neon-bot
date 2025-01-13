@@ -20,4 +20,3 @@ jobs:
 
       - name: Cleanup
         run: rm -rf neon-bot-key-pair.pem
-
