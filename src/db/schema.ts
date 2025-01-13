@@ -34,3 +34,22 @@ export const reachedRank = sqliteTable('reached_rank', {
         .notNull()
         .references(() => rank.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 });
+
+export const itemCategory = sqliteTable('item_category', {
+    id: int('id').primaryKey({ autoIncrement: true }),
+    name: text('name').notNull().unique(),
+});
+
+export const item = sqliteTable('item', {
+    id: int('id').primaryKey({ autoIncrement: true }),
+    name: text('name').notNull().unique(),
+    description: text('description'),
+    image: text('image'),
+    price: int('price').notNull(),
+    durability: int('durability').notNull(),
+    canBuy: int('can_buy', { mode: 'boolean' }).notNull(),
+    category: int('category').references(() => itemCategory.id, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+    }),
+});
