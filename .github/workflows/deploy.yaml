@@ -12,6 +12,7 @@ jobs:
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" > neon-bot-key-pair.pem
           chmod 400 neon-bot-key-pair.pem
+          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Add Environment variables and start the bot
