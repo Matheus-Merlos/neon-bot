@@ -1,7 +1,8 @@
 import { Colors, EmbedBuilder, Message } from 'discord.js';
-import { ilike } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import db from '../db/db';
 import { item } from '../db/schema';
+import { getMostSimilarString } from '../utils';
 
 type Item = {
     id: number;
@@ -16,10 +17,15 @@ type Item = {
 
 export default class ItemFactory {
     public static async getFromName(itemName: string) {
+        const itemNames = (await db.select({ name: item.name }).from(item)).map(
+            (entry) => entry.name,
+        );
+        const desiredItemName = getMostSimilarString(itemNames, itemName);
+
         const [dbItem] = await db
             .select()
             .from(item)
-            .where(ilike(item.name, `%${itemName}%`));
+            .where(sql`lower(${item.name}) = ${desiredItemName}`);
 
         return dbItem;
     }
