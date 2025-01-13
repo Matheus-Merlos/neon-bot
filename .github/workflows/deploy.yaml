@@ -1,0 +1,21 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: debian-latest
+    steps:
+      - name: Install SSH Keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+      - name: Add Environment variables and start the bot
+        run: ssh ${{ secrets.EC2_USER }}@${{ secrets.SSH_HOST }} "export DISCORD_TOKEN='${{ secrets.DISCORD_TOKEN }}' && export DB_FILE_NAME='file:db.sqlite3' && cd ~/neon-bot && git checkout master && git pull && npm install && npm start & disown"
+
+      - name: cleanup
+        run: rm -rf ~/.ssh
