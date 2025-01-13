@@ -10,13 +10,13 @@ jobs:
     steps:
       - name: Install SSH Keys
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.EC2_SSH_KEY }}" > neon-bot-key-pair.pem
+          chmod 400 neon-bot-key-pair.pem
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Add Environment variables and start the bot
-        run: ssh ${{ secrets.EC2_USER }}@${{ secrets.SSH_HOST }} "export DISCORD_TOKEN='${{ secrets.DISCORD_TOKEN }}' && export DB_FILE_NAME='file:db.sqlite3' && cd ~/neon-bot && git checkout master && git pull && npm install && npm start & disown"
+        run: ssh -i 'neon-bot-key-pair.pem' ${{ secrets.EC2_USER }}@${{ secrets.SSH_HOST }} "export DISCORD_TOKEN='${{ secrets.DISCORD_TOKEN }}' && export DB_FILE_NAME='file:db.sqlite3' && cd ~/neon-bot && git checkout master && git pull && npm install && npm start & disown"
 
-      - name: cleanup
-        run: rm -rf ~/.ssh
+      - name: Cleanup
+        run: rm -rf neon-bot-key-pair.pem
+
