@@ -34,7 +34,6 @@ export default class ItemFactory {
         const itemEmbed = new EmbedBuilder()
             .setColor(Colors.DarkGreen)
             .setTitle(item.name)
-            .setImage(item.image)
             .setFields(
                 {
                     name: 'Nome',
@@ -47,6 +46,11 @@ export default class ItemFactory {
                     inline: true,
                 },
                 {
+                    name: ' ',
+                    value: ' ',
+                    inline: false,
+                },
+                {
                     name: 'Comprável?',
                     value: item.canBuy === true ? 'Sim' : 'Não',
                     inline: true,
@@ -56,12 +60,19 @@ export default class ItemFactory {
                     value: `${item.durability}`,
                     inline: true,
                 },
-                {
-                    name: 'Descrição',
-                    value: item.description!,
-                    inline: false,
-                },
             );
+
+        if (item.description !== null) {
+            itemEmbed.addFields({
+                name: 'Descrição',
+                value: item.description,
+                inline: false,
+            });
+        }
+
+        if (item.image !== null) {
+            itemEmbed.setImage(item.image);
+        }
 
         await message.reply({ embeds: [itemEmbed] });
     }

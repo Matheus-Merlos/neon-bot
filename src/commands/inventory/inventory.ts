@@ -22,7 +22,7 @@ export default class Inventory implements Command {
             .select({ name: rank.name })
             .from(reachedRank)
             .innerJoin(rank, eq(reachedRank.rankId, rank.id))
-            .orderBy(desc(rank.id))
+            .orderBy(desc(reachedRank.id))
             .where(eq(reachedRank.characterId, char.id))
             .limit(1);
 
