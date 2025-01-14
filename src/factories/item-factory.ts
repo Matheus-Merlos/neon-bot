@@ -1,5 +1,5 @@
 import { Colors, EmbedBuilder, Message } from 'discord.js';
-import { sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import db from '../db/db';
 import { item } from '../db/schema';
 import { getMostSimilarString } from '../utils';
@@ -17,15 +17,17 @@ type Item = {
 
 export default class ItemFactory {
     public static async getFromName(itemName: string) {
-        const itemNames = (await db.select({ name: item.name }).from(item)).map(
-            (entry) => entry.name,
+        const itemNames = (await db.select({ id: item.id, name: item.name }).from(item)).map(
+            (entry) => ({ id: entry.id, name: entry.name.toLowerCase() }),
         );
-        const desiredItemName = getMostSimilarString(itemNames, itemName);
+        const desiredItemName = getMostSimilarString(
+            itemNames.map((entry) => entry.name),
+            itemName,
+        );
 
-        const [dbItem] = await db
-            .select()
-            .from(item)
-            .where(sql`lower(${item.name}) = ${desiredItemName}`);
+        const desiredItemNameId = itemNames.find((item) => item.name === desiredItemName)!.id;
+
+        const [dbItem] = await db.select().from(item).where(eq(item.id, desiredItemNameId));
 
         return dbItem;
     }
