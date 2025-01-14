@@ -1,7 +1,8 @@
 import { Colors, EmbedBuilder, Message } from 'discord.js';
-import { ilike } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import db from '../db/db';
 import { item } from '../db/schema';
+import { getMostSimilarString } from '../utils';
 
 type Item = {
     id: number;
@@ -16,10 +17,17 @@ type Item = {
 
 export default class ItemFactory {
     public static async getFromName(itemName: string) {
-        const [dbItem] = await db
-            .select()
-            .from(item)
-            .where(ilike(item.name, `%${itemName}%`));
+        const itemNames = (await db.select({ id: item.id, name: item.name }).from(item)).map(
+            (entry) => ({ id: entry.id, name: entry.name.toLowerCase() }),
+        );
+        const desiredItemName = getMostSimilarString(
+            itemNames.map((entry) => entry.name),
+            itemName,
+        );
+
+        const desiredItemNameId = itemNames.find((item) => item.name === desiredItemName)!.id;
+
+        const [dbItem] = await db.select().from(item).where(eq(item.id, desiredItemNameId));
 
         return dbItem;
     }
@@ -28,7 +36,6 @@ export default class ItemFactory {
         const itemEmbed = new EmbedBuilder()
             .setColor(Colors.DarkGreen)
             .setTitle(item.name)
-            .setImage(item.image)
             .setFields(
                 {
                     name: 'Nome',
@@ -41,6 +48,11 @@ export default class ItemFactory {
                     inline: true,
                 },
                 {
+                    name: ' ',
+                    value: ' ',
+                    inline: false,
+                },
+                {
                     name: 'Comprável?',
                     value: item.canBuy === true ? 'Sim' : 'Não',
                     inline: true,
@@ -50,12 +62,19 @@ export default class ItemFactory {
                     value: `${item.durability}`,
                     inline: true,
                 },
-                {
-                    name: 'Descrição',
-                    value: item.description!,
-                    inline: false,
-                },
             );
+
+        if (item.description !== null) {
+            itemEmbed.addFields({
+                name: 'Descrição',
+                value: item.description,
+                inline: false,
+            });
+        }
+
+        if (item.image !== null) {
+            itemEmbed.setImage(item.image);
+        }
 
         await message.reply({ embeds: [itemEmbed] });
     }

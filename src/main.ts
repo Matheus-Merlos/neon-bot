@@ -5,6 +5,7 @@ import { AddGold, RemoveExp, RemoveGold } from './commands/inventory/exp-gold/ex
 import Inventory from './commands/inventory/inventory';
 import { default as CreateItem } from './commands/inventory/items/create-item';
 import Item from './commands/inventory/items/item';
+import Shop from './commands/inventory/items/shop';
 import Pay from './commands/inventory/pay';
 
 config();
@@ -19,6 +20,7 @@ const pay = new Pay();
 
 const createItem = new CreateItem();
 const item = new Item();
+const shop = new Shop();
 
 const client = new Client(';');
 
@@ -32,3 +34,4 @@ client.addCommand([';pay', ';pagar'], pay);
 
 client.addCommand([';create-item', ';createitem', ';additem', ';add-item'], createItem);
 client.addCommand([';item', ';item-info', ';iteminfo', ';view-item'], item);
+client.addCommand([';shop', ';loja', ';items'], shop);
