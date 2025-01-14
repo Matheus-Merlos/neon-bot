@@ -4,7 +4,7 @@ import { randomBytes } from 'crypto';
 
 export default class ImageFactory {
     public static async uploadImage(imageName: string, stream: string, contentType: string) {
-        imageName = `${imageName}-${randomBytes(5).toString('base64').substring(0, 5).replaceAll('/', '-').replaceAll('+', '')}`;
+        imageName = `${randomBytes(5).toString('base64').substring(0, 5).replaceAll('/', '-').replaceAll('+', '')}-${imageName}`;
 
         const s3Client = new S3Client({ region: process.env.AWS_REGION! });
 
