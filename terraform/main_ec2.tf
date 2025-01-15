@@ -39,6 +39,7 @@ resource "aws_instance" "main_server" {
     security_groups = [aws_security_group.ec2_security_group.name]
 
     tags = {
-        Name = "tf-neon-bot"
+        Name       = "tf-neon-bot"
+        Auto-Start = true
     }
 }
