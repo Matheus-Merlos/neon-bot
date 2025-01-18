@@ -23,6 +23,7 @@ export const character = sqliteTable('character', {
             onDelete: 'cascade',
         })
         .notNull(),
+    imageUrl: text('image_url'),
 });
 
 export const reachedRank = sqliteTable('reached_rank', {

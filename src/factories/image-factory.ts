@@ -3,17 +3,30 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { randomBytes } from 'crypto';
 
 export default class ImageFactory {
-    public static async uploadImage(imageName: string, stream: string, contentType: string) {
-        imageName = `items/${randomBytes(5).toString('base64').substring(0, 5).replaceAll('/', '-').replaceAll('+', '')}-${imageName}`;
+    public static async uploadImage(
+        directory: string,
+        imageName: string,
+        stream: string,
+        contentType: string,
+    ): Promise<string> {
+        if (typeof process.env.AWS_REGION === 'undefined') {
+            throw new Error(`'AWS_REGION' not found in environment variables`);
+        }
+        if (typeof process.env.BUCKET_NAME === 'undefined') {
+            throw new Error(`'BUCKET_NAME' not found in environment variables`);
+        }
 
-        const s3Client = new S3Client({ region: process.env.AWS_REGION! });
+        //Generates salt to prevent duplicate image names (which would cause errors)
+        const salt = randomBytes(5).toString('hex').substring(0, 5);
+        const imagePath = `${directory}/${salt}-${imageName}`;
 
-        const body = typeof stream === 'string' ? Buffer.from(stream) : stream;
+        //Uploads the image to a S3 Bucket
+        const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
         const uploadParams = {
-            Bucket: process.env.BUCKET_NAME!,
-            Key: imageName,
-            Body: body,
+            Bucket: process.env.BUCKET_NAME,
+            Key: imagePath,
+            Body: stream,
             ContentType: contentType,
             ACL: ObjectCannedACL.public_read,
         };
@@ -25,6 +38,6 @@ export default class ImageFactory {
 
         await upload.done();
 
-        return `https://${process.env.BUCKET_NAME!}.s3.amazonaws.com/${imageName}`;
+        return `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${imagePath}`;
     }
 }

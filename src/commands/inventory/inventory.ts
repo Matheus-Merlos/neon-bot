@@ -24,6 +24,9 @@ export default class Inventory implements Command {
         }
 
         const char = await CharacterFactory.getFromId(playerId, message);
+        if (!char) {
+            return;
+        }
 
         let [actualRank]: Array<{ id: number; name: string; necessaryXp: number }> | undefined =
             await db
@@ -81,6 +84,7 @@ export default class Inventory implements Command {
             currentIndex,
             nextReacheableRank.name,
             nextRankDiff,
+            char.imageUrl,
         );
 
         const forwardButton = new ButtonBuilder()
@@ -125,6 +129,7 @@ export default class Inventory implements Command {
                     currentIndex,
                     nextReacheableRank.name,
                     nextRankDiff,
+                    char.imageUrl,
                 );
 
                 row = new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -150,6 +155,7 @@ export default class Inventory implements Command {
         currentPage: number,
         nextRank: string,
         necessaryXp: number | string,
+        imageUrl: string | null,
     ): EmbedBuilder {
         const embed = new EmbedBuilder()
             .setColor(Colors.Blue)
@@ -187,6 +193,10 @@ export default class Inventory implements Command {
                     inline: false,
                 });
             });
+        }
+
+        if (imageUrl) {
+            embed.setThumbnail(imageUrl);
         }
 
         embed.setFooter({ text: `Página ${currentPage + 1}/${totalPages}` });
