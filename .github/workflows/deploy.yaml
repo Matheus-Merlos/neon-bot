@@ -8,6 +8,29 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Bring code to container
+        uses: actions/checkout@v4
+
+
+      - name: Build Typescript project
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+        run: |
+          npm ci
+          npx tsc
+
+
+      - name: Copy build files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "dist/"
+          target: "/home/admin/neon-bot"
+
+
       - name: Add environment variables and start the bot
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -30,10 +53,6 @@ jobs:
             BUCKET_NAME=${{ secrets.BUCKET_NAME }}
             " > .env
 
-            git checkout master
-            git pull
-
-            npm install
-            npm run database:push
+            npx drizzle-kit push --config=drizzle-prod.drizzle.config
 
             sudo systemctl start neon-bot
