@@ -30,7 +30,7 @@ client.addCommand([';addexp', ';add-exp'], addExp);
 client.addCommand([';removeexp', ';remove-exp'], removeExp);
 client.addCommand([';addgold', ';add-gold', ';addmoney', ';add-money'], addGold);
 client.addCommand([';removegold', ';remove-gold'], removeGold);
-client.addCommand([';inv', ';inventory'], inv);
+client.addCommand([';inv', ';inventory', ';inventario', ';profile'], inv);
 
 client.addCommand([';pay', ';pagar'], pay);
 

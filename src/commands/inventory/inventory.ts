@@ -6,7 +6,7 @@ import {
     EmbedBuilder,
     Message,
 } from 'discord.js';
-import { count, desc, eq } from 'drizzle-orm';
+import { asc, count, desc, eq, gt } from 'drizzle-orm';
 import db from '../../db/db';
 import { inventory, item, rank, reachedRank } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
@@ -25,20 +25,32 @@ export default class Inventory implements Command {
 
         const char = await CharacterFactory.getFromId(playerId, message);
 
-        let [actualRank] = await db
-            .select({ name: rank.name })
-            .from(reachedRank)
-            .innerJoin(rank, eq(reachedRank.rankId, rank.id))
-            .orderBy(desc(reachedRank.id))
-            .where(eq(reachedRank.characterId, char.id))
-            .limit(1);
+        let [actualRank]: Array<{ id: number; name: string; necessaryXp: number }> | undefined =
+            await db
+                .select({ id: rank.id, name: rank.name, necessaryXp: rank.necessaryXp })
+                .from(reachedRank)
+                .innerJoin(rank, eq(reachedRank.rankId, rank.id))
+                .orderBy(desc(reachedRank.id))
+                .where(eq(reachedRank.characterId, char.id))
+                .limit(1);
 
         if (!actualRank) {
-            actualRank = {
-                name: 'Bronze',
-            };
+            actualRank = { id: 0, name: 'Bronze', necessaryXp: 0 };
         }
 
+        let [nextReacheableRank] = await db
+            .select({ name: rank.name, necessaryXp: rank.necessaryXp })
+            .from(rank)
+            .where(gt(rank.id, actualRank.id))
+            .orderBy(asc(rank.id))
+            .limit(1);
+
+        let nextRankDiff: number | string = '';
+        if (!nextReacheableRank) {
+            nextReacheableRank = { name: 'Nenhum', necessaryXp: 0 };
+        } else {
+            nextRankDiff = nextReacheableRank.necessaryXp - actualRank.necessaryXp;
+        }
         const inventoryItems = await db
             .select({
                 quantity: count(inventory.itemId),
@@ -67,6 +79,8 @@ export default class Inventory implements Command {
             itemMatrix[currentIndex],
             itemMatrix.length,
             currentIndex,
+            nextReacheableRank.name,
+            nextRankDiff,
         );
 
         const forwardButton = new ButtonBuilder()
@@ -109,6 +123,8 @@ export default class Inventory implements Command {
                     itemMatrix[currentIndex],
                     itemMatrix.length,
                     currentIndex,
+                    nextReacheableRank.name,
+                    nextRankDiff,
                 );
 
                 row = new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -132,6 +148,8 @@ export default class Inventory implements Command {
         items: Array<{ quantity: number; name: string }>,
         totalPages: number,
         currentPage: number,
+        nextRank: string,
+        necessaryXp: number | string,
     ): EmbedBuilder {
         const embed = new EmbedBuilder()
             .setColor(Colors.Blue)
@@ -148,6 +166,17 @@ export default class Inventory implements Command {
                     value: currentRank,
                     inline: true,
                 },
+                {
+                    name: 'Próximo Rank',
+                    value: nextRank,
+                    inline: true,
+                },
+                {
+                    name: 'XP Faltante',
+                    value: `${necessaryXp}`,
+                    inline: true,
+                },
+                { name: '\u200B', value: '\u200B' },
             );
 
         if (items) {
