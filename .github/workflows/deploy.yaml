@@ -32,6 +32,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "dist/"
           target: "/home/admin/neon-bot"
+          strip_components: 1
 
 
       - name: Add environment variables and start the bot
