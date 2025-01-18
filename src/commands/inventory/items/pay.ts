@@ -1,10 +1,10 @@
 import { Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
-import db from '../../db/db';
-import { character } from '../../db/schema';
-import CharacterFactory from '../../factories/character-factory';
-import { getIdFromMention } from '../../utils';
-import Command from '../base-command';
+import db from '../../../db/db';
+import { character } from '../../../db/schema';
+import CharacterFactory from '../../../factories/character-factory';
+import { getIdFromMention } from '../../../utils';
+import Command from '../../base-command';
 
 export default class Pay implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {

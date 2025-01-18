@@ -53,3 +53,13 @@ export const item = sqliteTable('item', {
         onUpdate: 'cascade',
     }),
 });
+
+export const inventory = sqliteTable('inventory', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    characterId: int('character_id')
+        .notNull()
+        .references(() => character.id),
+    itemId: int('item_id')
+        .notNull()
+        .references(() => item.id),
+});

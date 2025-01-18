@@ -39,7 +39,14 @@ export default class Client {
                 await this.executeCommand(command, message, commandAsList);
             } catch (e) {
                 console.log(e);
-                await message.reply('Não existe um comando com essa sintaxe!');
+                if (e instanceof Error) {
+                    if (e.message.includes('does not exist')) {
+                        await message.reply('Não existe um comando com essa sintaxe!');
+                        return;
+                    }
+                    await message.reply(`Erro ao executar comando: ${e.name}:${e.message}`);
+                }
+                return;
             }
         });
     }
