@@ -18,7 +18,7 @@ jobs:
           node-version: 20
     
 
-      - Name: Build Typescript project
+      - name: Build Typescript project
         run: |
           npm ci
           npx tsc
