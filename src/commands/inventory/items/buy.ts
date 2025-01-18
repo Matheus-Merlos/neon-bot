@@ -32,8 +32,8 @@ export default class Buy implements Command {
         if (char.gold < totalPrice) {
             message.reply(`
 Você não tem dinheiro o suficiente para fazer essa compra.
-- Dinheiro necessário: **${totalPrice}**
-- Seu dinheiro: **${char.gold}**
+> - Dinheiro necessário: **${totalPrice}**
+> - Seu dinheiro: **${char.gold}**
             `);
             return;
         }

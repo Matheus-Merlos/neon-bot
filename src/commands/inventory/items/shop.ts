@@ -70,7 +70,7 @@ export default class Shop implements Command {
         const shopMessage = await message.reply({ embeds: [shopEmbed], components: [row] });
 
         try {
-            const collector = await shopMessage.createMessageComponentCollector({ time: 60_000 });
+            const collector = shopMessage.createMessageComponentCollector({ time: 60_000 });
 
             collector.on('collect', async (interaction) => {
                 if (interaction.customId === 'forward') currentIndex++;
