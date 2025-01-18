@@ -35,6 +35,16 @@ jobs:
           strip_components: 1
 
 
+      - name: Copy dependencies to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "package.json,package-lock.json"
+          target: "/home/admin/neon-bot"
+
+
       - name: Add environment variables and start the bot
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -57,6 +67,8 @@ jobs:
             BUCKET_NAME=${{ secrets.BUCKET_NAME }}
             " > .env
 
-            npx drizzle-kit push --config=./drizzle-prod.config
+            npm install --omit=dev
+
+            npx drizzle-kit push --config=./drizzle-prod.config.js
 
             sudo systemctl start neon-bot
