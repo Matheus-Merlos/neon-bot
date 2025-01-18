@@ -56,6 +56,6 @@ jobs:
             BUCKET_NAME=${{ secrets.BUCKET_NAME }}
             " > .env
 
-            npx drizzle-kit push --config=drizzle-prod.drizzle.config
+            npx drizzle-kit push --config=./src/drizzle-prod.drizzle.config
 
             sudo systemctl start neon-bot
