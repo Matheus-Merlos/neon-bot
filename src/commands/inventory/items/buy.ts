@@ -45,7 +45,9 @@ Você não tem dinheiro o suficiente para fazer essa compra.
                 .where(eq(character.id, char.id));
 
             for (let i = 0; i < quantity; i++) {
-                await trx.insert(inventory).values({ itemId: item.id, characterId: char.id });
+                await trx
+                    .insert(inventory)
+                    .values({ itemId: item.id, characterId: char.id, durability: item.durability });
             }
         });
 

@@ -55,15 +55,16 @@ export default class Inventory implements Command {
         }
         const inventoryItems = await db
             .select({
-                quantity: count(inventory.itemId),
+                quantity: count(inventory.itemId).as('quantity'),
+                itemId: inventory.itemId,
                 name: item.name,
             })
             .from(inventory)
             .where(eq(inventory.characterId, char.id))
             .innerJoin(item, eq(inventory.itemId, item.id))
-            .groupBy(item.name);
+            .groupBy(inventory.itemId, item.name);
 
-        const itemMatrix: Array<Array<{ quantity: number; name: string }>> = [];
+        const itemMatrix: Array<Array<{ quantity: number; name: string; itemId: number }>> = [];
 
         for (let i = 0; i < inventoryItems.length; i += 3) {
             const itemSublist = inventoryItems.slice(i, i + 3);
@@ -73,7 +74,7 @@ export default class Inventory implements Command {
 
         let currentIndex = 0;
 
-        let inventoryEmbed = this.getInventoryEmbed(
+        let inventoryEmbed = await this.getInventoryEmbed(
             char.name,
             char.xp,
             char.gold,
@@ -119,7 +120,7 @@ export default class Inventory implements Command {
                 forwardButton.setDisabled(currentIndex === itemMatrix.length - 1);
                 backwardsButton.setDisabled(currentIndex === 0);
 
-                inventoryEmbed = this.getInventoryEmbed(
+                inventoryEmbed = await this.getInventoryEmbed(
                     char.name,
                     char.xp,
                     char.gold,
@@ -145,18 +146,18 @@ export default class Inventory implements Command {
         }
     }
 
-    private getInventoryEmbed(
+    private async getInventoryEmbed(
         characterName: string,
         exp: number,
         gold: number,
         currentRank: string,
-        items: Array<{ quantity: number; name: string }>,
+        items: Array<{ quantity: number; name: string; itemId: number }>,
         totalPages: number,
         currentPage: number,
         nextRank: string,
         necessaryXp: number | string,
         imageUrl: string | null,
-    ): EmbedBuilder {
+    ): Promise<EmbedBuilder> {
         const embed = new EmbedBuilder()
             .setColor(Colors.Blue)
             .setTitle(`Inventário de ${characterName}`)
@@ -186,13 +187,21 @@ export default class Inventory implements Command {
             );
 
         if (items) {
-            items.forEach((item) => {
+            for (const item of items) {
+                const itemDurabilities = (
+                    await db
+                        .select({ durability: inventory.durability })
+                        .from(inventory)
+                        .where(eq(inventory.itemId, item.itemId))
+                        .orderBy(asc(inventory.durability))
+                ).map((i) => i.durability);
+
                 embed.addFields({
                     name: `${item.quantity} - ${item.name}`,
-                    value: `Item`,
+                    value: `Durabilidades: ${itemDurabilities}`,
                     inline: false,
                 });
-            });
+            }
         }
 
         if (imageUrl) {

@@ -59,6 +59,7 @@ export const item = sqliteTable('item', {
 
 export const inventory = sqliteTable('inventory', {
     id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    durability: int('durability').notNull(),
     characterId: int('character_id')
         .notNull()
         .references(() => character.id, { onDelete: 'cascade' }),

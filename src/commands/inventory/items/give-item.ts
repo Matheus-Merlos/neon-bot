@@ -35,7 +35,9 @@ export default class GiveItem implements Command {
         }
 
         for (let i = 0; i < quantity; i++) {
-            await db.insert(inventory).values({ itemId: item.id, characterId: char.id });
+            await db
+                .insert(inventory)
+                .values({ itemId: item.id, characterId: char.id, durability: item.durability });
         }
 
         message.reply(`Você deu com sucesso **${quantity}** **${itemName}** para ${char.name}`);

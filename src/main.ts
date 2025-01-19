@@ -12,6 +12,7 @@ import GiveItem from './commands/inventory/items/give-item';
 import Item from './commands/inventory/items/item';
 import Pay from './commands/inventory/items/pay';
 import Shop from './commands/inventory/items/shop';
+import Use from './commands/inventory/items/use';
 
 config();
 
@@ -29,6 +30,7 @@ const giveItem = new GiveItem();
 const item = new Item();
 const shop = new Shop();
 const buy = new Buy();
+const use = new Use();
 
 const reset = new Reset();
 const newGen = new NewGen();
@@ -49,6 +51,7 @@ client.addCommand([';give', ';give-item', ';dar-item'], giveItem);
 client.addCommand([';item', ';item-info', ';iteminfo', ';view-item'], item);
 client.addCommand([';shop', ';loja', ';items'], shop);
 client.addCommand([';buy', ';comprar'], buy);
+client.addCommand([';use', ';usar'], use);
 
 client.addCommand([';reset', ';resetar', ';clear'], reset);
 client.addCommand([';newgen', ';resettotal', ';novagen'], newGen);
