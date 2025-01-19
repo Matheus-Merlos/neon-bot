@@ -24,6 +24,7 @@ export const character = sqliteTable('character', {
         .notNull()
         .unique(),
     imageUrl: text('image_url'),
+    salt: text('salt', { length: 5 }),
 });
 
 export const reachedRank = sqliteTable('reached_rank', {

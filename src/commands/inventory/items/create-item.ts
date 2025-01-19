@@ -30,13 +30,15 @@ export default class CreateItem implements Command {
             }
 
             try {
-                url = await ImageFactory.uploadImage(
-                    'items',
-                    img.name,
-                    image.data,
-                    img.contentType,
-                    image.headers['content-lenght'],
-                );
+                url = (
+                    await ImageFactory.getInstance().uploadImage(
+                        'items',
+                        img.name,
+                        image.data,
+                        img.contentType,
+                        image.headers['content-lenght'],
+                    )
+                ).url;
             } catch (error: unknown) {
                 if (error instanceof Error) {
                     message.reply(

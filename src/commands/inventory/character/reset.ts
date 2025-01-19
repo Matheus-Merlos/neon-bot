@@ -10,6 +10,7 @@ import db from '../../../db/db';
 import { character } from '../../../db/schema';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
+import ImageFactory from '../../../factories/image-factory';
 import { getIdFromMention } from '../../../utils';
 import Command from '../../base-command';
 
@@ -44,13 +45,18 @@ export default class Reset implements Command {
         try {
             const confirmation = await confirmationMessage.awaitMessageComponent({
                 filter: (i) => i.user.id === message.author.id,
-                time: 15_000,
+                time: 30_000,
             });
 
             if (confirmation.customId === ResetActions.ACCEPT) {
                 const char = await CharacterFactory.getFromId(
                     getIdFromMention(messageAsList[1]),
                     message,
+                );
+
+                await ImageFactory.getInstance().deleteImage(
+                    'characters',
+                    `${char.salt}-${char.name}.png`,
                 );
 
                 await db.delete(character).where(eq(character.id, char.id));

@@ -23,19 +23,22 @@ export default class CharacterFactory {
             });
 
             let image;
-            let url;
+            let url = null;
+            let salt = null;
             try {
                 image = await axios.get(imgUrl, { responseType: 'stream' });
 
                 const contentLenght: number = image.headers['content-length'];
 
-                url = await ImageFactory.uploadImage(
+                const upload = await ImageFactory.getInstance().uploadImage(
                     'characters',
                     `${charName!}.png`,
                     image.data,
                     'image/png',
                     contentLenght,
                 );
+                url = upload.url;
+                salt = upload.salt;
             } catch (error: unknown) {
                 if (error instanceof Error) {
                     message.reply(
@@ -60,6 +63,7 @@ export default class CharacterFactory {
                     gold: 0,
                     player: BigInt(playerId),
                     imageUrl: url,
+                    salt,
                 })
                 .returning();
         }

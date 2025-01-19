@@ -8,9 +8,10 @@
   "main": "main.ts",
   "scripts": {
     "start": "ts-node ./src/main.ts",
-    "makemigrations": "npx drizzle-kit generate",
-    "migrate": "npx drizzle-kit migrate",
-    "database:push": "npx drizzle-kit push"
+    "makemigrations": "npx drizzle-kit generate --config=./src/drizzle-dev.config.ts",
+    "migrate": "npx drizzle-kit migrate --config=./src/drizzle-dev.config.ts",
+    "database:push": "npx drizzle-kit push --config=./src/drizzle-dev.config.ts",
+    "studio": "npx drizzle-kit studio --config=./src/drizzle-dev.config.ts"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
