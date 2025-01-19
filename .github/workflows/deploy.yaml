@@ -76,8 +76,8 @@ jobs:
 
             DB_FILE_NAME=file:db.sqlite3
 
-            ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}
-            SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_REGION=${{ secrets.AWS_REGION }}
             BUCKET_NAME=${{ secrets.BUCKET_NAME }}
             " > .env
