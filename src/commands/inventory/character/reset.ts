@@ -8,6 +8,7 @@ import {
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { character } from '../../../db/schema';
+import hasMention from '../../../decorators/has-mention';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
 import ImageFactory from '../../../factories/image-factory';
@@ -21,6 +22,7 @@ enum ResetActions {
 
 export default class Reset implements Command {
     @hasPermission(PermissionFlagsBits.Administrator)
+    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         const cancelButton = new ButtonBuilder()
             .setCustomId(ResetActions.CANCEL)

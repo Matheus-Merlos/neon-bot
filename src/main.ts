@@ -1,9 +1,11 @@
 import { config } from 'dotenv';
-import Client from './client';
+import { default as Client } from './client';
 import NewGen from './commands/inventory/character/newgen';
 import Reset from './commands/inventory/character/reset';
 import AddExp from './commands/inventory/exp-gold/add-exp';
 import { AddGold, RemoveExp, RemoveGold } from './commands/inventory/exp-gold/exp-gold';
+import StackAddExp from './commands/inventory/exp-gold/stack-add-exp';
+import { default as StackAddGold } from './commands/inventory/exp-gold/stack-add-gold';
 import Inventory from './commands/inventory/inventory';
 import Buy from './commands/inventory/items/buy';
 import { default as CreateItem } from './commands/inventory/items/create-item';
@@ -20,6 +22,8 @@ const addExp = new AddExp();
 const removeExp = new RemoveExp();
 const addGold = new AddGold();
 const removeGold = new RemoveGold();
+const stackAddExp = new StackAddExp();
+const stackAddGold = new StackAddGold();
 const inv = new Inventory();
 
 const pay = new Pay();
@@ -41,6 +45,8 @@ client.addCommand([';addexp', ';add-exp'], addExp);
 client.addCommand([';removeexp', ';remove-exp'], removeExp);
 client.addCommand([';addgold', ';add-gold', ';addmoney', ';add-money'], addGold);
 client.addCommand([';removegold', ';remove-gold'], removeGold);
+client.addCommand([';stackaddexp', ';stack-add-exp'], stackAddExp);
+client.addCommand([';stackaddgold', ';stack-add-gold'], stackAddGold);
 client.addCommand([';inv', ';inventory', ';inventario', ';profile'], inv);
 
 client.addCommand([';pay', ';pagar'], pay);

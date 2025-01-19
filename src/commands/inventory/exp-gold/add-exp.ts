@@ -2,19 +2,16 @@ import { Message, PermissionsBitField } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { character, rank, reachedRank } from '../../../db/schema';
+import hasMention from '../../../decorators/has-mention';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
 import { getIdFromMention } from '../../../utils';
 import Command from '../../base-command';
 
 export default class AddExp implements Command {
+    @hasMention()
     @hasPermission(PermissionsBitField.Flags.ManageRoles)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        if (!messageAsList[1].includes('@')) {
-            await message.reply(`O player "${messageAsList[1]}" não é válido.`);
-            return;
-        }
-
         const playerId = getIdFromMention(messageAsList[1]);
         const quantity = parseInt(messageAsList[2]);
 

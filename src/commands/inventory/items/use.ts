@@ -67,7 +67,7 @@ export default class Use implements Command {
                     .set({ durability: remainingDurability })
                     .where(eq(inventory.id, invItem.inventoryEntryId));
             }
-            message.reply(`Você usou **${item.name}** com sucesso.`);
         }
+        message.reply(`Você usou **${item.name}** com sucesso.`);
     }
 }

@@ -2,11 +2,13 @@ import { Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { character } from '../../../db/schema';
+import hasMention from '../../../decorators/has-mention';
 import CharacterFactory from '../../../factories/character-factory';
 import { getIdFromMention } from '../../../utils';
 import Command from '../../base-command';
 
 export default class Pay implements Command {
+    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         const senderId = message.author.id;
         const receiverId = getIdFromMention(messageAsList[1]);

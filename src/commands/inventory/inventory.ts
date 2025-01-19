@@ -186,7 +186,7 @@ export default class Inventory implements Command {
                 { name: '\u200B', value: '\u200B' },
             );
 
-        if (items) {
+        if (items && items.length > 0) {
             for (const item of items) {
                 const itemDurabilities = (
                     await db
