@@ -17,6 +17,8 @@ jobs:
           script: |
             sudo systemctl stop neon-bot
 
+            cd /home/admin/neon-bot
+
             rm -rf src db factories node_modules commands
             rm utils.js client.js drizzle-dev.config.js drizzle-prod.config.js main.js package-lock.json package.json
 
