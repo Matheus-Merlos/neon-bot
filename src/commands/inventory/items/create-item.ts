@@ -1,16 +1,19 @@
 import axios from 'axios';
-import { Attachment, Message } from 'discord.js';
+import { Attachment, Message, PermissionFlagsBits } from 'discord.js';
 import db from '../../../db/db';
 import { item } from '../../../db/schema';
+import hasPermission from '../../../decorators/has-permission';
 import ImageFactory from '../../../factories/image-factory';
 import ItemFactory from '../../../factories/item-factory';
 import Command from '../../base-command';
 
 export default class CreateItem implements Command {
+    @hasPermission(PermissionFlagsBits.ManageChannels)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         let img: Attachment | undefined | null = message.attachments.first();
 
         let url: string | null = null;
+        let salt: string | null = null;
 
         if (
             typeof img !== 'undefined' &&
@@ -30,15 +33,16 @@ export default class CreateItem implements Command {
             }
 
             try {
-                url = (
-                    await ImageFactory.getInstance().uploadImage(
-                        'items',
-                        img.name,
-                        image.data,
-                        img.contentType,
-                        image.headers['content-lenght'],
-                    )
-                ).url;
+                const upload = await ImageFactory.getInstance().uploadImage(
+                    'items',
+                    img.name,
+                    image.data,
+                    img.contentType,
+                    image.headers['content-lenght'],
+                );
+
+                url = upload.url;
+                salt = upload.salt;
             } catch (error: unknown) {
                 if (error instanceof Error) {
                     message.reply(
@@ -88,6 +92,7 @@ export default class CreateItem implements Command {
                     price,
                     durability,
                     canBuy: true,
+                    salt,
                 })
                 .returning();
         } catch (error) {

@@ -46,7 +46,6 @@ export const item = sqliteTable('item', {
     id: int('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull().unique(),
     description: text('description'),
-    image: text('image'),
     price: int('price').notNull(),
     durability: int('durability').notNull(),
     canBuy: int('can_buy', { mode: 'boolean' }).notNull(),
@@ -54,6 +53,8 @@ export const item = sqliteTable('item', {
         onDelete: 'cascade',
         onUpdate: 'cascade',
     }),
+    image: text('image'),
+    salt: text('salt', { length: 5 }),
 });
 
 export const inventory = sqliteTable('inventory', {
