@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 import Client from './client';
+import NewGen from './commands/inventory/character/newgen';
 import Reset from './commands/inventory/character/reset';
 import AddExp from './commands/inventory/exp-gold/add-exp';
 import { AddGold, RemoveExp, RemoveGold } from './commands/inventory/exp-gold/exp-gold';
@@ -28,6 +29,7 @@ const shop = new Shop();
 const buy = new Buy();
 
 const reset = new Reset();
+const newGen = new NewGen();
 
 const client = new Client(';');
 
@@ -46,3 +48,4 @@ client.addCommand([';shop', ';loja', ';items'], shop);
 client.addCommand([';buy', ';comprar'], buy);
 
 client.addCommand([';reset', ';resetar', ';clear'], reset);
+client.addCommand([';newgen', ';resettotal', ';novagen'], newGen);
