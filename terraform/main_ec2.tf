@@ -43,3 +43,7 @@ resource "aws_instance" "main_server" {
         Auto-Start = true
     }
 }
+
+resource "aws_eip" "server_eip" {
+  instance = aws_instance.main_server.id
+}
