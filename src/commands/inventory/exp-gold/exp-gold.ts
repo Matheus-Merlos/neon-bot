@@ -1,7 +1,8 @@
-import { Message } from 'discord.js';
+import { Message, PermissionsBitField } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { character } from '../../../db/schema';
+import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
 import { getIdFromMention } from '../../../utils';
 import Command from '../../base-command';
@@ -46,18 +47,21 @@ class AddRemoveCommand {
 }
 
 export class RemoveExp extends AddRemoveCommand implements Command {
+    @hasPermission(PermissionsBitField.Flags.ManageRoles)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         super.execute(message, messageAsList, '-', 'xp');
     }
 }
 
 export class AddGold extends AddRemoveCommand implements Command {
+    @hasPermission(PermissionsBitField.Flags.ManageRoles)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         super.execute(message, messageAsList, '+', 'gold');
     }
 }
 
 export class RemoveGold extends AddRemoveCommand implements Command {
+    @hasPermission(PermissionsBitField.Flags.ManageRoles)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         super.execute(message, messageAsList, '-', 'gold');
     }

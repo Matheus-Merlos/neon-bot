@@ -17,12 +17,14 @@ export const character = sqliteTable('character', {
     name: text('name').notNull(),
     xp: int('xp').notNull(),
     gold: int('gold').notNull(),
-    active: int('active', { mode: 'boolean' }).notNull(),
     player: blob('player', { mode: 'bigint' })
         .references(() => player.discordId, {
             onDelete: 'cascade',
         })
-        .notNull(),
+        .notNull()
+        .unique(),
+    imageUrl: text('image_url'),
+    salt: text('salt', { length: 5 }),
 });
 
 export const reachedRank = sqliteTable('reached_rank', {
@@ -44,7 +46,6 @@ export const item = sqliteTable('item', {
     id: int('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull().unique(),
     description: text('description'),
-    image: text('image'),
     price: int('price').notNull(),
     durability: int('durability').notNull(),
     canBuy: int('can_buy', { mode: 'boolean' }).notNull(),
@@ -52,14 +53,17 @@ export const item = sqliteTable('item', {
         onDelete: 'cascade',
         onUpdate: 'cascade',
     }),
+    image: text('image'),
+    salt: text('salt', { length: 5 }),
 });
 
 export const inventory = sqliteTable('inventory', {
     id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    durability: int('durability').notNull(),
     characterId: int('character_id')
         .notNull()
-        .references(() => character.id),
+        .references(() => character.id, { onDelete: 'cascade' }),
     itemId: int('item_id')
         .notNull()
-        .references(() => item.id),
+        .references(() => item.id, { onDelete: 'cascade' }),
 });

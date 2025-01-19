@@ -41,7 +41,7 @@ export default class Client {
                 console.log(e);
                 if (e instanceof Error) {
                     if (e.message.includes('does not exist')) {
-                        await message.reply('Não existe um comando com essa sintaxe!');
+                        await message.reply(`O comando **${command}** não existe`);
                         return;
                     }
                     await message.reply(`Erro ao executar comando: ${e.name}:${e.message}`);
