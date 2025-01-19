@@ -41,6 +41,7 @@ resource "aws_instance" "main_server" {
     tags = {
         Name       = "tf-neon-bot"
         Auto-Start = true
+        Backup     = true
     }
 }
 
