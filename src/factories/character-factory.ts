@@ -27,11 +27,14 @@ export default class CharacterFactory {
             try {
                 image = await axios.get(imgUrl, { responseType: 'stream' });
 
+                const contentLenght = image.headers['content-length'];
+
                 url = await ImageFactory.uploadImage(
                     'characters',
                     `${charName!}.png`,
                     image.data,
                     'image/png',
+                    contentLenght,
                 );
             } catch (error: unknown) {
                 if (error instanceof Error) {

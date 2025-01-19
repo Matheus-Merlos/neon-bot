@@ -35,6 +35,7 @@ export default class CreateItem implements Command {
                     img.name,
                     image.data,
                     img.contentType,
+                    image.headers['content-lenght'],
                 );
             } catch (error: unknown) {
                 if (error instanceof Error) {

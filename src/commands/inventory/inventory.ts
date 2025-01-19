@@ -178,7 +178,7 @@ export default class Inventory implements Command {
                     inline: true,
                 },
                 {
-                    name: 'XP Faltante',
+                    name: 'XP Faltando',
                     value: `${necessaryXp}`,
                     inline: true,
                 },

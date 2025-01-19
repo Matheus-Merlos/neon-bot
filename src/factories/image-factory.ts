@@ -1,5 +1,6 @@
 import { ObjectCannedACL, S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
+import { NodeHttpHandler } from '@aws-sdk/node-http-handler';
 import { randomBytes } from 'crypto';
 
 export default class ImageFactory {
@@ -8,6 +9,7 @@ export default class ImageFactory {
         imageName: string,
         stream: string,
         contentType: string,
+        contentLength: number,
     ): Promise<string> {
         if (typeof process.env.AWS_REGION === 'undefined') {
             throw new Error(`'AWS_REGION' not found in environment variables`);
@@ -21,7 +23,11 @@ export default class ImageFactory {
         const imagePath = `${directory}/${salt}-${imageName}`;
 
         //Uploads the image to a S3 Bucket
-        const s3Client = new S3Client({ region: process.env.AWS_REGION });
+        const s3Client = new S3Client({
+            region: process.env.AWS_REGION,
+            maxAttempts: 3,
+            requestHandler: new NodeHttpHandler({ connectionTimeout: 5000 }),
+        });
 
         const uploadParams = {
             Bucket: process.env.BUCKET_NAME,
@@ -29,6 +35,7 @@ export default class ImageFactory {
             Body: stream,
             ContentType: contentType,
             ACL: ObjectCannedACL.public_read,
+            ContentLength: contentLength,
         };
 
         const upload = new Upload({
