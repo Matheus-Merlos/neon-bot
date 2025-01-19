@@ -47,7 +47,7 @@ export default class Inventory implements Command {
             .orderBy(asc(rank.id))
             .limit(1);
 
-        let nextRankDiff: number | string = '';
+        let nextRankDiff: number | string = ' ';
         if (!nextReacheableRank) {
             nextReacheableRank = { name: 'Nenhum', necessaryXp: 0 };
         } else {

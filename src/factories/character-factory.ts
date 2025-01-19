@@ -58,7 +58,6 @@ export default class CharacterFactory {
                     name: charName!,
                     xp: 0,
                     gold: 0,
-                    active: true,
                     player: BigInt(playerId),
                     imageUrl: url,
                 })

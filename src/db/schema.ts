@@ -17,12 +17,12 @@ export const character = sqliteTable('character', {
     name: text('name').notNull(),
     xp: int('xp').notNull(),
     gold: int('gold').notNull(),
-    active: int('active', { mode: 'boolean' }).notNull(),
     player: blob('player', { mode: 'bigint' })
         .references(() => player.discordId, {
             onDelete: 'cascade',
         })
-        .notNull(),
+        .notNull()
+        .unique(),
     imageUrl: text('image_url'),
 });
 
@@ -59,8 +59,8 @@ export const inventory = sqliteTable('inventory', {
     id: int('id').primaryKey({ autoIncrement: true }).notNull(),
     characterId: int('character_id')
         .notNull()
-        .references(() => character.id),
+        .references(() => character.id, { onDelete: 'cascade' }),
     itemId: int('item_id')
         .notNull()
-        .references(() => item.id),
+        .references(() => item.id, { onDelete: 'cascade' }),
 });
