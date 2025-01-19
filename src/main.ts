@@ -7,6 +7,7 @@ import { AddGold, RemoveExp, RemoveGold } from './commands/inventory/exp-gold/ex
 import Inventory from './commands/inventory/inventory';
 import Buy from './commands/inventory/items/buy';
 import { default as CreateItem } from './commands/inventory/items/create-item';
+import { default as DeleteItem } from './commands/inventory/items/delete-item';
 import GiveItem from './commands/inventory/items/give-item';
 import Item from './commands/inventory/items/item';
 import Pay from './commands/inventory/items/pay';
@@ -23,6 +24,7 @@ const inv = new Inventory();
 const pay = new Pay();
 
 const createItem = new CreateItem();
+const deleteItem = new DeleteItem();
 const giveItem = new GiveItem();
 const item = new Item();
 const shop = new Shop();
@@ -42,6 +44,7 @@ client.addCommand([';inv', ';inventory', ';inventario', ';profile'], inv);
 client.addCommand([';pay', ';pagar'], pay);
 
 client.addCommand([';create-item', ';createitem', ';additem', ';add-item'], createItem);
+client.addCommand([';delete-item', ';deleteitem'], deleteItem);
 client.addCommand([';give', ';give-item', ';dar-item'], giveItem);
 client.addCommand([';item', ';item-info', ';iteminfo', ';view-item'], item);
 client.addCommand([';shop', ';loja', ';items'], shop);

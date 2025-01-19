@@ -31,6 +31,13 @@ export default class Shop implements Command {
             .where(eq(item.canBuy, true))
             .orderBy(asc(item.price));
 
+        if (items.length === 0) {
+            await message.reply(
+                'Sua loja não possuem items, você pode criar eles com o comando `;create-item`.',
+            );
+            return;
+        }
+
         const itemMatrix: Array<Array<Item>> = [];
 
         for (let i = 0; i < items.length; i += ITEMS_PER_PAGE) {

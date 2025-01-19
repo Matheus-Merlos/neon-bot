@@ -60,4 +60,12 @@ function getMostSimilarString(arr: string[], target: string): string {
     return mostSimilarString;
 }
 
-export { getIdFromMention, getMostSimilarString };
+function toSlug(str: string): string {
+    //Removes words with diacritics in them
+    const noDiacritics = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    const noSpace = noDiacritics.replaceAll(' ', '-');
+    return noSpace.toLowerCase();
+}
+
+export { getIdFromMention, getMostSimilarString, toSlug };

@@ -5,6 +5,7 @@ import { item } from '../../../db/schema';
 import hasPermission from '../../../decorators/has-permission';
 import ImageFactory from '../../../factories/image-factory';
 import ItemFactory from '../../../factories/item-factory';
+import { toSlug } from '../../../utils';
 import Command from '../../base-command';
 
 export default class CreateItem implements Command {
@@ -14,6 +15,22 @@ export default class CreateItem implements Command {
 
         let url: string | null = null;
         let salt: string | null = null;
+
+        const priceIndex = messageAsList.findIndex(
+            (element) => !isNaN(parseInt(element)) && element.trim() !== '',
+        );
+        let itemName: string;
+
+        if (priceIndex === 1) {
+            await message.reply('O nome do item não deve começar com um número');
+            return;
+        }
+
+        if (priceIndex === 2) {
+            itemName = messageAsList[1].replaceAll('"', '');
+        } else {
+            itemName = message.content.split('"')[1];
+        }
 
         if (
             typeof img !== 'undefined' &&
@@ -35,7 +52,7 @@ export default class CreateItem implements Command {
             try {
                 const upload = await ImageFactory.getInstance().uploadImage(
                     'items',
-                    img.name,
+                    `${toSlug(itemName)}.png`,
                     image.data,
                     img.contentType,
                     image.headers['content-lenght'],
@@ -53,22 +70,6 @@ export default class CreateItem implements Command {
             }
         } else {
             img = null;
-        }
-
-        const priceIndex = messageAsList.findIndex(
-            (element) => !isNaN(parseInt(element)) && element.trim() !== '',
-        );
-        let itemName: string;
-
-        if (priceIndex === 1) {
-            await message.reply('O nome do item não deve começar com um número');
-            return;
-        }
-
-        if (priceIndex === 2) {
-            itemName = messageAsList[1].replaceAll('"', '');
-        } else {
-            itemName = message.content.split('"')[1];
         }
 
         const price = parseInt(messageAsList[priceIndex]);
