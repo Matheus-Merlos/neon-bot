@@ -28,17 +28,16 @@ export default class Inventory implements Command {
             return;
         }
 
-        let [actualRank]: Array<{ id: number; name: string; necessaryXp: number }> | undefined =
-            await db
-                .select({ id: rank.id, name: rank.name, necessaryXp: rank.necessaryXp })
-                .from(reachedRank)
-                .innerJoin(rank, eq(reachedRank.rankId, rank.id))
-                .orderBy(desc(reachedRank.id))
-                .where(eq(reachedRank.characterId, char.id))
-                .limit(1);
+        let [actualRank]: Array<{ id: number; name: string }> | undefined = await db
+            .select({ id: rank.id, name: rank.name })
+            .from(reachedRank)
+            .innerJoin(rank, eq(reachedRank.rankId, rank.id))
+            .orderBy(desc(reachedRank.id))
+            .where(eq(reachedRank.characterId, char.id))
+            .limit(1);
 
         if (!actualRank) {
-            actualRank = { id: 0, name: 'Bronze', necessaryXp: 0 };
+            actualRank = { id: 0, name: 'Bronze' };
         }
 
         let [nextReacheableRank] = await db
@@ -52,7 +51,7 @@ export default class Inventory implements Command {
         if (!nextReacheableRank) {
             nextReacheableRank = { name: 'Nenhum', necessaryXp: 0 };
         } else {
-            nextRankDiff = nextReacheableRank.necessaryXp - actualRank.necessaryXp;
+            nextRankDiff = nextReacheableRank.necessaryXp - char.xp;
         }
         const inventoryItems = await db
             .select({

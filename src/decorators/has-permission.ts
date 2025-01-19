@@ -17,11 +17,11 @@ export default function hasPermission(...permissions: Array<PermissionResolvable
             permissions.forEach(async (permission) => {
                 const member = await message.guild!.members.fetch(message.author.id);
                 if (member.permissions.has(permission)) {
-                    callable(message, messageAsList);
+                    await callable(message, messageAsList);
                     return;
                 } else {
                     await message.reply(
-                        `Você não possui a permissão de **${getPermissionName(permission)}** para executar este comando`,
+                        `Você não possui a permissão de **${getPermissionName(permission)}** necessária para executar este comando`,
                     );
                 }
             });
