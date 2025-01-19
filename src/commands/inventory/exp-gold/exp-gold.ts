@@ -2,6 +2,7 @@ import { Message, PermissionsBitField } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { character } from '../../../db/schema';
+import hasMention from '../../../decorators/has-mention';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
 import { getIdFromMention } from '../../../utils';
@@ -14,11 +15,6 @@ class AddRemoveCommand {
         operator: '+' | '-',
         attribute: 'gold' | 'xp',
     ): Promise<void> {
-        if (!messageAsList[1].includes('@')) {
-            await message.reply(`O player "${messageAsList[1]}" não é válido.`);
-            return;
-        }
-
         const playerId = getIdFromMention(messageAsList[1]);
         const quantity = parseInt(messageAsList[2]);
 
@@ -48,6 +44,7 @@ class AddRemoveCommand {
 
 export class RemoveExp extends AddRemoveCommand implements Command {
     @hasPermission(PermissionsBitField.Flags.ManageRoles)
+    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         super.execute(message, messageAsList, '-', 'xp');
     }
@@ -55,6 +52,7 @@ export class RemoveExp extends AddRemoveCommand implements Command {
 
 export class AddGold extends AddRemoveCommand implements Command {
     @hasPermission(PermissionsBitField.Flags.ManageRoles)
+    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         super.execute(message, messageAsList, '+', 'gold');
     }
@@ -62,6 +60,7 @@ export class AddGold extends AddRemoveCommand implements Command {
 
 export class RemoveGold extends AddRemoveCommand implements Command {
     @hasPermission(PermissionsBitField.Flags.ManageRoles)
+    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         super.execute(message, messageAsList, '-', 'gold');
     }

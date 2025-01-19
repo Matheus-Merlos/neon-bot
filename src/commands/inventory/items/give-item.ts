@@ -1,6 +1,7 @@
 import { Message, PermissionFlagsBits } from 'discord.js';
 import db from '../../../db/db';
 import { inventory } from '../../../db/schema';
+import hasMention from '../../../decorators/has-mention';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
 import ItemFactory from '../../../factories/item-factory';
@@ -9,6 +10,7 @@ import Command from '../../base-command';
 
 export default class GiveItem implements Command {
     @hasPermission(PermissionFlagsBits.ManageChannels)
+    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         let quantity = 1;
         let char;

@@ -9,11 +9,13 @@ import {
 import { asc, count, desc, eq, gt } from 'drizzle-orm';
 import db from '../../db/db';
 import { inventory, item, rank, reachedRank } from '../../db/schema';
+import hasMention from '../../decorators/has-mention';
 import CharacterFactory from '../../factories/character-factory';
 import { getIdFromMention } from '../../utils';
 import Command from '../base-command';
 
 export default class Inventory implements Command {
+    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         let playerId;
         if (messageAsList[1]) {
