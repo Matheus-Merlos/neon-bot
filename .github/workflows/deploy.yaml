@@ -5,6 +5,21 @@ on:
     branches: [ master ]
 
 jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup old release
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo systemctl stop neon-bot
+
+            rm -rf src db factories node_modules commands
+            rm utils.js client.js drizzle-dev.config.js drizzle-prod.config.js main.js package-lock.json package.json
+
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -52,8 +67,6 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo systemctl stop neon-bot
-
             cd ~/neon-bot
 
             echo "
