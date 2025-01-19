@@ -6,6 +6,7 @@ import { randomBytes } from 'crypto';
 export default class ImageFactory {
     private static instance: ImageFactory | null = null;
     private s3Client: S3Client;
+    private env: string;
 
     private constructor() {
         if (typeof process.env.AWS_ACCESS_KEY_ID === 'undefined') {
@@ -20,7 +21,11 @@ export default class ImageFactory {
         if (typeof process.env.BUCKET_NAME === 'undefined') {
             throw new Error(`'BUCKET_NAME' not found in environment variables`);
         }
+        if (typeof process.env.ENV === 'undefined') {
+            throw new Error(`'ENV' not found in environment variables`);
+        }
 
+        this.env = process.env.ENV;
         this.s3Client = new S3Client({
             region: process.env.AWS_REGION,
             maxAttempts: 3,
@@ -49,7 +54,7 @@ export default class ImageFactory {
     ): Promise<{ salt: string; url: string }> {
         //Generates salt to prevent duplicate image names (which would cause errors)
         const salt = randomBytes(5).toString('hex').substring(0, 5);
-        const imagePath = `${directory}/${salt}-${imageName}`;
+        const imagePath = `${directory}/${this.env}/${salt}-${imageName}`;
 
         //Uploads the image to a S3 Bucket
         const uploadParams = {
@@ -75,7 +80,7 @@ export default class ImageFactory {
     }
 
     public async deleteImage(directory: string, imageName: string): Promise<void> {
-        const imagePath = `${directory}/${imageName}`;
+        const imagePath = `${directory}/${this.env}/${imageName}`;
 
         const deleteParams = {
             Bucket: process.env.BUCKET_NAME,
