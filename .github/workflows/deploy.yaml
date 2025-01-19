@@ -19,8 +19,8 @@ jobs:
 
             cd /home/admin/neon-bot
 
-            rm -rf src db factories node_modules commands decorators
-            rm utils.js client.js drizzle-dev.config.js drizzle-prod.config.js main.js package-lock.json package.json
+            rm -rf src db factories node_modules commands decorators 2>/dev/null
+            rm utils.js client.js drizzle-dev.config.js drizzle-prod.config.js main.js package-lock.json package.json 2>/dev/null
 
   deploy:
     runs-on: ubuntu-latest
