@@ -27,7 +27,7 @@ export default class CharacterFactory {
             try {
                 image = await axios.get(imgUrl, { responseType: 'stream' });
 
-                const contentLenght = image.headers['content-length'];
+                const contentLenght: number = image.headers['content-length'];
 
                 url = await ImageFactory.uploadImage(
                     'characters',

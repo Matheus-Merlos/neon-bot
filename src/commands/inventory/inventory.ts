@@ -90,7 +90,8 @@ export default class Inventory implements Command {
         const forwardButton = new ButtonBuilder()
             .setCustomId('forward')
             .setLabel('Próximo')
-            .setStyle(ButtonStyle.Primary);
+            .setStyle(ButtonStyle.Primary)
+            .setDisabled(itemMatrix.length < 1);
 
         const backwardsButton = new ButtonBuilder()
             .setCustomId('backward')
@@ -199,7 +200,7 @@ export default class Inventory implements Command {
             embed.setThumbnail(imageUrl);
         }
 
-        embed.setFooter({ text: `Página ${currentPage + 1}/${totalPages}` });
+        embed.setFooter({ text: `Página ${currentPage + 1}/${totalPages === 0 ? 1 : totalPages}` });
 
         return embed;
     }
