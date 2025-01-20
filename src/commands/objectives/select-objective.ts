@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
-import { objective, selectedObjective } from '../../db/schema';
+import { completedObjective, objective, selectedObjective } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
 import ObjectiveFactory from '../../factories/objective-factory';
 import Command from '../base-command';
@@ -33,6 +33,21 @@ export default class SelectObjective implements Command {
 
         if (alreadySelectedObjectives.includes(objectiveToSelect.type)) {
             message.reply(`Você já tem um objetivo dessa dificuldade selecionado.`);
+            return;
+        }
+
+        const alreadyCompletedObjectives = (
+            await db
+                .select({
+                    difficultyId: objective.type,
+                })
+                .from(completedObjective)
+                .where(eq(completedObjective.characterId, char.id))
+                .innerJoin(objective, eq(completedObjective.objectiveId, objective.id))
+        ).map((obj) => obj.difficultyId);
+
+        if (alreadyCompletedObjectives.includes(objectiveToSelect.type)) {
+            message.reply(`Você já concluiu esse objetivo anteriormente.`);
             return;
         }
 
