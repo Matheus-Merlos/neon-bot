@@ -8,6 +8,24 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
+      - name: Check time window
+        run: |
+          TZ="America/Sao_Paulo"
+          export TZ
+
+          CURRENT_HOUR=$(date +'%H')
+
+          START_HOUR=9   # 06:00 (UTC-3)
+          END_HOUR=22    # 22:00 (UTC-3)
+
+          echo "Horário atual (UTC-3): $CURRENT_HOUR"
+
+          if [ "$CURRENT_HOUR" -lt "$START_HOUR" ] || [ "$CURRENT_HOUR" -ge "$END_HOUR" ]; then
+            echo "Outside permitted hours. Aborting workflow."
+            exit 1
+          fi
+
+
       - name: Cleanup old release
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -25,6 +43,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Check time window
+        run: |
+          TZ="America/Sao_Paulo"
+          export TZ
+
+          CURRENT_HOUR=$(date +'%H')
+
+          START_HOUR=9   # 06:00 (UTC-3)
+          END_HOUR=22    # 22:00 (UTC-3)
+
+          echo "Horário atual (UTC-3): $CURRENT_HOUR"
+
+          if [ "$CURRENT_HOUR" -lt "$START_HOUR" ] || [ "$CURRENT_HOUR" -ge "$END_HOUR" ]; then
+            echo "Outside permitted hours. Aborting workflow."
+            exit 1
+          fi
+
+
       - name: Bring code to container
         uses: actions/checkout@v4
 
