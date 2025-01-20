@@ -15,12 +15,14 @@ import Item from './commands/inventory/items/item';
 import Pay from './commands/inventory/items/pay';
 import Shop from './commands/inventory/items/shop';
 import Use from './commands/inventory/items/use';
+import SelectObjective from './commands/objectives/choose-objective';
 import CompletedObjective from './commands/objectives/completed-objective';
+import CompletedObjectives from './commands/objectives/completed-objectives';
 import CreateObjective from './commands/objectives/create-objective';
 import CreateObjectiveDifficulty from './commands/objectives/create-objective-difficulty';
 import DeleteObjective from './commands/objectives/delete-objective';
 import Objectives from './commands/objectives/objectives';
-import SelectObjective from './commands/objectives/select-objective';
+import SelectedObjectives from './commands/objectives/selected-objectives';
 
 config();
 
@@ -81,3 +83,5 @@ client.addCommand([';deleteobjective', ';delete-objective', ';deletarobjetivo'],
 client.addCommand([';objectives', ';objetivos'], objectives);
 client.addCommand([';chooseobjective', ';choose-objective', ';escolherobjetivo'], new SelectObjective());
 client.addCommand([';completed-objective', ';completedobjective', ';objetivoconcluído'], new CompletedObjective());
+client.addCommand([';completed-objectives', ';completedobjectives', ';objetivosconcluidos'], new CompletedObjectives());
+client.addCommand([';selected-objectives', ';selectedobjectives', ';objetivosselecionados'], new SelectedObjectives());
