@@ -4,8 +4,8 @@ import db from '../../../db/db';
 import { character } from '../../../db/schema';
 import hasPermission from '../../../decorators/has-permission';
 import ImageFactory from '../../../factories/image-factory';
+import addConfirmation from '../../../utils/confirmation-row';
 import Command from '../../base-command';
-import addConfirmation from '../../confirmation';
 
 export default class NewGen implements Command {
     @hasPermission(PermissionFlagsBits.Administrator)

@@ -2,7 +2,7 @@ import { Colors, EmbedBuilder, Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../db/db';
 import { item } from '../db/schema';
-import { getMostSimilarString } from '../utils';
+import getMostSimilarString from '../utils/levenshtein';
 
 type Item = {
     id: number;

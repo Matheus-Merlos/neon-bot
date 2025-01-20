@@ -10,7 +10,7 @@ import { asc, count, desc, eq, gt } from 'drizzle-orm';
 import db from '../../db/db';
 import { inventory, item, rank, reachedRank } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
-import { getIdFromMention } from '../../utils';
+import getIdFromMention from '../../utils/get-id-from-mention';
 import Command from '../base-command';
 
 export default class Inventory implements Command {

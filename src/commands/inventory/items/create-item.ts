@@ -5,7 +5,7 @@ import { item } from '../../../db/schema';
 import hasPermission from '../../../decorators/has-permission';
 import ImageFactory from '../../../factories/image-factory';
 import ItemFactory from '../../../factories/item-factory';
-import { toSlug } from '../../../utils';
+import toSlug from '../../../utils/slug';
 import Command from '../../base-command';
 
 export default class CreateItem implements Command {

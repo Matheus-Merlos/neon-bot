@@ -5,7 +5,7 @@ import { character } from '../../../db/schema';
 import hasMention from '../../../decorators/has-mention';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
-import { getIdFromMention } from '../../../utils';
+import getIdFromMention from '../../../utils/get-id-from-mention';
 import Command from '../../base-command';
 
 class AddRemoveCommand {

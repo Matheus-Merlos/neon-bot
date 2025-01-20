@@ -5,9 +5,9 @@ import { item as itemTable } from '../../../db/schema';
 import hasPermission from '../../../decorators/has-permission';
 import ImageFactory from '../../../factories/image-factory';
 import ItemFactory from '../../../factories/item-factory';
-import { toSlug } from '../../../utils';
+import addConfirmation from '../../../utils/confirmation-row';
+import toSlug from '../../../utils/slug';
 import Command from '../../base-command';
-import addConfirmation from '../../confirmation';
 
 export default class DeleteItem implements Command {
     @hasPermission(PermissionFlagsBits.ManageChannels)

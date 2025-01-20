@@ -1,7 +1,3 @@
-function getIdFromMention(mention: string): string {
-    return mention.slice(2, mention.length - 1);
-}
-
 function getMostSimilarString(arr: string[], target: string): string {
     if (arr.length === 0) {
         throw new Error('O array não pode ser vazio');
@@ -73,12 +69,4 @@ function getMostSimilarString(arr: string[], target: string): string {
     return mostSimilarString;
 }
 
-function toSlug(str: string): string {
-    //Removes words with diacritics in them
-    const noDiacritics = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-    const noSpace = noDiacritics.replaceAll(' ', '-');
-    return noSpace.toLowerCase();
-}
-
-export { getIdFromMention, getMostSimilarString, toSlug };
+export default getMostSimilarString;

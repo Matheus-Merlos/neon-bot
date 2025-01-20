@@ -6,9 +6,9 @@ import hasMention from '../../../decorators/has-mention';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
 import ImageFactory from '../../../factories/image-factory';
-import { getIdFromMention } from '../../../utils';
+import addConfirmation from '../../../utils/confirmation-row';
+import getIdFromMention from '../../../utils/get-id-from-mention';
 import Command from '../../base-command';
-import addConfirmation from '../../confirmation';
 
 export default class Reset implements Command {
     @hasPermission(PermissionFlagsBits.Administrator)
