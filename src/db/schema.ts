@@ -81,6 +81,7 @@ export const objective = sqliteTable('objective', {
     name: text('name').notNull(),
     xp: int('xp').notNull(),
     gold: int('gold').notNull(),
+    description: text('description').notNull(),
     type: int('type')
         .notNull()
         .references(() => objectiveDifficulty.id, { onDelete: 'cascade', onUpdate: 'cascade' }),

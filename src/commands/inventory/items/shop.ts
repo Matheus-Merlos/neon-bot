@@ -1,11 +1,4 @@
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    Colors,
-    EmbedBuilder,
-    Message,
-} from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, Message } from 'discord.js';
 import { asc, eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { item } from '../../../db/schema';
@@ -32,9 +25,7 @@ export default class Shop implements Command {
             .orderBy(asc(item.price));
 
         if (items.length === 0) {
-            await message.reply(
-                'Sua loja não possuem items, você pode criar eles com o comando `;create-item`.',
-            );
+            await message.reply('Sua loja não possuem items, você pode criar eles com o comando `;create-item`.');
             return;
         }
 
@@ -48,16 +39,9 @@ export default class Shop implements Command {
 
         let currentIndex = 0;
 
-        let shopEmbed = this.getShopEmbed(
-            itemMatrix[currentIndex],
-            itemMatrix.length,
-            currentIndex,
-        );
+        let shopEmbed = this.getShopEmbed(itemMatrix[currentIndex], itemMatrix.length, currentIndex);
 
-        const forwardButton = new ButtonBuilder()
-            .setCustomId('forward')
-            .setLabel('Próximo')
-            .setStyle(ButtonStyle.Primary);
+        const forwardButton = new ButtonBuilder().setCustomId('forward').setLabel('Próximo').setStyle(ButtonStyle.Primary);
 
         const backwardsButton = new ButtonBuilder()
             .setCustomId('backward')
@@ -69,10 +53,7 @@ export default class Shop implements Command {
             forwardButton.setDisabled(true);
         }
 
-        let row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            backwardsButton,
-            forwardButton,
-        );
+        let row = new ActionRowBuilder<ButtonBuilder>().addComponents(backwardsButton, forwardButton);
 
         const shopMessage = await message.reply({ embeds: [shopEmbed], components: [row] });
 
@@ -86,16 +67,9 @@ export default class Shop implements Command {
                 forwardButton.setDisabled(currentIndex === itemMatrix.length - 1);
                 backwardsButton.setDisabled(currentIndex === 0);
 
-                shopEmbed = this.getShopEmbed(
-                    itemMatrix[currentIndex],
-                    itemMatrix.length,
-                    currentIndex,
-                );
+                shopEmbed = this.getShopEmbed(itemMatrix[currentIndex], itemMatrix.length, currentIndex);
 
-                row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-                    backwardsButton,
-                    forwardButton,
-                );
+                row = new ActionRowBuilder<ButtonBuilder>().addComponents(backwardsButton, forwardButton);
 
                 await interaction.deferUpdate();
                 await shopMessage.edit({ embeds: [shopEmbed], components: [row] });
@@ -105,11 +79,7 @@ export default class Shop implements Command {
         }
     }
 
-    private getShopEmbed(
-        items: Array<Item>,
-        totalPages: number,
-        currentIndex: number,
-    ): EmbedBuilder {
+    private getShopEmbed(items: Array<Item>, totalPages: number, currentIndex: number): EmbedBuilder {
         const shopEmbed = new EmbedBuilder()
             .setTitle('Loja')
             .setColor(Colors.Yellow)

@@ -15,6 +15,11 @@ import Item from './commands/inventory/items/item';
 import Pay from './commands/inventory/items/pay';
 import Shop from './commands/inventory/items/shop';
 import Use from './commands/inventory/items/use';
+import CreateObjective from './commands/objectives/create-objective';
+import CreateObjectiveDifficulty from './commands/objectives/create-objective-difficulty';
+import DeleteObjective from './commands/objectives/delete-objective';
+import Objectives from './commands/objectives/objectives';
+import SelectObjective from './commands/objectives/select-objective';
 
 config();
 
@@ -39,6 +44,12 @@ const use = new Use();
 const reset = new Reset();
 const newGen = new NewGen();
 
+const createObjectiveDifficulty = new CreateObjectiveDifficulty();
+const createObjective = new CreateObjective();
+const deleteObjective = new DeleteObjective();
+
+const objectives = new Objectives();
+
 const client = new Client(';');
 
 client.addCommand([';addexp', ';add-exp'], addExp);
@@ -61,3 +72,10 @@ client.addCommand([';use', ';usar'], use);
 
 client.addCommand([';reset', ';resetar', ';clear'], reset);
 client.addCommand([';newgen', ';resettotal', ';novagen'], newGen);
+
+client.addCommand([';createobjectivedifficulty', ';coj', ';cdo', ';create-objective-difficulty'], createObjectiveDifficulty);
+client.addCommand([';createobjective', ';create-objective', ';criarobjetivo'], createObjective);
+client.addCommand([';deleteobjective', ';delete-objective', ';deletarobjetivo'], deleteObjective);
+
+client.addCommand([';objectives', ';objetivos'], objectives);
+client.addCommand([';selectobjective', ';select-objective', ';selecionarobjetivo'], new SelectObjective());
