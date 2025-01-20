@@ -51,6 +51,6 @@ Você não tem dinheiro o suficiente para fazer essa compra.
             }
         });
 
-        message.reply(`Você comprou com sucesso **${quantity}** **${itemName}**`);
+        message.reply(`Você comprou com sucesso **${quantity}** **${item.name}**`);
     }
 }

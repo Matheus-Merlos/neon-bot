@@ -10,50 +10,63 @@ function getMostSimilarString(arr: string[], target: string): string {
     target = target.toLowerCase();
 
     function levenshtein(a: string, b: string): number {
-        a = a.toLowerCase();
-        b = b.toLowerCase();
-
-        const tmp: number[] = [];
-        let i: number, j: number;
         const alen = a.length;
         const blen = b.length;
-        if (alen === 0) {
-            return blen;
-        }
-        if (blen === 0) {
-            return alen;
-        }
+        const dp = Array.from({ length: alen + 1 }, () => Array(blen + 1).fill(0));
 
-        for (i = 0; i <= alen; i++) {
-            tmp[i] = i;
-        }
+        for (let i = 0; i <= alen; i++) dp[i][0] = i;
+        for (let j = 0; j <= blen; j++) dp[0][j] = j;
 
-        for (j = 0; j <= blen; j++) {
-            let lastValue = j;
-            for (i = 0; i < alen; i++) {
-                const oldValue = tmp[i];
-                tmp[i] =
-                    a[i] === b[j]
-                        ? lastValue
-                        : Math.min(lastValue + 1, Math.min(oldValue + 1, tmp[i] + 1));
-                lastValue = oldValue;
+        for (let i = 1; i <= alen; i++) {
+            for (let j = 1; j <= blen; j++) {
+                dp[i][j] =
+                    a[i - 1] === b[j - 1]
+                        ? dp[i - 1][j - 1]
+                        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
             }
         }
-        return tmp[alen - 1];
+
+        return dp[alen][blen];
     }
 
-    let mostSimilarString = arr[0].toLowerCase();
-    let minDistance = levenshtein(target, arr[0]);
+    function normalizedLevenshtein(a: string, b: string): number {
+        const distance = levenshtein(a, b);
+        const maxLength = Math.max(a.length, b.length);
+        return distance / maxLength;
+    }
+
+    function getTokenSimilarity(target: string, candidate: string): number {
+        const targetTokens = target.split(' ');
+        const candidateTokens = candidate.split(' ');
+        let totalScore = 0;
+
+        for (const tToken of targetTokens) {
+            let bestScore = 1; // Inicia com o pior caso (similaridade máxima)
+            for (const cToken of candidateTokens) {
+                const similarity = normalizedLevenshtein(tToken, cToken);
+                if (similarity < bestScore) {
+                    bestScore = similarity; // Busca a melhor similaridade com o token atual
+                }
+            }
+            totalScore += bestScore;
+        }
+
+        return totalScore / targetTokens.length; // Média da similaridade
+    }
+
+    let mostSimilarString = arr[0];
+    let bestScore = getTokenSimilarity(target, arr[0].toLowerCase());
 
     for (let i = 1; i < arr.length; i++) {
-        const currentDistance = levenshtein(target, arr[i]);
-        if (currentDistance < minDistance) {
-            minDistance = currentDistance;
-            mostSimilarString = arr[i].toLowerCase();
+        const score = getTokenSimilarity(target, arr[i].toLowerCase());
+        if (score < bestScore) {
+            bestScore = score;
+            mostSimilarString = arr[i];
         }
     }
 
-    if (minDistance > target.length / 2) {
+    // Ajuste do limite: quanto menor o score, mais similar
+    if (bestScore > 0.5) {
         throw new Error('Nenhuma string similar foi encontrada');
     }
 
