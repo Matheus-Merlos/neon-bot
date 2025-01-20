@@ -67,3 +67,41 @@ export const inventory = sqliteTable('inventory', {
         .notNull()
         .references(() => item.id, { onDelete: 'cascade' }),
 });
+
+/*
+Objective System
+*/
+export const objectiveDifficulty = sqliteTable('objective_difficulty', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    name: text('name').notNull(),
+});
+
+export const objective = sqliteTable('objective', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    name: text('name').notNull(),
+    xp: int('xp').notNull(),
+    gold: int('gold').notNull(),
+    type: int('type')
+        .notNull()
+        .references(() => objectiveDifficulty.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+});
+
+export const selectedObjective = sqliteTable('selected_objective', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    objectiveId: int('objective_id')
+        .notNull()
+        .references(() => objective.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    characterId: int('character_id')
+        .notNull()
+        .references(() => character.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+});
+
+export const completedObjective = sqliteTable('completed_objective', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    objectiveId: int('objective_id')
+        .notNull()
+        .references(() => objective.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    characterId: int('character_id')
+        .notNull()
+        .references(() => character.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+});
