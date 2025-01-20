@@ -1,10 +1,4 @@
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    Message,
-    PermissionFlagsBits,
-} from 'discord.js';
+import { Message, PermissionFlagsBits } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { item as itemTable } from '../../../db/schema';
@@ -13,11 +7,7 @@ import ImageFactory from '../../../factories/image-factory';
 import ItemFactory from '../../../factories/item-factory';
 import { toSlug } from '../../../utils';
 import Command from '../../base-command';
-
-enum DeleteItemActions {
-    CANCEL = 'cancel',
-    ACCEPT = 'accept',
-}
+import addConfirmation from '../../confirmation';
 
 export default class DeleteItem implements Command {
     @hasPermission(PermissionFlagsBits.ManageChannels)
@@ -33,54 +23,31 @@ export default class DeleteItem implements Command {
             return;
         }
 
-        const cancelButton = new ButtonBuilder()
-            .setCustomId(DeleteItemActions.CANCEL)
-            .setStyle(ButtonStyle.Primary)
-            .setLabel('Cancelar');
+        await addConfirmation({
+            message: message,
+            confirmationMsgContent: `Atenção: Isso irá deletar o item **${item.name}**. Você tem certeza que quer fazer isso?`,
+            timeToInteract: 30_000,
+            interactionFilter: (i) => i.user.id === message.author.id,
+            actions: {
+                async callbackFnAccept(confirmationMessage: Message) {
+                    await ImageFactory.getInstance().deleteImage(
+                        'items',
+                        `${item.salt}-${toSlug(item.name)}.png`,
+                    );
 
-        const acceptButton = new ButtonBuilder()
-            .setCustomId(DeleteItemActions.ACCEPT)
-            .setStyle(ButtonStyle.Danger)
-            .setLabel('Confirmar');
+                    await db.delete(itemTable).where(eq(itemTable.id, item.id));
 
-        const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            cancelButton,
-            acceptButton,
-        );
-
-        const confirmationMessage = await message.reply({
-            content: `Atenção: Isso irá deletar o item **${item.name}**. Você tem certeza que quer fazer isso?`,
-            components: [buttonRow],
+                    await confirmationMessage.edit({
+                        content: `Item **${item.name}** deletado com sucesso.`,
+                        components: [],
+                    });
+                    return;
+                },
+                //Throwing a error because tha catch will just edit the message
+                callbackFnDecline() {
+                    throw new Error();
+                },
+            },
         });
-
-        try {
-            const confirmation = await confirmationMessage.awaitMessageComponent({
-                filter: (i) => i.user.id === message.author.id,
-                time: 30_000,
-            });
-
-            if (confirmation.customId === DeleteItemActions.CANCEL) {
-                throw new Error();
-            }
-
-            if (confirmation.customId === DeleteItemActions.ACCEPT) {
-                await ImageFactory.getInstance().deleteImage(
-                    'items',
-                    `${item.salt}-${toSlug(item.name)}.png`,
-                );
-
-                await db.delete(itemTable).where(eq(itemTable.id, item.id));
-
-                await confirmationMessage.edit({
-                    content: `Item **${item.name}** deletado com sucesso.`,
-                    components: [],
-                });
-                confirmation.deferUpdate();
-                return;
-            }
-        } catch {
-            await confirmationMessage.edit({ content: `Operação cancelada.`, components: [] });
-            return;
-        }
     }
 }
