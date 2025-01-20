@@ -5,7 +5,7 @@ import ObjectiveFactory from '../../factories/objective-factory';
 import Command from '../base-command';
 
 export default class CreateObjective implements Command {
-    @hasPermission(PermissionFlagsBits.Administrator)
+    @hasPermission(PermissionFlagsBits.ManageRoles)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         messageAsList.splice(0, 1);
 
