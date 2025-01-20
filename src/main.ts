@@ -15,6 +15,7 @@ import Item from './commands/inventory/items/item';
 import Pay from './commands/inventory/items/pay';
 import Shop from './commands/inventory/items/shop';
 import Use from './commands/inventory/items/use';
+import CompletedObjective from './commands/objectives/completed-objective';
 import CreateObjective from './commands/objectives/create-objective';
 import CreateObjectiveDifficulty from './commands/objectives/create-objective-difficulty';
 import DeleteObjective from './commands/objectives/delete-objective';
@@ -78,4 +79,5 @@ client.addCommand([';createobjective', ';create-objective', ';criarobjetivo'], c
 client.addCommand([';deleteobjective', ';delete-objective', ';deletarobjetivo'], deleteObjective);
 
 client.addCommand([';objectives', ';objetivos'], objectives);
-client.addCommand([';selectobjective', ';select-objective', ';selecionarobjetivo'], new SelectObjective());
+client.addCommand([';chooseobjective', ';choose-objective', ';escolherobjetivo'], new SelectObjective());
+client.addCommand([';completed-objective', ';completedobjective', ';objetivoconcluído'], new CompletedObjective());

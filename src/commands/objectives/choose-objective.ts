@@ -21,6 +21,20 @@ export default class SelectObjective implements Command {
             return;
         }
 
+        const alreadyCompletedObjectives = (
+            await db
+                .select({
+                    id: completedObjective.objectiveId,
+                })
+                .from(completedObjective)
+                .where(eq(completedObjective.characterId, char.id))
+        ).map((obj) => obj.id);
+
+        if (alreadyCompletedObjectives.includes(objectiveToSelect.id)) {
+            message.reply(`Você já concluiu esse objetivo anteriormente.`);
+            return;
+        }
+
         const alreadySelectedObjectives = (
             await db
                 .select({
@@ -33,21 +47,6 @@ export default class SelectObjective implements Command {
 
         if (alreadySelectedObjectives.includes(objectiveToSelect.type)) {
             message.reply(`Você já tem um objetivo dessa dificuldade selecionado.`);
-            return;
-        }
-
-        const alreadyCompletedObjectives = (
-            await db
-                .select({
-                    difficultyId: objective.type,
-                })
-                .from(completedObjective)
-                .where(eq(completedObjective.characterId, char.id))
-                .innerJoin(objective, eq(completedObjective.objectiveId, objective.id))
-        ).map((obj) => obj.difficultyId);
-
-        if (alreadyCompletedObjectives.includes(objectiveToSelect.type)) {
-            message.reply(`Você já concluiu esse objetivo anteriormente.`);
             return;
         }
 
