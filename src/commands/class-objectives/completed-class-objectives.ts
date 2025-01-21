@@ -13,7 +13,6 @@ export default class CompletedClassObjectives implements Command {
         if (messageAsList[1]) {
             char = await CharacterFactory.getFromId(getIdFromMention(messageAsList[1]), message);
             messageAsList.splice(0, 1);
-            console.log('Chegou auqi');
         } else {
             char = await CharacterFactory.getFromId(message.author.id, message);
         }

@@ -34,10 +34,7 @@ export default class SetClass implements Command {
 
             await trx.delete(completedClassObjective).where(eq(completedClassObjective.characterId, char.id));
 
-            const classObjectives = await trx
-                .select()
-                .from(classObjective)
-                .where(eq(classObjective.classId, char.characterClass!));
+            const classObjectives = await trx.select().from(classObjective).where(eq(classObjective.classId, cls.id));
 
             for (const clsObj of classObjectives) {
                 await trx.insert(completedClassObjective).values({ characterId: char.id, classObjectiveId: clsObj.id });
