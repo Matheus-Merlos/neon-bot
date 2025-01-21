@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
-import db from '../db/db';
-import { objectiveDifficulty } from '../db/schema';
-import getMostSimilarString from '../utils/levenshtein';
-import { default as Factory } from './base-factory';
+import db from '../../db/db';
+import { objectiveDifficulty } from '../../db/schema';
+import getMostSimilarString from '../../utils/levenshtein';
+import Factory from '../base-factory';
 
 export default class ObjectiveDifficultyFactory implements Factory<typeof objectiveDifficulty> {
     private static instance: ObjectiveDifficultyFactory | null = null;

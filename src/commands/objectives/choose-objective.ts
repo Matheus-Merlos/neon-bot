@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { completedObjective, objective, selectedObjective } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
-import ObjectiveFactory from '../../factories/objective-factory';
+import ObjectiveFactory from '../../factories/objectives/objective-factory';
 import Command from '../base-command';
 
 export default class SelectObjective implements Command {

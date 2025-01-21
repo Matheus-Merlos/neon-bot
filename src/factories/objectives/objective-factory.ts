@@ -1,8 +1,8 @@
 import { asc, eq } from 'drizzle-orm';
-import db from '../db/db';
-import { objective } from '../db/schema';
-import getMostSimilarString from '../utils/levenshtein';
-import Factory from './base-factory';
+import db from '../../db/db';
+import { objective } from '../../db/schema';
+import getMostSimilarString from '../../utils/levenshtein';
+import Factory from '../base-factory';
 
 export default class ObjectiveFactory implements Factory<typeof objective> {
     private static instance: ObjectiveFactory | null = null;

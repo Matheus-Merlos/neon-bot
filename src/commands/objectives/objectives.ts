@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, Message } from 'discord.js';
 import { InferSelectModel } from 'drizzle-orm';
 import { objective } from '../../db/schema';
-import ObjectiveFactory from '../../factories/objective-factory';
+import ObjectiveFactory from '../../factories/objectives/objective-factory';
 import Command from '../base-command';
 
 const OBJECTIVES_PER_PAGE = 5;

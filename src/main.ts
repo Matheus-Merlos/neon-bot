@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 import { default as Client } from './client';
+import CreateClass from './commands/class-objectives/create-class';
 import NewGen from './commands/inventory/character/newgen';
 import Reset from './commands/inventory/character/reset';
 import AddExp from './commands/inventory/exp-gold/add-exp';
@@ -85,3 +86,5 @@ client.addCommand([';chooseobjective', ';choose-objective', ';escolherobjetivo']
 client.addCommand([';completed-objective', ';completedobjective', ';objetivoconcluído'], new CompletedObjective());
 client.addCommand([';completed-objectives', ';completedobjectives', ';objetivosconcluidos'], new CompletedObjectives());
 client.addCommand([';selected-objectives', ';selectedobjectives', ';objetivosselecionados'], new SelectedObjectives());
+
+client.addCommand([';createclass', ';create-class', ';criar-classe', ';criarclasse'], new CreateClass());

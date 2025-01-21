@@ -1,7 +1,7 @@
 import { Colors, EmbedBuilder, Message, PermissionFlagsBits } from 'discord.js';
 import hasPermission from '../../decorators/has-permission';
-import ObjectiveDifficultyFactory from '../../factories/objective-difficulty-factory';
-import ObjectiveFactory from '../../factories/objective-factory';
+import ObjectiveDifficultyFactory from '../../factories/objectives/objective-difficulty-factory';
+import { default as ObjectiveFactory } from '../../factories/objectives/objective-factory';
 import Command from '../base-command';
 
 export default class CreateObjective implements Command {

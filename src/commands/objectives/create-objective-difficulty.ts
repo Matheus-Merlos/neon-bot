@@ -1,6 +1,6 @@
 import { Message, PermissionFlagsBits } from 'discord.js';
 import hasPermission from '../../decorators/has-permission';
-import ObjectiveDifficultyFactory from '../../factories/objective-difficulty-factory';
+import { default as ObjectiveDifficultyFactory } from '../../factories/objectives/objective-difficulty-factory';
 import Command from '../base-command';
 
 export default class CreateObjectiveDifficulty implements Command {

@@ -1,6 +1,6 @@
 import { Message, PermissionFlagsBits } from 'discord.js';
 import hasPermission from '../../decorators/has-permission';
-import ObjectiveFactory from '../../factories/objective-factory';
+import ObjectiveFactory from '../../factories/objectives/objective-factory';
 import addConfirmation from '../../utils/confirmation-row';
 import Command from '../base-command';
 
