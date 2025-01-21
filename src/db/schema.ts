@@ -126,11 +126,11 @@ export const character = sqliteTable('character', {
 
 export const completedClassObjective = sqliteTable('completed_class_objective', {
     id: int('id').primaryKey({ autoIncrement: true }).notNull(),
-    characterId: int('id')
+    characterId: int('character_id')
         .notNull()
         .references(() => character.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-    classId: int('id')
+    classObjectiveId: int('class_objective_id')
         .notNull()
-        .references(() => characterClass.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+        .references(() => classObjective.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
     completed: int('completed', { mode: 'boolean' }).default(false).notNull(),
 });

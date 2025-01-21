@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
 import { default as Client } from './client';
 import Classes from './commands/class-objectives/classes';
+import CompletedClassObjective from './commands/class-objectives/completed-class-objective';
 import CreateClass from './commands/class-objectives/create-class';
 import CreateClassObjective from './commands/class-objectives/create-class-objective';
 import DeleteClass from './commands/class-objectives/delete-class';
@@ -97,3 +98,4 @@ client.addCommand([';classes', ';class-list'], new Classes());
 client.addCommand([';set-class', ';setclass'], new SetClass());
 
 client.addCommand([';create-class-objective', ';criar-objetivo-classe'], new CreateClassObjective());
+client.addCommand([';completed-class-objective', ';objetivo-classe-concluido'], new CompletedClassObjective());

@@ -1,5 +1,7 @@
+import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { classObjective } from '../../db/schema';
+import getMostSimilarString from '../../utils/levenshtein';
 import Factory from '../base-factory';
 
 export default class ClassObjectiveFactory implements Factory<typeof classObjective> {
@@ -30,16 +32,28 @@ export default class ClassObjectiveFactory implements Factory<typeof classObject
         return createdClassObjective;
     }
 
-    getByName(
-        ...params: Array<unknown>
+    async getByName(
+        name: string,
     ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number }> {
-        throw new Error('Method not implemented.');
+        const classObjectives = (await this.getAll()).map((entry) => ({
+            id: entry.id,
+            name: entry.name.toLowerCase(),
+        }));
+
+        const desiredClassObjectiveName = getMostSimilarString(
+            classObjectives.map((cls) => cls.name),
+            name,
+        );
+
+        const objectiveId = classObjectives.find((cls) => cls.name === desiredClassObjectiveName)!.id;
+
+        const [cls] = await db.select().from(classObjective).where(eq(classObjective.id, objectiveId));
+
+        return cls;
     }
 
-    getAll(
-        ...params: Array<unknown>
-    ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number }[]> {
-        throw new Error('Method not implemented.');
+    async getAll(): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number }[]> {
+        return await db.select().from(classObjective);
     }
 
     delete(id: number): Promise<void> {

@@ -1,10 +1,11 @@
 import { Message, PermissionFlagsBits } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
-import { character } from '../../db/schema';
+import { character, completedClassObjective } from '../../db/schema';
 import hasPermission from '../../decorators/has-permission';
 import CharacterFactory from '../../factories/character-factory';
 import ClassFactory from '../../factories/class-objectives/class-factory';
+import ClassObjectiveFactory from '../../factories/class-objectives/class-objective-factory';
 import getIdFromMention from '../../utils/get-id-from-mention';
 import Command from '../base-command';
 
@@ -29,7 +30,14 @@ export default class SetClass implements Command {
             return;
         }
 
-        await db.update(character).set({ characterClass: cls.id }).where(eq(character.id, char.id));
+        await db.transaction(async (trx) => {
+            await trx.update(character).set({ characterClass: cls.id }).where(eq(character.id, char.id));
+
+            const classObjectives = await ClassObjectiveFactory.getInstance().getAll();
+            classObjectives.forEach(async (clsObj) => {
+                await trx.insert(completedClassObjective).values({ characterId: char.id, classObjectiveId: clsObj.id });
+            });
+        });
 
         await message.reply(`Classe **${cls.name}** adicionada ao personagem **${char.name}** com sucesso.`);
         return;
