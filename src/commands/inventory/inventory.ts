@@ -1,15 +1,9 @@
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    Colors,
-    EmbedBuilder,
-    Message,
-} from 'discord.js';
+import { Colors, EmbedBuilder, Message } from 'discord.js';
 import { asc, count, desc, eq, gt } from 'drizzle-orm';
 import db from '../../db/db';
 import { inventory, item, rank, reachedRank } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
+import embedList from '../../utils/embed-list';
 import getIdFromMention from '../../utils/get-id-from-mention';
 import Command from '../base-command';
 
@@ -64,152 +58,60 @@ export default class Inventory implements Command {
             .innerJoin(item, eq(inventory.itemId, item.id))
             .groupBy(inventory.itemId, item.name);
 
-        const itemMatrix: Array<Array<{ quantity: number; name: string; itemId: number }>> = [];
-
-        for (let i = 0; i < inventoryItems.length; i += 3) {
-            const itemSublist = inventoryItems.slice(i, i + 3);
-
-            itemMatrix.push(itemSublist);
-        }
-
-        let currentIndex = 0;
-
-        let inventoryEmbed = await this.getInventoryEmbed(
-            char.name,
-            char.xp,
-            char.gold,
-            actualRank.name,
-            itemMatrix[currentIndex],
-            itemMatrix.length,
-            currentIndex,
-            nextReacheableRank.name,
-            nextRankDiff,
-            char.imageUrl,
-        );
-
-        const forwardButton = new ButtonBuilder()
-            .setCustomId('forward')
-            .setLabel('Próximo')
-            .setStyle(ButtonStyle.Primary)
-            .setDisabled(itemMatrix.length < 1);
-
-        const backwardsButton = new ButtonBuilder()
-            .setCustomId('backward')
-            .setLabel('Anterior')
-            .setStyle(ButtonStyle.Primary)
-            .setDisabled(true);
-
-        if (itemMatrix.length == currentIndex + 1) {
-            forwardButton.setDisabled(true);
-        }
-
-        let row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            backwardsButton,
-            forwardButton,
-        );
-
-        const invMessage = await message.reply({ embeds: [inventoryEmbed], components: [row] });
-
-        try {
-            const collector = invMessage.createMessageComponentCollector({ time: 60_000 });
-
-            collector.on('collect', async (interaction) => {
-                if (interaction.customId === 'forward') currentIndex++;
-                if (interaction.customId === 'backward') currentIndex--;
-
-                forwardButton.setDisabled(currentIndex === itemMatrix.length - 1);
-                backwardsButton.setDisabled(currentIndex === 0);
-
-                inventoryEmbed = await this.getInventoryEmbed(
-                    char.name,
-                    char.xp,
-                    char.gold,
-                    actualRank.name,
-                    itemMatrix[currentIndex],
-                    itemMatrix.length,
-                    currentIndex,
-                    nextReacheableRank.name,
-                    nextRankDiff,
-                    char.imageUrl,
+        await embedList(inventoryItems, 3, message, async (matrix: Array<typeof inventoryItems>, currentIndex) => {
+            const embed = new EmbedBuilder()
+                .setColor(Colors.Blue)
+                .setTitle(`Inventário de ${char.name}`)
+                .addFields(
+                    { name: 'EXP', value: `${char.xp}`, inline: true },
+                    {
+                        name: 'Gold',
+                        value: `${char.gold}`,
+                        inline: true,
+                    },
+                    {
+                        name: 'Rank',
+                        value: actualRank.name,
+                        inline: true,
+                    },
+                    {
+                        name: 'Próximo Rank',
+                        value: nextReacheableRank.name,
+                        inline: true,
+                    },
+                    {
+                        name: 'XP Faltando',
+                        value: `${nextRankDiff}`,
+                        inline: true,
+                    },
+                    { name: '\u200B', value: '\u200B' },
                 );
 
-                row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-                    backwardsButton,
-                    forwardButton,
-                );
+            if (matrix[currentIndex] && matrix[currentIndex].length > 0) {
+                for (const item of matrix[currentIndex]) {
+                    const itemDurabilities = (
+                        await db
+                            .select({ durability: inventory.durability })
+                            .from(inventory)
+                            .where(eq(inventory.itemId, item.itemId))
+                            .orderBy(asc(inventory.durability))
+                    ).map((i) => i.durability);
 
-                await interaction.deferUpdate();
-                await invMessage.edit({ embeds: [inventoryEmbed], components: [row] });
-            });
-        } catch {
-            return;
-        }
-    }
-
-    private async getInventoryEmbed(
-        characterName: string,
-        exp: number,
-        gold: number,
-        currentRank: string,
-        items: Array<{ quantity: number; name: string; itemId: number }>,
-        totalPages: number,
-        currentPage: number,
-        nextRank: string,
-        necessaryXp: number | string,
-        imageUrl: string | null,
-    ): Promise<EmbedBuilder> {
-        const embed = new EmbedBuilder()
-            .setColor(Colors.Blue)
-            .setTitle(`Inventário de ${characterName}`)
-            .addFields(
-                { name: 'EXP', value: `${exp}`, inline: true },
-                {
-                    name: 'Gold',
-                    value: `${gold}`,
-                    inline: true,
-                },
-                {
-                    name: 'Rank',
-                    value: currentRank,
-                    inline: true,
-                },
-                {
-                    name: 'Próximo Rank',
-                    value: nextRank,
-                    inline: true,
-                },
-                {
-                    name: 'XP Faltando',
-                    value: `${necessaryXp}`,
-                    inline: true,
-                },
-                { name: '\u200B', value: '\u200B' },
-            );
-
-        if (items && items.length > 0) {
-            for (const item of items) {
-                const itemDurabilities = (
-                    await db
-                        .select({ durability: inventory.durability })
-                        .from(inventory)
-                        .where(eq(inventory.itemId, item.itemId))
-                        .orderBy(asc(inventory.durability))
-                ).map((i) => i.durability);
-
-                embed.addFields({
-                    name: `${item.quantity} - ${item.name}`,
-                    value: `Durabilidades: ${itemDurabilities}`,
-                    inline: false,
-                });
+                    embed.addFields({
+                        name: `${item.quantity} - ${item.name}`,
+                        value: `Durabilidades: ${itemDurabilities}`,
+                        inline: false,
+                    });
+                }
             }
-        }
 
-        if (imageUrl) {
-            embed.setThumbnail(imageUrl);
-        }
+            if (char.imageUrl) {
+                embed.setThumbnail(char.imageUrl);
+            }
 
-        embed.setFooter({ text: `Página ${currentPage + 1}/${totalPages === 0 ? 1 : totalPages}` });
+            embed.setFooter({ text: `Página ${currentIndex + 1}/${matrix.length === 0 ? 1 : matrix.length}` });
 
-        return embed;
+            return embed;
+        });
     }
 }
