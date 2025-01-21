@@ -36,23 +36,24 @@ export default class CompletedClassObjective implements Command {
             return;
         }
 
+        const [clsObj] = await db
+            .select()
+            .from(completedClassObjective)
+            .where(
+                and(
+                    eq(completedClassObjective.classObjectiveId, classObjective.id),
+                    eq(completedClassObjective.characterId, char.id),
+                ),
+            );
+
+        if (clsObj.completed) {
+            message.reply(`**${char.name}** já completou este objetivo.`);
+            return;
+        }
+
+        await checkCaracterLevelUp(message, char, classObjective.xp);
+
         await db.transaction(async (trx) => {
-            const [clsObj] = await trx
-                .select()
-                .from(completedClassObjective)
-                .where(
-                    and(
-                        eq(completedClassObjective.classObjectiveId, classObjective.id),
-                        eq(completedClassObjective.characterId, char.id),
-                    ),
-                );
-
-            if (clsObj.completed) {
-                message.reply(`**${char.name}** já completou este objetivo.`);
-                trx.rollback();
-                return;
-            }
-
             await trx
                 .update(completedClassObjective)
                 .set({ completed: true })
@@ -62,8 +63,6 @@ export default class CompletedClassObjective implements Command {
                         eq(completedClassObjective.characterId, char.id),
                     ),
                 );
-
-            await checkCaracterLevelUp(message, char, classObjective.xp);
 
             await trx
                 .update(character)
