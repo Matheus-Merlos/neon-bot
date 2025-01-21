@@ -1,6 +1,10 @@
 import { config } from 'dotenv';
 import { default as Client } from './client';
+import Classes from './commands/class-objectives/classes';
 import CreateClass from './commands/class-objectives/create-class';
+import CreateClassObjective from './commands/class-objectives/create-class-objective';
+import DeleteClass from './commands/class-objectives/delete-class';
+import SetClass from './commands/class-objectives/set-class';
 import NewGen from './commands/inventory/character/newgen';
 import Reset from './commands/inventory/character/reset';
 import AddExp from './commands/inventory/exp-gold/add-exp';
@@ -88,3 +92,8 @@ client.addCommand([';completed-objectives', ';completedobjectives', ';objetivosc
 client.addCommand([';selected-objectives', ';selectedobjectives', ';objetivosselecionados'], new SelectedObjectives());
 
 client.addCommand([';createclass', ';create-class', ';criar-classe', ';criarclasse'], new CreateClass());
+client.addCommand([';delete-class', ';deleteclass', ';deletar-classe'], new DeleteClass());
+client.addCommand([';classes', ';class-list'], new Classes());
+client.addCommand([';set-class', ';setclass'], new SetClass());
+
+client.addCommand([';create-class-objective', ';criar-objetivo-classe'], new CreateClassObjective());

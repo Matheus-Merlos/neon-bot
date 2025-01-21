@@ -21,20 +21,11 @@ export default async function addConfirmation({
         callbackFnDecline: (confirmationMessage: Message) => void | Promise<void>;
     };
 }) {
-    const cancelButton = new ButtonBuilder()
-        .setCustomId(Actions.DECLINE)
-        .setStyle(ButtonStyle.Primary)
-        .setLabel('Cancelar');
+    const cancelButton = new ButtonBuilder().setCustomId(Actions.DECLINE).setStyle(ButtonStyle.Primary).setLabel('Cancelar');
 
-    const acceptButton = new ButtonBuilder()
-        .setCustomId(Actions.ACCEPT)
-        .setStyle(ButtonStyle.Danger)
-        .setLabel('Confirmar');
+    const acceptButton = new ButtonBuilder().setCustomId(Actions.ACCEPT).setStyle(ButtonStyle.Danger).setLabel('Confirmar');
 
-    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-        cancelButton,
-        acceptButton,
-    );
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(cancelButton, acceptButton);
 
     const confirmationMessage = await message.reply({
         content: confirmationMsgContent,
