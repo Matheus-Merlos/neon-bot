@@ -1,9 +1,10 @@
 import { Message, PermissionsBitField } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
-import { character, rank, reachedRank } from '../../../db/schema';
+import { character } from '../../../db/schema';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
+import checkCaracterLevelUp from '../../../utils/check-character-levelup';
 import getIdFromMention from '../../../utils/get-id-from-mention';
 import Command from '../../base-command';
 
@@ -20,29 +21,8 @@ export default class StackAddExp implements Command {
             characters.push(await CharacterFactory.getFromId(playerId, message));
         }
 
-        const ranks = await db.select().from(rank);
-
         for (const char of characters) {
-            const achievedRanks = (
-                await db
-                    .select({ id: reachedRank.rankId })
-                    .from(reachedRank)
-                    .where(eq(reachedRank.characterId, char.id))
-            ).map((obj) => obj.id);
-
-            ranks.forEach(async (rank) => {
-                const xp = char.xp + quantity;
-                if (xp >= rank.necessaryXp) {
-                    if (!achievedRanks.includes(rank.id)) {
-                        await db
-                            .insert(reachedRank)
-                            .values({ characterId: char.id, rankId: rank.id });
-                        await message.reply(
-                            `Parabéns <@${char.player}>, você evoluiu para o rank **${rank.name}**. Seu personagem ganhou **+${rank.extraHabs}** slots de habilidade, e **+${rank.extraAttributes}** pontos de atributo.`,
-                        );
-                    }
-                }
-            });
+            await checkCaracterLevelUp(message, char, quantity);
 
             await db
                 .update(character)
