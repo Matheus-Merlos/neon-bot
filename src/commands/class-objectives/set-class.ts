@@ -1,11 +1,10 @@
 import { Message, PermissionFlagsBits } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
-import { character, completedClassObjective } from '../../db/schema';
+import { character, classObjective, completedClassObjective } from '../../db/schema';
 import hasPermission from '../../decorators/has-permission';
 import CharacterFactory from '../../factories/character-factory';
 import ClassFactory from '../../factories/class-objectives/class-factory';
-import ClassObjectiveFactory from '../../factories/class-objectives/class-objective-factory';
 import getIdFromMention from '../../utils/get-id-from-mention';
 import Command from '../base-command';
 
@@ -35,7 +34,10 @@ export default class SetClass implements Command {
 
             await trx.delete(completedClassObjective).where(eq(completedClassObjective.characterId, char.id));
 
-            const classObjectives = await ClassObjectiveFactory.getInstance().getAll();
+            const classObjectives = await trx
+                .select()
+                .from(classObjective)
+                .where(eq(classObjective.classId, char.characterClass!));
             classObjectives.forEach(async (clsObj) => {
                 await trx.insert(completedClassObjective).values({ characterId: char.id, classObjectiveId: clsObj.id });
             });
