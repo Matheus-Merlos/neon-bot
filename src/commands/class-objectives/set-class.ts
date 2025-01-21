@@ -38,9 +38,10 @@ export default class SetClass implements Command {
                 .select()
                 .from(classObjective)
                 .where(eq(classObjective.classId, char.characterClass!));
-            classObjectives.forEach(async (clsObj) => {
+
+            for (const clsObj of classObjectives) {
                 await trx.insert(completedClassObjective).values({ characterId: char.id, classObjectiveId: clsObj.id });
-            });
+            }
         });
 
         await message.reply(`Classe **${cls.name}** adicionada ao personagem **${char.name}** com sucesso.`);
