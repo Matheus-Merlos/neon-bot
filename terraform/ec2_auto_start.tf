@@ -76,12 +76,12 @@ resource "aws_lambda_function" "start_ec2_lambda" {
 
 resource "aws_cloudwatch_event_rule" "ec2_stop_rule" {
     name                = "StopEC2Instances"
-    schedule_expression = "cron(0 22 * * ? *)"
+    schedule_expression = "cron(0 4 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_rule" "ec2_start_rule" {
     name                = "StartEC2Instances"
-    schedule_expression = "cron(0 6 * * ? *)"
+    schedule_expression = "cron(0 12 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "ec2_stop_rule_target" {
