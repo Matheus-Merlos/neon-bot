@@ -33,6 +33,8 @@ export default class SetClass implements Command {
         await db.transaction(async (trx) => {
             await trx.update(character).set({ characterClass: cls.id }).where(eq(character.id, char.id));
 
+            await trx.delete(completedClassObjective).where(eq(completedClassObjective.characterId, char.id));
+
             const classObjectives = await ClassObjectiveFactory.getInstance().getAll();
             classObjectives.forEach(async (clsObj) => {
                 await trx.insert(completedClassObjective).values({ characterId: char.id, classObjectiveId: clsObj.id });
