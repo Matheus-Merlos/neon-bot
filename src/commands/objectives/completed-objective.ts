@@ -2,7 +2,6 @@ import { Message } from 'discord.js';
 import { and, eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { character, completedObjective, selectedObjective } from '../../db/schema';
-import hasMention from '../../decorators/has-mention';
 import CharacterFactory from '../../factories/character-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
 import checkCaracterLevelUp from '../../utils/check-character-levelup';
@@ -10,11 +9,16 @@ import getIdFromMention from '../../utils/get-id-from-mention';
 import Command from '../base-command';
 
 export default class CompletedObjective implements Command {
-    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         messageAsList.splice(0, 1);
 
-        const char = await CharacterFactory.getFromId(getIdFromMention(messageAsList[0]), message);
+        let char;
+        if (messageAsList[1]) {
+            char = await CharacterFactory.getFromId(getIdFromMention(messageAsList[1]), message);
+            messageAsList.splice(0, 1);
+        } else {
+            char = await CharacterFactory.getFromId(message.author.id, message);
+        }
 
         messageAsList.splice(0, 1);
 

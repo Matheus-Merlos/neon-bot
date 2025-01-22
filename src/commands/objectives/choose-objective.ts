@@ -4,20 +4,28 @@ import db from '../../db/db';
 import { completedObjective, objective, selectedObjective } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
+import getIdFromMention from '../../utils/get-id-from-mention';
 import Command from '../base-command';
 
 export default class SelectObjective implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         messageAsList.splice(0, 1);
 
-        const itemName = messageAsList.join(' ');
+        const objectiveName = messageAsList.join(' ');
 
-        const char = await CharacterFactory.getFromId(message.author.id, message);
+        let char;
+        if (messageAsList[1]) {
+            char = await CharacterFactory.getFromId(getIdFromMention(messageAsList[1]), message);
+            messageAsList.splice(0, 1);
+        } else {
+            char = await CharacterFactory.getFromId(message.author.id, message);
+        }
+
         let objectiveToSelect;
         try {
-            objectiveToSelect = await ObjectiveFactory.getInstance().getByName(itemName);
+            objectiveToSelect = await ObjectiveFactory.getInstance().getByName(objectiveName);
         } catch {
-            message.reply(`Não existe um objetivo com o nome **${itemName}**.`);
+            message.reply(`Não existe um objetivo com o nome **${objectiveName}**.`);
             return;
         }
 
