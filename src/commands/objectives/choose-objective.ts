@@ -9,15 +9,15 @@ import Command from '../base-command';
 
 export default class SelectObjective implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        messageAsList.splice(0, 1);
-
         let char;
-        if (messageAsList[1]) {
+        if (messageAsList[1].includes('@')) {
             char = await CharacterFactory.getFromId(getIdFromMention(messageAsList[1]), message);
             messageAsList.splice(0, 1);
         } else {
             char = await CharacterFactory.getFromId(message.author.id, message);
         }
+
+        messageAsList.splice(0, 1);
 
         const objectiveName = messageAsList.join(' ');
 
