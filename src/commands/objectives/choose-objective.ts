@@ -11,8 +11,6 @@ export default class SelectObjective implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         messageAsList.splice(0, 1);
 
-        const objectiveName = messageAsList.join(' ');
-
         let char;
         if (messageAsList[1]) {
             char = await CharacterFactory.getFromId(getIdFromMention(messageAsList[1]), message);
@@ -20,6 +18,8 @@ export default class SelectObjective implements Command {
         } else {
             char = await CharacterFactory.getFromId(message.author.id, message);
         }
+
+        const objectiveName = messageAsList.join(' ');
 
         let objectiveToSelect;
         try {
