@@ -4,6 +4,7 @@ import db from '../../db/db';
 import { character, completedObjective, selectedObjective } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
+import checkCaracterLevelUp from '../../utils/check-character-levelup';
 import getIdFromMention from '../../utils/get-id-from-mention';
 import Command from '../base-command';
 
