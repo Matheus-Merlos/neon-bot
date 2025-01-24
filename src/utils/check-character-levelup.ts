@@ -13,7 +13,7 @@ export default async function checkCaracterLevelUp(
         await db.select({ id: reachedRank.rankId }).from(reachedRank).where(eq(reachedRank.characterId, char.id))
     ).map((obj) => obj.id);
 
-    ranks.forEach(async (rank) => {
+    for (const rank of ranks) {
         const xp = char.xp + quantityAdded;
         if (xp >= rank.necessaryXp) {
             if (!achievedRanks.includes(rank.id)) {
@@ -23,5 +23,5 @@ export default async function checkCaracterLevelUp(
                 );
             }
         }
-    });
+    }
 }
