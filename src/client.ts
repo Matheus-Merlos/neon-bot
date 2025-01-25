@@ -76,4 +76,8 @@ export default class Client {
 
         await this.commands[key].execute(message, commandAsList);
     }
+
+    get getClient() {
+        return this.client;
+    }
 }

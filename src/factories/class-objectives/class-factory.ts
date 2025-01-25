@@ -17,12 +17,12 @@ export default class ClassFactory implements Factory<typeof characterClass> {
         return ClassFactory.instance;
     }
 
-    async create(name: string): Promise<{ id: number; name: string }> {
+    async create(name: string): Promise<{ id: number; name: string; guildId: bigint }> {
         const [createdClass] = await db.insert(characterClass).values({ name: name }).returning();
         return createdClass;
     }
 
-    async getByName(name: string): Promise<{ id: number; name: string }> {
+    async getByName(name: string): Promise<{ id: number; name: string; guildId: bigint }> {
         const classes = (await this.getAll()).map((entry) => ({
             id: entry.id,
             name: entry.name.toLowerCase(),
@@ -40,7 +40,7 @@ export default class ClassFactory implements Factory<typeof characterClass> {
         return cls;
     }
 
-    async getAll(): Promise<{ id: number; name: string }[]> {
+    async getAll(): Promise<{ id: number; name: string; guildId: bigint }[]> {
         return await db.select().from(characterClass);
     }
 

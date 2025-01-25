@@ -76,3 +76,5 @@ client.addCommand('create-class-objective', new CreateClassObjective());
 client.addCommand('completed-class-objective', new CompletedClassObjective());
 client.addCommand('completed-class-objectives', new CompletedClassObjectives());
 client.addCommand('class-objectives', new ClassObjectives());
+
+export default client;
