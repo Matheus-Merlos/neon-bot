@@ -28,7 +28,7 @@ export default class GiveItem implements Command {
         let item;
 
         try {
-            item = await ItemFactory.getFromName(itemName);
+            item = await ItemFactory.getInstance().getByName(itemName, message.guildId!);
         } catch {
             await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;

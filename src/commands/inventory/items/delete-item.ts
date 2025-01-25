@@ -1,12 +1,7 @@
 import { Message, PermissionFlagsBits } from 'discord.js';
-import { eq } from 'drizzle-orm';
-import db from '../../../db/db';
-import { item as itemTable } from '../../../db/schema';
 import hasPermission from '../../../decorators/has-permission';
-import ImageFactory from '../../../factories/image-factory';
 import ItemFactory from '../../../factories/item-factory';
 import addConfirmation from '../../../utils/confirmation-row';
-import toSlug from '../../../utils/slug';
 import Command from '../../base-command';
 
 export default class DeleteItem implements Command {
@@ -17,7 +12,7 @@ export default class DeleteItem implements Command {
         const itemName = messageAsList.join(' ');
         let item;
         try {
-            item = await ItemFactory.getFromName(itemName);
+            item = await ItemFactory.getInstance().getByName(itemName, message.guildId!);
         } catch {
             message.reply(`Não foi encontrado um item com o nome **${itemName}**`);
             return;
@@ -30,12 +25,7 @@ export default class DeleteItem implements Command {
             interactionFilter: (i) => i.user.id === message.author.id,
             actions: {
                 async callbackFnAccept(confirmationMessage: Message) {
-                    await ImageFactory.getInstance().deleteImage(
-                        'items',
-                        `${item.salt}-${toSlug(item.name)}.png`,
-                    );
-
-                    await db.delete(itemTable).where(eq(itemTable.id, item.id));
+                    await ItemFactory.getInstance().delete(item.id);
 
                     await confirmationMessage.edit({
                         content: `Item **${item.name}** deletado com sucesso.`,

@@ -20,7 +20,7 @@ export default class Use implements Command {
         const itemName = messageAsList.join(' ');
         let item;
         try {
-            item = await ItemFactory.getFromName(itemName);
+            item = await ItemFactory.getInstance().getByName(itemName, message.guildId!);
         } catch {
             await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;
@@ -43,14 +43,10 @@ export default class Use implements Command {
             return;
         }
 
-        const totalDurability = inventoryItems
-            .map((invItem) => invItem.durability)
-            .reduce((acc, val) => acc + val, 0);
+        const totalDurability = inventoryItems.map((invItem) => invItem.durability).reduce((acc, val) => acc + val, 0);
 
         if (totalDurability < quantity) {
-            await message.reply(
-                `Você não possui **${item.name}** o suficiente para utilizar **${quantity}** vezes.`,
-            );
+            await message.reply(`Você não possui **${item.name}** o suficiente para utilizar **${quantity}** vezes.`);
         }
 
         for (const invItem of inventoryItems) {

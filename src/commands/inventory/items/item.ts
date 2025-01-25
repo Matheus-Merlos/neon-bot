@@ -9,12 +9,12 @@ export default class Item implements Command {
         let item;
 
         try {
-            item = await ItemFactory.getFromName(itemName);
+            item = await ItemFactory.getInstance().getByName(itemName, message.guildId!);
         } catch {
             await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;
         }
 
-        await ItemFactory.sendItem(message, item);
+        await message.reply({ embeds: [ItemFactory.getInstance().show(item)] });
     }
 }
