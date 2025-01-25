@@ -34,8 +34,6 @@ import SelectedObjectives from './commands/objectives/selected-objectives';
 
 config();
 
-const objectives = new Objectives();
-
 const client = new Client(';');
 
 client.addCommand('add-exp', new AddExp());
@@ -63,7 +61,7 @@ client.addCommand(['coj', 'create-objective-difficulty'], new CreateObjectiveDif
 client.addCommand('create-objective', new CreateObjective());
 client.addCommand('delete-objective', new DeleteObjective());
 
-client.addCommand('objectives', objectives);
+client.addCommand('objectives', new Objectives());
 client.addCommand(['choose-objective', 'select-objective'], new SelectObjective());
 client.addCommand('completed-objective', new CompletedObjective());
 client.addCommand('completed-objectives', new CompletedObjectives());
