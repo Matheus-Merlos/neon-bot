@@ -10,6 +10,7 @@ export const rank = sqliteTable('rank', {
     necessaryXp: int('xp').notNull(),
     extraAttributes: int('extra_attributes').notNull(),
     extraHabs: int('extra_habs').notNull(),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
 });
 
 export const reachedRank = sqliteTable('reached_rank', {
@@ -22,11 +23,6 @@ export const reachedRank = sqliteTable('reached_rank', {
         .references(() => rank.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 });
 
-export const itemCategory = sqliteTable('item_category', {
-    id: int('id').primaryKey({ autoIncrement: true }),
-    name: text('name').notNull().unique(),
-});
-
 export const item = sqliteTable('item', {
     id: int('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull().unique(),
@@ -34,12 +30,9 @@ export const item = sqliteTable('item', {
     price: int('price').notNull(),
     durability: int('durability').notNull(),
     canBuy: int('can_buy', { mode: 'boolean' }).notNull(),
-    category: int('category').references(() => itemCategory.id, {
-        onDelete: 'cascade',
-        onUpdate: 'cascade',
-    }),
     image: text('image'),
     salt: text('salt', { length: 5 }),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
 });
 
 export const inventory = sqliteTable('inventory', {
@@ -59,6 +52,7 @@ Objective System
 export const objectiveDifficulty = sqliteTable('objective_difficulty', {
     id: int('id').primaryKey({ autoIncrement: true }).notNull(),
     name: text('name').notNull(),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
 });
 
 export const objective = sqliteTable('objective', {
@@ -70,6 +64,7 @@ export const objective = sqliteTable('objective', {
     type: int('type')
         .notNull()
         .references(() => objectiveDifficulty.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
 });
 
 export const selectedObjective = sqliteTable('selected_objective', {
@@ -95,6 +90,7 @@ export const completedObjective = sqliteTable('completed_objective', {
 export const characterClass = sqliteTable('class', {
     id: int('id').primaryKey({ autoIncrement: true }).notNull(),
     name: text('name').notNull(),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
 });
 
 export const classObjective = sqliteTable('class_objective', {
@@ -106,6 +102,7 @@ export const classObjective = sqliteTable('class_objective', {
     classId: int('class')
         .notNull()
         .references(() => characterClass.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
 });
 
 export const character = sqliteTable('character', {
@@ -122,6 +119,7 @@ export const character = sqliteTable('character', {
     imageUrl: text('image_url'),
     salt: text('salt', { length: 5 }),
     characterClass: int('class').references(() => characterClass.id, { onDelete: 'set null', onUpdate: 'no action' }),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
 });
 
 export const completedClassObjective = sqliteTable('completed_class_objective', {
