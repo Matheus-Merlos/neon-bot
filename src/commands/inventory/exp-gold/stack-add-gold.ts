@@ -17,7 +17,7 @@ export default class StackAddGold implements Command {
         const playersId = messageAsList.map((mention) => getIdFromMention(mention));
         const characters = [];
         for (const playerId of playersId) {
-            characters.push(await CharacterFactory.getFromId(playerId, message));
+            characters.push(await CharacterFactory.getInstance().getFromPlayerId(playerId, message.guild!.id));
         }
 
         for (const char of characters) {
@@ -26,9 +26,7 @@ export default class StackAddGold implements Command {
                 .set({ gold: char.gold + quantity })
                 .where(eq(character.id, char.id));
 
-            await message.reply(
-                `**${quantity}** de dinheiro adicionado com sucesso para **${char.name}**`,
-            );
+            await message.reply(`**${quantity}** de dinheiro adicionado com sucesso para **${char.name}**`);
         }
     }
 }

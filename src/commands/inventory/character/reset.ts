@@ -1,18 +1,12 @@
 import { Message, PermissionFlagsBits } from 'discord.js';
-import { eq } from 'drizzle-orm';
-import db from '../../../db/db';
-import { character } from '../../../db/schema';
-import hasMention from '../../../decorators/has-mention';
 import hasPermission from '../../../decorators/has-permission';
 import CharacterFactory from '../../../factories/character-factory';
-import ImageFactory from '../../../factories/image-factory';
 import addConfirmation from '../../../utils/confirmation-row';
 import getIdFromMention from '../../../utils/get-id-from-mention';
 import Command from '../../base-command';
 
 export default class Reset implements Command {
     @hasPermission(PermissionFlagsBits.Administrator)
-    @hasMention()
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         await addConfirmation({
             message: message,
@@ -21,17 +15,12 @@ export default class Reset implements Command {
             interactionFilter: (i) => i.user.id === message.author.id,
             actions: {
                 async callbackFnAccept(confirmationMessage: Message) {
-                    const char = await CharacterFactory.getFromId(
+                    const char = await CharacterFactory.getInstance().getFromPlayerId(
                         getIdFromMention(messageAsList[1]),
-                        message,
+                        message.guild!.id,
                     );
 
-                    await ImageFactory.getInstance().deleteImage(
-                        'characters',
-                        `${char.salt}-${char.name}.png`,
-                    );
-
-                    await db.delete(character).where(eq(character.id, char.id));
+                    await CharacterFactory.getInstance().delete(char.id);
 
                     await confirmationMessage.edit({
                         content: `Personagem de **${messageAsList[1]}** resetado com sucesso.`,

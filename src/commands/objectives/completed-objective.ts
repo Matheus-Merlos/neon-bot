@@ -12,10 +12,10 @@ export default class CompletedObjective implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         let char;
         if (messageAsList[1].includes('@')) {
-            char = await CharacterFactory.getFromId(getIdFromMention(messageAsList[1]), message);
+            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guildId!);
             messageAsList.splice(0, 1);
         } else {
-            char = await CharacterFactory.getFromId(message.author.id, message);
+            char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guildId!);
         }
 
         messageAsList.splice(0, 1);

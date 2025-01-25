@@ -12,16 +12,14 @@ import Command from '../base-command';
 export default class CompletedClassObjective implements Command {
     @hasPermission(PermissionFlagsBits.ManageRoles)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        const hasMention = messageAsList[1].includes('@');
+        messageAsList.splice(0, 1);
         let char;
-        if (hasMention) {
-            char = await CharacterFactory.getFromId(getIdFromMention(messageAsList[1]), message);
+        if (messageAsList[0].includes('@')) {
+            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guild!.id);
             messageAsList.splice(0, 1);
         } else {
-            char = await CharacterFactory.getFromId(message.author.id, message);
+            char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guild!.id);
         }
-
-        messageAsList.splice(0, 1);
 
         const classObjectiveName = messageAsList.join(' ');
 

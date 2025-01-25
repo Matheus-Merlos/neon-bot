@@ -9,17 +9,13 @@ import Command from '../base-command';
 
 export default class Inventory implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        let playerId;
-        if (messageAsList[1]) {
-            playerId = getIdFromMention(messageAsList[1]);
-        }
-        if (!playerId) {
-            playerId = message.author.id;
-        }
-
-        const char = await CharacterFactory.getFromId(playerId, message);
-        if (!char) {
-            return;
+        messageAsList.splice(0, 1);
+        let char;
+        if (messageAsList[0].includes('@')) {
+            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guild!.id);
+            messageAsList.splice(0, 1);
+        } else {
+            char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guild!.id);
         }
 
         let [actualRank]: Array<{ id: number; name: string }> | undefined = await db

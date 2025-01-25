@@ -25,7 +25,7 @@ export default class Buy implements Command {
             await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;
         }
-        const char = await CharacterFactory.getFromId(message.author.id, message);
+        const char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guild!.id);
 
         const totalPrice = item.price * quantity;
 
@@ -45,9 +45,7 @@ Você não tem dinheiro o suficiente para fazer essa compra.
                 .where(eq(character.id, char.id));
 
             for (let i = 0; i < quantity; i++) {
-                await trx
-                    .insert(inventory)
-                    .values({ itemId: item.id, characterId: char.id, durability: item.durability });
+                await trx.insert(inventory).values({ itemId: item.id, characterId: char.id, durability: item.durability });
             }
         });
 

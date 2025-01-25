@@ -3,11 +3,19 @@ import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { completedObjective, objective, objectiveDifficulty } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
+import getIdFromMention from '../../utils/get-id-from-mention';
 import Command from '../base-command';
 
 export default class CompletedObjectives implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        const char = await CharacterFactory.getFromId(message.author.id, message);
+        messageAsList.splice(0, 1);
+        let char;
+        if (messageAsList[0].includes('@')) {
+            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guildId!);
+            messageAsList.splice(0, 1);
+        } else {
+            char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guildId!);
+        }
 
         const completedObjectives = await db
             .select({
