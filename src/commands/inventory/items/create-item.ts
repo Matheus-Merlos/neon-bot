@@ -16,9 +16,7 @@ export default class CreateItem implements Command {
         let url: string | null = null;
         let salt: string | null = null;
 
-        const priceIndex = messageAsList.findIndex(
-            (element) => !isNaN(parseInt(element)) && element.trim() !== '',
-        );
+        const priceIndex = messageAsList.findIndex((element) => !isNaN(parseInt(element)) && element.trim() !== '');
         let itemName: string;
 
         if (priceIndex === 1) {
@@ -32,19 +30,13 @@ export default class CreateItem implements Command {
             itemName = message.content.split('"')[1];
         }
 
-        if (
-            typeof img !== 'undefined' &&
-            img.contentType !== null &&
-            img.contentType!.includes('image')
-        ) {
+        if (typeof img !== 'undefined' && img.contentType !== null && img.contentType!.includes('image')) {
             let image;
             try {
                 image = await axios.get(img.url, { responseType: 'stream' });
             } catch (error: unknown) {
                 if (error instanceof Error) {
-                    message.reply(
-                        `Erro ao fazer o download da imagem: ${error.name}:${error.message}`,
-                    );
+                    message.reply(`Erro ao fazer o download da imagem: ${error.name}:${error.message}`);
                 }
                 return;
             }
@@ -62,9 +54,7 @@ export default class CreateItem implements Command {
                 salt = upload.salt;
             } catch (error: unknown) {
                 if (error instanceof Error) {
-                    message.reply(
-                        `Erro ao fazer o upload da imagem: ${error.name}:${error.message}`,
-                    );
+                    message.reply(`Erro ao fazer o upload da imagem: ${error.name}:${error.message}`);
                 }
                 return;
             }

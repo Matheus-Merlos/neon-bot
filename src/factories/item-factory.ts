@@ -1,28 +1,85 @@
-import { Colors, EmbedBuilder, Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../db/db';
 import { item } from '../db/schema';
 import getMostSimilarString from '../utils/levenshtein';
+import toSlug from '../utils/slug';
+import Factory from './base-factory';
+import ImageFactory from './image-factory';
 
-type Item = {
-    id: number;
-    name: string;
-    description: string | null;
-    image: string | null;
-    price: number;
-    durability: number;
-    canBuy: boolean;
-    category: number | null;
-};
+export default class ItemFactory implements Factory<typeof item> {
+    async create(
+        name: string,
+        description: string,
+        imageStream: string | null,
+        contentType: string,
+        contentLenght: number,
+        price: number,
+        durability: number,
+        guildId: string,
+    ): Promise<{
+        id: number;
+        name: string;
+        description: string | null;
+        price: number;
+        durability: number;
+        canBuy: boolean;
+        image: string | null;
+        salt: string | null;
+        guildId: bigint;
+    }> {
+        let salt = null;
+        let url = null;
+        if (imageStream !== null) {
+            const upload = await ImageFactory.getInstance().uploadImage(
+                'items',
+                `${toSlug(name)}.png`,
+                imageStream,
+                contentType,
+                contentLenght,
+            );
 
-export default class ItemFactory {
-    public static async getFromName(itemName: string) {
-        const itemNames = (await db.select({ id: item.id, name: item.name }).from(item)).map(
-            (entry) => ({ id: entry.id, name: entry.name.toLowerCase() }),
-        );
+            url = upload.url;
+            salt = upload.salt;
+        }
+
+        const [createdItem] = await db
+            .insert(item)
+            .values({
+                name,
+                description,
+                image: url,
+                price,
+                durability,
+                canBuy: true,
+                salt,
+                guildId: BigInt(guildId),
+            })
+            .returning();
+
+        return createdItem;
+    }
+
+    async getByName(
+        name: string,
+        guildId: string,
+    ): Promise<{
+        id: number;
+        name: string;
+        description: string | null;
+        price: number;
+        durability: number;
+        canBuy: boolean;
+        image: string | null;
+        salt: string | null;
+        guildId: bigint;
+    }> {
+        const itemNames = (await this.getAll(guildId)).map((entry) => ({
+            id: entry.id,
+            name: entry.name.toLowerCase(),
+        }));
         const desiredItemName = getMostSimilarString(
             itemNames.map((entry) => entry.name),
-            itemName,
+            name,
         );
 
         const desiredItemNameId = itemNames.find((item) => item.name === desiredItemName)!.id;
@@ -32,50 +89,30 @@ export default class ItemFactory {
         return dbItem;
     }
 
-    public static async sendItem(message: Message, item: Item) {
-        const itemEmbed = new EmbedBuilder()
-            .setColor(Colors.DarkGreen)
-            .setTitle(item.name)
-            .setFields(
-                {
-                    name: 'Nome',
-                    value: item.name,
-                    inline: true,
-                },
-                {
-                    name: 'Preço',
-                    value: `$${item.price}`,
-                    inline: true,
-                },
-                {
-                    name: ' ',
-                    value: ' ',
-                    inline: false,
-                },
-                {
-                    name: 'Comprável?',
-                    value: item.canBuy === true ? 'Sim' : 'Não',
-                    inline: true,
-                },
-                {
-                    name: 'Durabilidade',
-                    value: `${item.durability}`,
-                    inline: true,
-                },
-            );
+    async getAll(guildId: string): Promise<
+        {
+            id: number;
+            name: string;
+            description: string | null;
+            price: number;
+            durability: number;
+            canBuy: boolean;
+            image: string | null;
+            salt: string | null;
+            guildId: bigint;
+        }[]
+    > {
+        return await db
+            .select()
+            .from(item)
+            .where(eq(item.guildId, BigInt(guildId)));
+    }
 
-        if (item.description !== null) {
-            itemEmbed.addFields({
-                name: 'Descrição',
-                value: item.description,
-                inline: false,
-            });
-        }
+    async delete(id: number): Promise<void> {
+        const [DBItem] = await db.select().from(item).where(eq(item.id, id));
 
-        if (item.image !== null) {
-            itemEmbed.setImage(item.image);
-        }
+        await ImageFactory.getInstance().deleteImage('items', `${DBItem.salt}-${toSlug(DBItem.name)}.png}.png`);
 
-        await message.reply({ embeds: [itemEmbed] });
+        await db.delete(item).where(eq(item.id, id));
     }
 }
