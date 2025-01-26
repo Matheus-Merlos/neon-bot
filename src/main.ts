@@ -32,6 +32,7 @@ import DeleteObjective from './commands/objectives/delete-objective';
 import Objectives from './commands/objectives/objectives';
 import SelectedObjectives from './commands/objectives/selected-objectives';
 import Calculate from './commands/rpg/calculate';
+import ClearChat from './commands/rpg/clear-chat';
 import Roll from './commands/rpg/roll';
 import { default as TurnList } from './commands/rpg/turn-list';
 
@@ -83,5 +84,6 @@ client.addCommand('class-objectives', new ClassObjectives());
 client.addCommand(['turn-list', 'turnos'], new TurnList());
 client.addCommand(['calc', 'r', 'calculate'], new Calculate());
 client.addCommand('roll', new Roll());
+client.addCommand(['limpar-chat', 'clear-chat'], new ClearChat());
 
 export default client;
