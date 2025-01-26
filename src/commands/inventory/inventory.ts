@@ -5,17 +5,21 @@ import { inventory, item, rank, reachedRank } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
 import embedList from '../../utils/embed-list';
 import getIdFromMention from '../../utils/get-id-from-mention';
+import getLeaderboardPlacement from '../../utils/leaderboard';
 import Command from '../base-command';
 
 export default class Inventory implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         messageAsList.splice(0, 1);
         let char;
+        let playerId;
         if (messageAsList[0]) {
+            playerId = getIdFromMention(messageAsList[0]);
             char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[0]), message.guild!.id);
             messageAsList.splice(0, 1);
         } else {
             char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guild!.id);
+            playerId = message.author.id;
         }
 
         let [actualRank]: Array<{ id: number; name: string }> | undefined = await db
@@ -78,6 +82,17 @@ export default class Inventory implements Command {
                     {
                         name: 'XP Faltando',
                         value: `${nextRankDiff}`,
+                        inline: true,
+                    },
+                    { name: ' ', value: ' ' },
+                    {
+                        name: 'Ranking de Dinheiro',
+                        value: `#${await getLeaderboardPlacement(message.guildId!, playerId, 'gold')}`,
+                        inline: true,
+                    },
+                    {
+                        name: 'Ranking de XP',
+                        value: `#${await getLeaderboardPlacement(message.guildId!, playerId, 'xp')}`,
                         inline: true,
                     },
                     { name: '\u200B', value: '\u200B' },

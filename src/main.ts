@@ -23,6 +23,7 @@ import Item from './commands/inventory/items/item';
 import Pay from './commands/inventory/items/pay';
 import Shop from './commands/inventory/items/shop';
 import Use from './commands/inventory/items/use';
+import Leaderboard from './commands/inventory/leaderboard';
 import SelectObjective from './commands/objectives/choose-objective';
 import CompletedObjective from './commands/objectives/completed-objective';
 import CompletedObjectives from './commands/objectives/completed-objectives';
@@ -47,6 +48,7 @@ client.addCommand('remove-gold', new RemoveGold());
 client.addCommand('stack-add-exp', new StackAddExp());
 client.addCommand('stack-add-gold', new StackAddGold());
 client.addCommand(['inv', 'inventory', 'profile'], new Inventory());
+client.addCommand('leaderboard', new Leaderboard());
 
 client.addCommand(['pay', 'pagar'], new Pay());
 
