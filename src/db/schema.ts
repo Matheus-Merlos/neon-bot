@@ -25,7 +25,7 @@ export const reachedRank = sqliteTable('reached_rank', {
 
 export const item = sqliteTable('item', {
     id: int('id').primaryKey({ autoIncrement: true }),
-    name: text('name').notNull().unique(),
+    name: text('name').notNull(),
     description: text('description'),
     price: int('price').notNull(),
     durability: int('durability').notNull(),
@@ -114,8 +114,7 @@ export const character = sqliteTable('character', {
         .references(() => player.discordId, {
             onDelete: 'cascade',
         })
-        .notNull()
-        .unique(),
+        .notNull(),
     imageUrl: text('image_url'),
     salt: text('salt', { length: 5 }),
     characterClass: int('class').references(() => characterClass.id, { onDelete: 'set null', onUpdate: 'no action' }),
