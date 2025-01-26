@@ -1,4 +1,4 @@
-import { Client as DiscordClient, Events, GatewayIntentBits, Message } from 'discord.js';
+import { Client as DiscordClient, Events, GatewayIntentBits } from 'discord.js';
 import Command from './commands/base-command';
 
 export default class Client {
@@ -8,6 +8,10 @@ export default class Client {
     private commands: { [k: string]: Command } = {};
 
     constructor(prefix: string) {
+        if (typeof this.token === 'undefined') {
+            throw new Error('DISCORD_TOKEN not found in environment variables.');
+        }
+
         this.token = process.env.DISCORD_TOKEN;
         this.client = new DiscordClient({
             intents: [
@@ -19,10 +23,6 @@ export default class Client {
         });
         this.prefix = prefix;
 
-        if (typeof this.token === 'undefined') {
-            throw new Error('DISCORD_TOKEN not found in environment variables.');
-        }
-
         this.client.once(Events.ClientReady, (readyClient) => {
             console.log(`Bot Ready! Logged in as ${readyClient.user.tag}`);
         });
@@ -32,18 +32,21 @@ export default class Client {
             if (!message.content.startsWith(this.prefix)) {
                 return;
             }
+
             const commandAsList = message.content.split(' ');
-            const command = commandAsList[0].toLowerCase();
+            let command = commandAsList[0].toLowerCase();
+
+            command = command.replace(this.prefix, '');
+            if (!this.commands[command]) {
+                await message.reply(`O comando **${command}** não existe`);
+                return;
+            }
 
             try {
-                await this.executeCommand(command, message, commandAsList);
+                await this.commands[command].execute(message, commandAsList);
             } catch (e) {
                 console.log(e);
                 if (e instanceof Error) {
-                    if (e.message.includes('does not exist')) {
-                        await message.reply(`O comando **${command}** não existe`);
-                        return;
-                    }
                     await message.reply(`Erro ao executar comando: ${e.name}:${e.message}`);
                 }
                 return;
@@ -66,15 +69,6 @@ export default class Client {
         if (key in this.commands) throw new Error(`Key ${key} already exists!`);
         this.commands[key] = command;
         return;
-    }
-
-    private async executeCommand(key: string, message: Message, commandAsList: Array<string>): Promise<void> {
-        key = key.replace(this.prefix, '');
-        if (!this.commands[key]) {
-            throw new Error(`Command ${key} does not exist!`);
-        }
-
-        await this.commands[key].execute(message, commandAsList);
     }
 
     get getClient() {
