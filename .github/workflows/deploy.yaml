@@ -22,7 +22,7 @@ jobs:
 
             cd /home/admin/neon-bot
 
-            rm -rf commands db decorators drizzle factories node_modules utils
+            rm -rf commands db decorators factories node_modules utils
             rm .env client.js drizzle-dev.config.js drizzle-prod.config.js main.js package-lock.json package.json
 
 
@@ -90,6 +90,7 @@ jobs:
 
             npm install --omit=dev
 
-            npx drizzle-kit push --config=./drizzle-prod.config.js
+            npx drizzle-kit generate --config=./drizzle-prod.config.js
+            npx drizzle-kit migrate --config=./drizzle-prod.config.js
 
             sudo systemctl start neon-bot
