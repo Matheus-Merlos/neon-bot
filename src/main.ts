@@ -49,7 +49,6 @@ client.addCommand('stack-add-exp', new StackAddExp());
 client.addCommand('stack-add-gold', new StackAddGold());
 client.addCommand(['inv', 'inventory', 'profile'], new Inventory());
 client.addCommand('leaderboard', new Leaderboard());
-
 client.addCommand(['pay', 'pagar'], new Pay());
 
 client.addCommand('create-item', new CreateItem());
