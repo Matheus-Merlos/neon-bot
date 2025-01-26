@@ -8,11 +8,11 @@ export default class Client {
     private commands: { [k: string]: Command } = {};
 
     constructor(prefix: string) {
+        this.token = process.env.DISCORD_TOKEN;
         if (typeof this.token === 'undefined') {
             throw new Error('DISCORD_TOKEN not found in environment variables.');
         }
 
-        this.token = process.env.DISCORD_TOKEN;
         this.client = new DiscordClient({
             intents: [
                 GatewayIntentBits.MessageContent,
@@ -30,6 +30,10 @@ export default class Client {
         this.client.login(this.token);
         this.client.on(Events.MessageCreate, async (message) => {
             if (!message.content.startsWith(this.prefix)) {
+                return;
+            }
+
+            if (!message.guildId) {
                 return;
             }
 

@@ -31,6 +31,9 @@ import CreateObjectiveDifficulty from './commands/objectives/create-objective-di
 import DeleteObjective from './commands/objectives/delete-objective';
 import Objectives from './commands/objectives/objectives';
 import SelectedObjectives from './commands/objectives/selected-objectives';
+import Calculate from './commands/rpg/calculate';
+import Roll from './commands/rpg/roll';
+import { default as TurnList } from './commands/rpg/turn-list';
 
 config();
 
@@ -76,5 +79,9 @@ client.addCommand('create-class-objective', new CreateClassObjective());
 client.addCommand('completed-class-objective', new CompletedClassObjective());
 client.addCommand('completed-class-objectives', new CompletedClassObjectives());
 client.addCommand('class-objectives', new ClassObjectives());
+
+client.addCommand(['turn-list', 'turnos'], new TurnList());
+client.addCommand(['calc', 'r', 'calculate'], new Calculate());
+client.addCommand('roll', new Roll());
 
 export default client;
