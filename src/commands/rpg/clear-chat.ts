@@ -4,6 +4,7 @@ import Command from '../base-command';
 
 export default class ClearChat implements Command {
     @hasPermission(PermissionFlagsBits.ManageMessages)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         const messages = await message.channel.messages.fetch({ limit: 100 });
         const messagesToDelete = messages.filter(
