@@ -10,7 +10,7 @@ export default class Reset implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         await addConfirmation({
             message: message,
-            confirmationMsgContent: `Atenção: Isso irá deletar tudo relacionado ao personagem de **${messageAsList[1]}**. Você tem certeza que quer fazer isso?`,
+            confirmationMsgContent: `Atenção: Isso irá deletar tudo relacionado ao personagem de **${messageAsList[1] ? messageAsList[1] : `<@${message.author.id}>`}**. Você tem certeza que quer fazer isso?`,
             timeToInteract: 30_000,
             interactionFilter: (i) => i.user.id === message.author.id,
             actions: {

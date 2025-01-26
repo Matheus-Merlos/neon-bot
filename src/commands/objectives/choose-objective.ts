@@ -22,7 +22,7 @@ export default class SelectObjective implements Command {
 
         let objectiveToSelect;
         try {
-            objectiveToSelect = await ObjectiveFactory.getInstance().getByName(objectiveName);
+            objectiveToSelect = await ObjectiveFactory.getInstance().getByName(objectiveName, message.guildId!);
         } catch {
             message.reply(`Não existe um objetivo com o nome **${objectiveName}**.`);
             return;

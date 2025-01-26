@@ -23,7 +23,7 @@ export default class CreateObjectiveDifficulty implements Command {
             return;
         }
 
-        const createdDifficulty = await ObjectiveDifficultyFactory.getInstance().create(name);
+        const createdDifficulty = await ObjectiveDifficultyFactory.getInstance().create(name, message.guildId!);
 
         message.reply(`Criado com sucesso a dificuldade **${createdDifficulty.name}**`);
     }

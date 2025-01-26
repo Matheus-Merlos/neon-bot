@@ -17,13 +17,16 @@ export default class ClassFactory implements Factory<typeof characterClass> {
         return ClassFactory.instance;
     }
 
-    async create(name: string): Promise<{ id: number; name: string; guildId: bigint }> {
-        const [createdClass] = await db.insert(characterClass).values({ name: name }).returning();
+    async create(name: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
+        const [createdClass] = await db
+            .insert(characterClass)
+            .values({ name, guildId: BigInt(guildId) })
+            .returning();
         return createdClass;
     }
 
-    async getByName(name: string): Promise<{ id: number; name: string; guildId: bigint }> {
-        const classes = (await this.getAll()).map((entry) => ({
+    async getByName(name: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
+        const classes = (await this.getAll(guildId)).map((entry) => ({
             id: entry.id,
             name: entry.name.toLowerCase(),
         }));
@@ -40,8 +43,11 @@ export default class ClassFactory implements Factory<typeof characterClass> {
         return cls;
     }
 
-    async getAll(): Promise<{ id: number; name: string; guildId: bigint }[]> {
-        return await db.select().from(characterClass);
+    async getAll(guildId: string): Promise<{ id: number; name: string; guildId: bigint }[]> {
+        return await db
+            .select()
+            .from(characterClass)
+            .where(eq(characterClass.guildId, BigInt(guildId)));
     }
 
     async delete(id: number): Promise<void> {

@@ -12,7 +12,7 @@ export default class DeleteObjective implements Command {
 
         let objective;
         try {
-            objective = await ObjectiveFactory.getInstance().getByName(itemName);
+            objective = await ObjectiveFactory.getInstance().getByName(itemName, message.guildId!);
         } catch {
             message.reply(`Não existe um objetivo com o nome **${itemName}**.`);
             return;

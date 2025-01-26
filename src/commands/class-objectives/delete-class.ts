@@ -12,7 +12,7 @@ export default class DeleteClass implements Command {
 
         let cls;
         try {
-            cls = await ClassFactory.getInstance().getByName(clsName);
+            cls = await ClassFactory.getInstance().getByName(clsName, message.guildId!);
         } catch {
             message.reply(`Não foi encontrado nenhuma classe com o nome **${clsName}**.`);
             return;

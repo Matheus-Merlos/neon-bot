@@ -25,7 +25,7 @@ export default class CompletedClassObjective implements Command {
 
         let classObjective;
         try {
-            classObjective = await ClassObjectiveFactory.getInstance().getByName(classObjectiveName);
+            classObjective = await ClassObjectiveFactory.getInstance().getByName(classObjectiveName, message.guildId!);
         } catch {
             message.reply(`Não existe um objetivo de classe com o nome **${classObjectiveName}**`);
             return;

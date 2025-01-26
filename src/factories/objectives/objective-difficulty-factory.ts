@@ -17,14 +17,17 @@ export default class ObjectiveDifficultyFactory implements Factory<typeof object
         return ObjectiveDifficultyFactory.instance;
     }
 
-    async create(name: string): Promise<{ id: number; name: string }> {
-        const [createdObjectiveDifficulty] = await db.insert(objectiveDifficulty).values({ name }).returning();
+    async create(name: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
+        const [createdObjectiveDifficulty] = await db
+            .insert(objectiveDifficulty)
+            .values({ name, guildId: BigInt(guildId) })
+            .returning();
 
         return createdObjectiveDifficulty;
     }
 
-    async getByName(difficultyName: string): Promise<{ id: number; name: string }> {
-        const difficulties = (await this.getAll()).map((entry) => ({
+    async getByName(difficultyName: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
+        const difficulties = (await this.getAll(guildId)).map((entry) => ({
             id: entry.id,
             name: entry.name.toLowerCase(),
         }));
@@ -41,8 +44,11 @@ export default class ObjectiveDifficultyFactory implements Factory<typeof object
         return diff;
     }
 
-    async getAll(): Promise<{ id: number; name: string }[]> {
-        return db.select().from(objectiveDifficulty);
+    async getAll(guildId: string): Promise<{ id: number; name: string; guildId: bigint }[]> {
+        return db
+            .select()
+            .from(objectiveDifficulty)
+            .where(eq(objectiveDifficulty.guildId, BigInt(guildId)));
     }
 
     async delete(id: number): Promise<void> {

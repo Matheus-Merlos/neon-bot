@@ -22,11 +22,12 @@ export default class ClassObjectiveFactory implements Factory<typeof classObject
         xp: number,
         gold: number,
         classId: number,
+        guildId: string,
         description: string,
-    ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number }> {
+    ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number; guildId: bigint }> {
         const [createdClassObjective] = await db
             .insert(classObjective)
-            .values({ name, xp, gold, classId, description })
+            .values({ name, xp, gold, classId, description, guildId: BigInt(guildId) })
             .returning();
 
         return createdClassObjective;
@@ -34,8 +35,9 @@ export default class ClassObjectiveFactory implements Factory<typeof classObject
 
     async getByName(
         name: string,
-    ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number }> {
-        const classObjectives = (await this.getAll()).map((entry) => ({
+        guildId: string,
+    ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number; guildId: bigint }> {
+        const classObjectives = (await this.getAll(guildId)).map((entry) => ({
             id: entry.id,
             name: entry.name.toLowerCase(),
         }));
@@ -52,11 +54,18 @@ export default class ClassObjectiveFactory implements Factory<typeof classObject
         return cls;
     }
 
-    async getAll(): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number }[]> {
-        return await db.select().from(classObjective);
+    async getAll(
+        guildId: string,
+    ): Promise<
+        { id: number; name: string; xp: number; gold: number; description: string; classId: number; guildId: bigint }[]
+    > {
+        return await db
+            .select()
+            .from(classObjective)
+            .where(eq(classObjective.guildId, BigInt(guildId)));
     }
 
-    delete(id: number): Promise<void> {
-        throw new Error('Method not implemented.');
+    async delete(id: number): Promise<void> {
+        await db.delete(classObjective).where(eq(classObjective.id, id));
     }
 }

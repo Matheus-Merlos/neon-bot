@@ -48,8 +48,8 @@ export default class ItemFactory implements Factory<typeof item>, ShowEmbed<type
                 'items',
                 `${toSlug(name)}.png`,
                 imageStream,
-                contentType,
-                contentLenght,
+                contentType!,
+                contentLenght!,
             );
 
             url = upload.url;

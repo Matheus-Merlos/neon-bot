@@ -23,7 +23,7 @@ export default class CompletedObjective implements Command {
         const objectiveName = messageAsList.join(' ');
         let objective;
         try {
-            objective = await ObjectiveFactory.getInstance().getByName(objectiveName);
+            objective = await ObjectiveFactory.getInstance().getByName(objectiveName, message.guildId!);
         } catch {
             message.reply(`Não existe um objetivo com o nome **${objectiveName}**.`);
             return;

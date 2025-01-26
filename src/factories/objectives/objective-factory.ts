@@ -23,16 +23,18 @@ export default class ObjectiveFactory implements Factory<typeof objective> {
         gold,
         difficultyId,
         description,
+        guildId,
     }: {
         name: string;
         xp: number;
         gold: number;
         difficultyId: number;
         description: string;
-    }): Promise<{ id: number; name: string; xp: number; gold: number; type: number; description: string }> {
+        guildId: string;
+    }): Promise<{ id: number; name: string; xp: number; gold: number; type: number; description: string; guildId: bigint }> {
         const [createdObjective] = await db
             .insert(objective)
-            .values({ name, xp, gold, type: difficultyId, description })
+            .values({ name, xp, gold, type: difficultyId, description, guildId: BigInt(guildId) })
             .returning();
 
         return createdObjective;
@@ -40,8 +42,9 @@ export default class ObjectiveFactory implements Factory<typeof objective> {
 
     async getByName(
         objectiveName: string,
-    ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; type: number }> {
-        const objectives = (await this.getAll()).map((entry) => ({
+        guildId: string,
+    ): Promise<{ id: number; name: string; xp: number; gold: number; type: number; description: string; guildId: bigint }> {
+        const objectives = (await this.getAll(guildId)).map((entry) => ({
             id: entry.id,
             name: entry.name.toLowerCase(),
         }));
@@ -58,8 +61,14 @@ export default class ObjectiveFactory implements Factory<typeof objective> {
         return diff;
     }
 
-    async getAll(): Promise<{ id: number; name: string; xp: number; gold: number; description: string; type: number }[]> {
-        return await db.select().from(objective).orderBy(asc(objective.xp));
+    async getAll(
+        guildId: string,
+    ): Promise<{ id: number; name: string; xp: number; gold: number; type: number; description: string; guildId: bigint }[]> {
+        return await db
+            .select()
+            .from(objective)
+            .orderBy(asc(objective.xp))
+            .where(eq(objective.guildId, BigInt(guildId)));
     }
 
     async delete(id: number): Promise<void> {

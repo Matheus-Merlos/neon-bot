@@ -34,10 +34,9 @@ export default class Client {
             }
             const commandAsList = message.content.split(' ');
             const command = commandAsList[0].toLowerCase();
-            const commandWithPrefix = this.prefix + command;
 
             try {
-                await this.executeCommand(commandWithPrefix, message, commandAsList);
+                await this.executeCommand(command, message, commandAsList);
             } catch (e) {
                 console.log(e);
                 if (e instanceof Error) {
@@ -70,6 +69,7 @@ export default class Client {
     }
 
     private async executeCommand(key: string, message: Message, commandAsList: Array<string>): Promise<void> {
+        key = key.replace(this.prefix, '');
         if (!this.commands[key]) {
             throw new Error(`Command ${key} does not exist!`);
         }

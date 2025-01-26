@@ -14,7 +14,7 @@ export default class SetClass implements Command {
         messageAsList.splice(0, 1);
         let char;
         if (messageAsList[0].includes('@')) {
-            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guild!.id);
+            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[0]), message.guild!.id);
             messageAsList.splice(0, 1);
         } else {
             char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guild!.id);
@@ -22,7 +22,7 @@ export default class SetClass implements Command {
 
         let cls;
         try {
-            cls = await ClassFactory.getInstance().getByName(messageAsList.join(' '));
+            cls = await ClassFactory.getInstance().getByName(messageAsList.join(' '), message.guildId!);
         } catch {
             message.reply(`Não foi encontrada nenhuma classe com o nome **${messageAsList.join(' ')}**.`);
             return;

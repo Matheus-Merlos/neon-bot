@@ -21,7 +21,10 @@ export default class CreateObjective implements Command {
 
         let difficulty;
         try {
-            difficulty = await ObjectiveDifficultyFactory.getInstance().getByName(messageAsList[expIndex + 2]);
+            difficulty = await ObjectiveDifficultyFactory.getInstance().getByName(
+                messageAsList[expIndex + 2],
+                message.guildId!,
+            );
         } catch {
             message.reply(`Não existe uma dificuldade de objetivo com o nome **${messageAsList[expIndex + 2]}**.`);
             return;
@@ -33,6 +36,7 @@ export default class CreateObjective implements Command {
             gold,
             difficultyId: difficulty.id,
             description,
+            guildId: message.guildId!,
         });
 
         const objectiveEmbed = new EmbedBuilder()

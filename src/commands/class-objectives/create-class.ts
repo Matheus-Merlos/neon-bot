@@ -13,7 +13,7 @@ export default class CreateClass implements Command {
 
         const className = messageAsList[1];
 
-        const createdClass = await ClassFactory.getInstance().create(className);
+        const createdClass = await ClassFactory.getInstance().create(className, message.guildId!);
 
         message.reply(`Classe **${createdClass.name}** criada com sucesso.`);
     }

@@ -11,8 +11,8 @@ export default class CompletedClassObjectives implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         messageAsList.splice(0, 1);
         let char;
-        if (messageAsList[0].includes('@')) {
-            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guild!.id);
+        if (messageAsList[0]) {
+            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[0]), message.guild!.id);
             messageAsList.splice(0, 1);
         } else {
             char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guild!.id);

@@ -7,7 +7,7 @@ import Command from '../base-command';
 
 export default class Objectives implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        const objectives = await ObjectiveFactory.getInstance().getAll();
+        const objectives = await ObjectiveFactory.getInstance().getAll(message.guildId!);
 
         await embedList(
             objectives,

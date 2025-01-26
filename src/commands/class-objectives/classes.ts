@@ -5,7 +5,7 @@ import Command from '../base-command';
 
 export default class Classes implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        const classes = await ClassFactory.getInstance().getAll();
+        const classes = await ClassFactory.getInstance().getAll(message.guildId!);
 
         await embedList(classes, 5, message, (matrix: Array<typeof classes>, currentIndex: number) => {
             const embed = new EmbedBuilder()

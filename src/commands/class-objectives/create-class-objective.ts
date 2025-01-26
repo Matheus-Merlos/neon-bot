@@ -12,7 +12,7 @@ export default class CreateClassObjective implements Command {
 
         let cls;
         try {
-            cls = await ClassFactory.getInstance().getByName(clsName);
+            cls = await ClassFactory.getInstance().getByName(clsName, message.guildId!);
         } catch {
             message.reply(`Não foi encontrado uma classe com o nome **${clsName}**`);
             return;
@@ -30,7 +30,14 @@ export default class CreateClassObjective implements Command {
             .join(' ')
             .replaceAll('"', '');
 
-        const created = await ClassObjectiveFactory.getInstance().create(objectiveName, xp, gold, cls.id, description);
+        const created = await ClassObjectiveFactory.getInstance().create(
+            objectiveName,
+            xp,
+            gold,
+            cls.id,
+            description,
+            message.guildId!,
+        );
 
         message.reply(`Objetivo de classe **${created.name}** criado com sucesso para a classe **${cls.name}**`);
         return;
