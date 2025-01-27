@@ -92,7 +92,7 @@ export default class MissionFactory extends Factory<typeof mission> implements S
 
             const img = await ImageFactory.getInstance().uploadImage(
                 'missions',
-                toSlug(name),
+                `${toSlug(name)}.png`,
                 stream,
                 contentType,
                 contentLenght,
@@ -159,6 +159,10 @@ export default class MissionFactory extends Factory<typeof mission> implements S
     }
 
     async delete(id: number): Promise<void> {
+        const [DBMission] = await db.select().from(mission).where(eq(mission.id, id));
+
+        await ImageFactory.getInstance().deleteImage('missions', `${DBMission.salt}-${toSlug(DBMission.name)}.png`);
+
         await db.delete(mission).where(eq(mission.id, id));
     }
 }

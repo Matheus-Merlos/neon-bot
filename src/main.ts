@@ -24,6 +24,7 @@ import Pay from './commands/inventory/items/pay';
 import Shop from './commands/inventory/items/shop';
 import Use from './commands/inventory/items/use';
 import Leaderboard from './commands/inventory/leaderboard';
+import CompletedMission from './commands/missions/completed-mission';
 import CreateMission from './commands/missions/create-mission';
 import CreateMissionDifficulty from './commands/missions/create-mission-difficulty';
 import DeleteMission from './commands/missions/delete-mission';
@@ -99,5 +100,6 @@ client.addCommand('mission-difficulties', new MissionDifficulties());
 client.addCommand('create-mission', new CreateMission());
 client.addCommand('delete-mission', new DeleteMission());
 client.addCommand('mission', new Mission());
+client.addCommand('completed-mission', new CompletedMission());
 
 export default client;
