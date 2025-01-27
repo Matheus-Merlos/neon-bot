@@ -6,6 +6,20 @@ import Factory from '../base-factory';
 import ShowEmbed from '../show-embed';
 
 export default class MissionFactory extends Factory<typeof mission> implements ShowEmbed<typeof mission> {
+    private static instance: MissionFactory | null = null;
+
+    private constructor() {
+        super();
+    }
+
+    static getInstance(): MissionFactory {
+        if (MissionFactory.instance === null) {
+            MissionFactory.instance = new MissionFactory();
+        }
+
+        return MissionFactory.instance;
+    }
+
     show(entry: {
         id: number;
         name: string;

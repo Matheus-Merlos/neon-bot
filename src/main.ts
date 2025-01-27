@@ -24,7 +24,11 @@ import Pay from './commands/inventory/items/pay';
 import Shop from './commands/inventory/items/shop';
 import Use from './commands/inventory/items/use';
 import Leaderboard from './commands/inventory/leaderboard';
+import CreateMission from './commands/missions/create-mission';
 import CreateMissionDifficulty from './commands/missions/create-mission-difficulty';
+import DeleteMission from './commands/missions/delete-mission';
+import DeleteMissionDifficulty from './commands/missions/delete-mission-difficulty';
+import MissionDifficulties from './commands/missions/mission-difficulties';
 import SelectObjective from './commands/objectives/choose-objective';
 import CompletedObjective from './commands/objectives/completed-objective';
 import CompletedObjectives from './commands/objectives/completed-objectives';
@@ -89,5 +93,9 @@ client.addCommand('roll', new Roll());
 client.addCommand(['limpar-chat', 'clear-chat'], new ClearChat());
 
 client.addCommand('create-mission-difficulty', new CreateMissionDifficulty());
+client.addCommand('delete-mission-difficulty', new DeleteMissionDifficulty());
+client.addCommand('mission-difficulties', new MissionDifficulties());
+client.addCommand('create-mission', new CreateMission());
+client.addCommand('delete-mission', new DeleteMission());
 
 export default client;
