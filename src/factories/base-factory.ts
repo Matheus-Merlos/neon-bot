@@ -6,11 +6,11 @@ export default abstract class Factory<T extends Table> {
 
     abstract getByName(...params: Array<unknown>): Promise<InferSelectModel<T>>;
 
-    protected async searchEntry(
+    protected searchEntry(
         entries: Array<InferSelectModel<T>>,
         searchColumn: keyof InferSelectModel<T>,
         searchName: string,
-    ): Promise<InferSelectModel<T>> {
+    ): InferSelectModel<T> {
         const entryList = [...entries];
 
         const entryListLowerCase = entries.map((entry) => ({
