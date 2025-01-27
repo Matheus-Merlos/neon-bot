@@ -13,7 +13,7 @@ export default class DeleteMissionDifficulty implements Command {
         let missionDifficulty;
         try {
             missionDifficulty = await MissionDifficultyFactory.getInstance().getByName(missionDifficultyName, message.guildId!);
-        } catch {
+        } catch (e) {
             message.reply(`Não foi encontrado nenhuma dificuldade de missão com o nome **${missionDifficultyName}**.`);
             return;
         }
@@ -30,7 +30,7 @@ export default class DeleteMissionDifficulty implements Command {
                     await MissionDifficultyFactory.getInstance().delete(missionDifficulty.id);
 
                     confirmationMessage.edit({
-                        content: `Classe **${missionDifficulty.name}** deletada com sucesso`,
+                        content: `Dificuldade **${missionDifficulty.name}** deletada com sucesso`,
                         components: [],
                     });
                     return;

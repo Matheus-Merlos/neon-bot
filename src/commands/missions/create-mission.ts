@@ -1,7 +1,8 @@
 import { Message, PermissionFlagsBits } from 'discord.js';
 import hasPermission from '../../decorators/has-permission';
-import ClassObjectiveFactory from '../../factories/class-objectives/class-objective-factory';
 import MissionDifficultyFactory from '../../factories/missions/mission-difficulty-factory';
+import MissionFactory from '../../factories/missions/mission-factory';
+import { EntryNotFoundError } from '../../utils/errors';
 import Command from '../base-command';
 
 export default class CreateMission implements Command {
@@ -13,8 +14,10 @@ export default class CreateMission implements Command {
         let missionDifficulty;
         try {
             missionDifficulty = await MissionDifficultyFactory.getInstance().getByName(difficultyName, message.guildId!);
-        } catch {
-            message.reply(`Não foi encontrado uma dificuldade de missão com o nome **${difficultyName}**`);
+        } catch (error) {
+            if (error instanceof EntryNotFoundError) {
+                message.reply(`Não foi encontrado uma dificuldade de missão com o nome **${difficultyName}**`);
+            }
             return;
         }
 
@@ -30,18 +33,22 @@ export default class CreateMission implements Command {
             .join(' ')
             .replaceAll('"', '');
 
-        const created = await ClassObjectiveFactory.getInstance().create(
-            missionName,
+        const imageUrl = message.attachments.first();
+
+        const created = await MissionFactory.getInstance().create({
+            name: missionName,
             xp,
             gold,
-            missionDifficulty.id,
+            difficultyId: missionDifficulty.id,
             description,
-            message.guildId!,
-        );
+            guildId: message.guildId!,
+            imageUrl: typeof imageUrl === 'undefined' ? null : imageUrl.url,
+        });
 
-        message.reply(
-            `Objetivo de classe **${created.name}** criado com sucesso com a dificuldade **${missionDifficulty.name}**`,
-        );
+        message.reply({
+            content: `Missão **${created.name}** criado com sucesso com a dificuldade **${missionDifficulty.name}**:`,
+            embeds: [MissionFactory.getInstance().show(created)],
+        });
         return;
     }
 }

@@ -2,7 +2,10 @@ import { Colors, EmbedBuilder } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { mission } from '../../db/schema';
+import downloadImage from '../../utils/download-image';
+import toSlug from '../../utils/slug';
 import Factory from '../base-factory';
+import ImageFactory from '../image-factory';
 import ShowEmbed from '../show-embed';
 
 export default class MissionFactory extends Factory<typeof mission> implements ShowEmbed<typeof mission> {
@@ -28,13 +31,15 @@ export default class MissionFactory extends Factory<typeof mission> implements S
         gold: number;
         difficulty: number;
         guildId: bigint;
+        salt: string | null;
+        imageUrl: string | null;
+        completed: boolean;
     }): EmbedBuilder {
         const missionEmbed = new EmbedBuilder()
             .setTitle(`Missão "${entry.name}"`)
             .setColor(Colors.Red)
             .setDescription(entry.description)
             .setFields([
-                { name: '\u200B', value: '\u200B' },
                 {
                     name: 'XP',
                     value: `${entry.xp}`,
@@ -46,7 +51,8 @@ export default class MissionFactory extends Factory<typeof mission> implements S
                     inline: true,
                 },
                 { name: '\u200B', value: '\u200B' },
-            ]);
+            ])
+            .setImage(entry.imageUrl ? entry.imageUrl : '');
 
         return missionEmbed;
     }
@@ -58,6 +64,7 @@ export default class MissionFactory extends Factory<typeof mission> implements S
         gold,
         difficultyId,
         guildId,
+        imageUrl,
     }: {
         name: string;
         description: string;
@@ -65,6 +72,7 @@ export default class MissionFactory extends Factory<typeof mission> implements S
         gold: number;
         difficultyId: number;
         guildId: string;
+        imageUrl: string | null;
     }): Promise<{
         id: number;
         name: string;
@@ -73,7 +81,27 @@ export default class MissionFactory extends Factory<typeof mission> implements S
         gold: number;
         difficulty: number;
         guildId: bigint;
+        salt: string | null;
+        imageUrl: string | null;
+        completed: boolean;
     }> {
+        let salt,
+            url = null;
+        if (imageUrl) {
+            const { stream, contentLenght, contentType } = await downloadImage(imageUrl);
+
+            const img = await ImageFactory.getInstance().uploadImage(
+                'missions',
+                toSlug(name),
+                stream,
+                contentType,
+                contentLenght,
+            );
+
+            salt = img.salt;
+            url = img.url;
+        }
+
         const [createdMission] = await db
             .insert(mission)
             .values({
@@ -83,6 +111,8 @@ export default class MissionFactory extends Factory<typeof mission> implements S
                 gold,
                 difficulty: difficultyId,
                 guildId: BigInt(guildId),
+                salt,
+                imageUrl: url,
             })
             .returning();
 
@@ -100,15 +130,27 @@ export default class MissionFactory extends Factory<typeof mission> implements S
         gold: number;
         difficulty: number;
         guildId: bigint;
+        salt: string | null;
+        imageUrl: string | null;
+        completed: boolean;
     }> {
         const missions = await this.getAll(guildId);
         return await super.searchEntry(missions, 'name', missionName);
     }
 
-    async getAll(
-        guildId: string,
-    ): Promise<
-        { id: number; name: string; description: string; xp: number; gold: number; difficulty: number; guildId: bigint }[]
+    async getAll(guildId: string): Promise<
+        {
+            id: number;
+            name: string;
+            description: string;
+            xp: number;
+            gold: number;
+            difficulty: number;
+            guildId: bigint;
+            salt: string | null;
+            imageUrl: string | null;
+            completed: boolean;
+        }[]
     > {
         return await db
             .select()

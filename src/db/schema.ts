@@ -150,7 +150,10 @@ export const mission = sqliteTable('mission', {
     difficulty: int('difficulty')
         .notNull()
         .references(() => missionDifficulty.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    imageUrl: text('image_url'),
+    salt: text('salt', { length: 5 }),
     guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
+    completed: int('completed', { mode: 'boolean' }).notNull().default(false),
 });
 
 export const missionComplete = sqliteTable('mission_complete', {
