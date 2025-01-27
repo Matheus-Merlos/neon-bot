@@ -4,14 +4,15 @@ import { and, eq } from 'drizzle-orm';
 import db from '../db/db';
 import { character, player } from '../db/schema';
 import client from '../main';
-import getMostSimilarString from '../utils/levenshtein';
 import Factory from './base-factory';
 import ImageFactory from './image-factory';
 
-export default class CharacterFactory implements Factory<typeof character> {
+export default class CharacterFactory extends Factory<typeof character> {
     private static instance: CharacterFactory | null = null;
 
-    private constructor() {}
+    private constructor() {
+        super();
+    }
 
     static getInstance(): CharacterFactory {
         if (CharacterFactory.instance === null) {
@@ -130,21 +131,7 @@ export default class CharacterFactory implements Factory<typeof character> {
         salt: string | null;
         characterClass: number | null;
     }> {
-        const chars = (await this.getAll(guildId)).map((entry) => ({
-            id: entry.id,
-            name: entry.name.toLowerCase(),
-        }));
-
-        const charName = getMostSimilarString(
-            chars.map((chr) => chr.name),
-            name,
-        );
-
-        const charId = chars.find((chr) => chr.name === charName)!.id;
-
-        const [char] = await db.select().from(character).where(eq(character.id, charId));
-
-        return char;
+        return await this.searchEntry(await this.getAll(guildId), 'name', name);
     }
 
     async getAll(guildId: string): Promise<
