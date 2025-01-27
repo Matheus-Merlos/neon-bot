@@ -1,13 +1,14 @@
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { characterClass } from '../../db/schema';
-import getMostSimilarString from '../../utils/levenshtein';
 import Factory from '../base-factory';
 
-export default class ClassFactory implements Factory<typeof characterClass> {
+export default class ClassFactory extends Factory<typeof characterClass> {
     private static instance: ClassFactory | null = null;
 
-    private constructor() {}
+    private constructor() {
+        super();
+    }
 
     static getInstance(): ClassFactory {
         if (ClassFactory.instance === null) {
@@ -26,21 +27,7 @@ export default class ClassFactory implements Factory<typeof characterClass> {
     }
 
     async getByName(name: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
-        const classes = (await this.getAll(guildId)).map((entry) => ({
-            id: entry.id,
-            name: entry.name.toLowerCase(),
-        }));
-
-        const desiredClassName = getMostSimilarString(
-            classes.map((cls) => cls.name),
-            name,
-        );
-
-        const classId = classes.find((cls) => cls.name === desiredClassName)!.id;
-
-        const [cls] = await db.select().from(characterClass).where(eq(characterClass.id, classId));
-
-        return cls;
+        return await this.searchEntry(await this.getAll(guildId), 'name', name);
     }
 
     async getAll(guildId: string): Promise<{ id: number; name: string; guildId: bigint }[]> {

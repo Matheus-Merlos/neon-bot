@@ -1,13 +1,14 @@
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { objectiveDifficulty } from '../../db/schema';
-import getMostSimilarString from '../../utils/levenshtein';
 import Factory from '../base-factory';
 
-export default class ObjectiveDifficultyFactory implements Factory<typeof objectiveDifficulty> {
+export default class ObjectiveDifficultyFactory extends Factory<typeof objectiveDifficulty> {
     private static instance: ObjectiveDifficultyFactory | null = null;
 
-    private constructor() {}
+    private constructor() {
+        super();
+    }
 
     static getInstance(): ObjectiveDifficultyFactory {
         if (ObjectiveDifficultyFactory.instance === null) {
@@ -27,21 +28,7 @@ export default class ObjectiveDifficultyFactory implements Factory<typeof object
     }
 
     async getByName(difficultyName: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
-        const difficulties = (await this.getAll(guildId)).map((entry) => ({
-            id: entry.id,
-            name: entry.name.toLowerCase(),
-        }));
-
-        const desiredDifficultyName = getMostSimilarString(
-            difficulties.map((diff) => diff.name),
-            difficultyName,
-        );
-
-        const desiredDifficultyId = difficulties.find((diff) => diff.name === desiredDifficultyName)!.id;
-
-        const [diff] = await db.select().from(objectiveDifficulty).where(eq(objectiveDifficulty.id, desiredDifficultyId));
-
-        return diff;
+        return await this.searchEntry(await this.getAll(guildId), 'name', difficultyName);
     }
 
     async getAll(guildId: string): Promise<{ id: number; name: string; guildId: bigint }[]> {

@@ -2,16 +2,17 @@ import { Colors, EmbedBuilder } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../db/db';
 import { item } from '../db/schema';
-import getMostSimilarString from '../utils/levenshtein';
 import toSlug from '../utils/slug';
 import Factory from './base-factory';
 import ImageFactory from './image-factory';
 import ShowEmbed from './show-embed';
 
-export default class ItemFactory implements Factory<typeof item>, ShowEmbed<typeof item> {
+export default class ItemFactory extends Factory<typeof item> implements ShowEmbed<typeof item> {
     private static instance: ItemFactory | null = null;
 
-    private constructor() {}
+    private constructor() {
+        super();
+    }
 
     static getInstance(): ItemFactory {
         if (ItemFactory.instance === null) {
@@ -87,20 +88,7 @@ export default class ItemFactory implements Factory<typeof item>, ShowEmbed<type
         salt: string | null;
         guildId: bigint;
     }> {
-        const itemNames = (await this.getAll(guildId)).map((entry) => ({
-            id: entry.id,
-            name: entry.name.toLowerCase(),
-        }));
-        const desiredItemName = getMostSimilarString(
-            itemNames.map((entry) => entry.name),
-            name,
-        );
-
-        const desiredItemNameId = itemNames.find((item) => item.name === desiredItemName)!.id;
-
-        const [dbItem] = await db.select().from(item).where(eq(item.id, desiredItemNameId));
-
-        return dbItem;
+        return await this.searchEntry(await this.getAll(guildId), 'name', name);
     }
 
     async getAll(guildId: string): Promise<

@@ -131,3 +131,37 @@ export const completedClassObjective = sqliteTable('completed_class_objective', 
         .references(() => classObjective.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
     completed: int('completed', { mode: 'boolean' }).default(false).notNull(),
 });
+
+/*
+Mission System
+*/
+export const missionDifficulty = sqliteTable('mission_difficulty', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    name: text('name').notNull(),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
+});
+
+export const mission = sqliteTable('mission', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    name: text('name').notNull(),
+    description: text('description').notNull(),
+    xp: int('xp').notNull(),
+    gold: int('gold').notNull(),
+    difficulty: int('difficulty')
+        .notNull()
+        .references(() => missionDifficulty.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    imageUrl: text('image_url'),
+    salt: text('salt', { length: 5 }),
+    guildId: blob('guild_id', { mode: 'bigint' }).notNull(),
+    completed: int('completed', { mode: 'boolean' }).notNull().default(false),
+});
+
+export const missionComplete = sqliteTable('mission_complete', {
+    id: int('id').primaryKey({ autoIncrement: true }).notNull(),
+    characterId: int('character_id')
+        .notNull()
+        .references(() => character.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+    missionId: int('mission_id')
+        .notNull()
+        .references(() => mission.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+});
