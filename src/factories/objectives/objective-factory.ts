@@ -1,13 +1,14 @@
 import { asc, eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { objective } from '../../db/schema';
-import getMostSimilarString from '../../utils/levenshtein';
 import Factory from '../base-factory';
 
-export default class ObjectiveFactory implements Factory<typeof objective> {
+export default class ObjectiveFactory extends Factory<typeof objective> {
     private static instance: ObjectiveFactory | null = null;
 
-    private constructor() {}
+    private constructor() {
+        super();
+    }
 
     static getInstance(): ObjectiveFactory {
         if (ObjectiveFactory.instance === null) {
@@ -44,21 +45,7 @@ export default class ObjectiveFactory implements Factory<typeof objective> {
         objectiveName: string,
         guildId: string,
     ): Promise<{ id: number; name: string; xp: number; gold: number; type: number; description: string; guildId: bigint }> {
-        const objectives = (await this.getAll(guildId)).map((entry) => ({
-            id: entry.id,
-            name: entry.name.toLowerCase(),
-        }));
-
-        const desiredObjectiveName = getMostSimilarString(
-            objectives.map((diff) => diff.name),
-            objectiveName,
-        );
-
-        const desiredObjectiveId = objectives.find((obj) => obj.name === desiredObjectiveName)!.id;
-
-        const [diff] = await db.select().from(objective).where(eq(objective.id, desiredObjectiveId));
-
-        return diff;
+        return await this.searchEntry(await this.getAll(guildId), 'name', objectiveName);
     }
 
     async getAll(

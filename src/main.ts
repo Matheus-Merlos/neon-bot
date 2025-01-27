@@ -24,6 +24,7 @@ import Pay from './commands/inventory/items/pay';
 import Shop from './commands/inventory/items/shop';
 import Use from './commands/inventory/items/use';
 import Leaderboard from './commands/inventory/leaderboard';
+import CreateMissionDifficulty from './commands/missions/create-mission-difficulty';
 import SelectObjective from './commands/objectives/choose-objective';
 import CompletedObjective from './commands/objectives/completed-objective';
 import CompletedObjectives from './commands/objectives/completed-objectives';
@@ -86,5 +87,7 @@ client.addCommand(['turn-list', 'turnos'], new TurnList());
 client.addCommand(['calc', 'r', 'calculate'], new Calculate());
 client.addCommand('roll', new Roll());
 client.addCommand(['limpar-chat', 'clear-chat'], new ClearChat());
+
+client.addCommand('create-mission-difficulty', new CreateMissionDifficulty());
 
 export default client;

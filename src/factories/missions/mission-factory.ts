@@ -1,9 +1,9 @@
 import { Colors, EmbedBuilder } from 'discord.js';
 import { eq } from 'drizzle-orm';
-import db from '../db/db';
-import { mission } from '../db/schema';
-import Factory from './base-factory';
-import ShowEmbed from './show-embed';
+import db from '../../db/db';
+import { mission } from '../../db/schema';
+import Factory from '../base-factory';
+import ShowEmbed from '../show-embed';
 
 export default class MissionFactory extends Factory<typeof mission> implements ShowEmbed<typeof mission> {
     show(entry: {
