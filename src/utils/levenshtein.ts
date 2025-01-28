@@ -1,3 +1,5 @@
+import { EntryNotFoundError } from './errors';
+
 function getMostSimilarString(arr: string[], target: string): string {
     if (arr.length === 0) {
         throw new Error('O array não pode ser vazio');
@@ -16,9 +18,7 @@ function getMostSimilarString(arr: string[], target: string): string {
         for (let i = 1; i <= alen; i++) {
             for (let j = 1; j <= blen; j++) {
                 dp[i][j] =
-                    a[i - 1] === b[j - 1]
-                        ? dp[i - 1][j - 1]
-                        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+                    a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
             }
         }
 
@@ -61,9 +61,8 @@ function getMostSimilarString(arr: string[], target: string): string {
         }
     }
 
-    // Ajuste do limite: quanto menor o score, mais similar
-    if (bestScore > 0.5) {
-        throw new Error('Nenhuma string similar foi encontrada');
+    if (bestScore > 1) {
+        throw new EntryNotFoundError('No similar string was found');
     }
 
     return mostSimilarString;

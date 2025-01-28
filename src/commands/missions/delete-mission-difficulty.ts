@@ -30,7 +30,7 @@ export default class DeleteMissionDifficulty implements Command {
                     await MissionDifficultyFactory.getInstance().delete(missionDifficulty.id);
 
                     confirmationMessage.edit({
-                        content: `Classe **${missionDifficulty.name}** deletada com sucesso`,
+                        content: `Dificuldade **${missionDifficulty.name}** deletada com sucesso`,
                         components: [],
                     });
                     return;

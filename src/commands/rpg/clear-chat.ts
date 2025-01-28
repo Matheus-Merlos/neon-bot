@@ -13,7 +13,8 @@ export default class ClearChat implements Command {
                 message.content.startsWith('((') ||
                 message.content.startsWith('||') ||
                 message.content.endsWith('//') ||
-                message.content.endsWith('(('),
+                message.content.endsWith('((') ||
+                message.content.includes('gif'),
         );
 
         try {

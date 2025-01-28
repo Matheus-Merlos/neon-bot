@@ -1,9 +1,6 @@
 name: Deploy to EC2
 
 on:
-  release:
-    types:
-      - created
   push:
     branches: [ master ]
 
