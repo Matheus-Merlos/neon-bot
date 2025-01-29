@@ -5,7 +5,7 @@ function getMostSimilarString(arr: string[], target: string): string {
         throw new Error('O array não pode ser vazio');
     }
 
-    target = target.toLowerCase();
+    target = target.toLowerCase().trim();
 
     function levenshtein(a: string, b: string): number {
         const alen = a.length;
@@ -27,41 +27,55 @@ function getMostSimilarString(arr: string[], target: string): string {
 
     function normalizedLevenshtein(a: string, b: string): number {
         const distance = levenshtein(a, b);
-        const maxLength = Math.max(a.length, b.length);
-        return distance / maxLength;
+        return distance / Math.max(a.length, b.length, 1); // Normalização mais rígida
     }
 
-    function getTokenSimilarity(target: string, candidate: string): number {
-        const targetTokens = target.split(' ');
-        const candidateTokens = candidate.split(' ');
-        let totalScore = 0;
-
-        for (const tToken of targetTokens) {
-            let bestScore = 1; // Inicia com o pior caso (similaridade máxima)
-            for (const cToken of candidateTokens) {
-                const similarity = normalizedLevenshtein(tToken, cToken);
-                if (similarity < bestScore) {
-                    bestScore = similarity; // Busca a melhor similaridade com o token atual
-                }
+    function cosineSimilarity(a: string, b: string): number {
+        const vectorize = (str: string) => {
+            const freq: Record<string, number> = {};
+            for (const char of str) {
+                freq[char] = (freq[char] || 0) + 1;
             }
-            totalScore += bestScore;
+            return freq;
+        };
+
+        const vecA = vectorize(a);
+        const vecB = vectorize(b);
+        const uniqueChars = new Set([...Object.keys(vecA), ...Object.keys(vecB)]);
+
+        let dotProduct = 0,
+            magA = 0,
+            magB = 0;
+        for (const char of uniqueChars) {
+            const valA = vecA[char] || 0;
+            const valB = vecB[char] || 0;
+            dotProduct += valA * valB;
+            magA += valA ** 2;
+            magB += valB ** 2;
         }
 
-        return totalScore / targetTokens.length; // Média da similaridade
+        return magA && magB ? dotProduct / (Math.sqrt(magA) * Math.sqrt(magB)) : 0;
+    }
+
+    function getSimilarity(target: string, candidate: string): number {
+        const lev = normalizedLevenshtein(target, candidate);
+        const cos = cosineSimilarity(target, candidate);
+        return (1 - lev) * 0.6 + cos * 0.4; // Combinação ponderada
     }
 
     let mostSimilarString = arr[0];
-    let bestScore = getTokenSimilarity(target, arr[0].toLowerCase());
+    let bestScore = getSimilarity(target, arr[0].toLowerCase());
 
     for (let i = 1; i < arr.length; i++) {
-        const score = getTokenSimilarity(target, arr[i].toLowerCase());
-        if (score < bestScore) {
+        const score = getSimilarity(target, arr[i].toLowerCase());
+        if (score > bestScore) {
             bestScore = score;
             mostSimilarString = arr[i];
         }
     }
 
-    if (bestScore > 1) {
+    if (bestScore < 0.6) {
+        // Define um limiar para considerar "parecido"
         throw new EntryNotFoundError('No similar string was found');
     }
 

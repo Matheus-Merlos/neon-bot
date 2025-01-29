@@ -2,6 +2,7 @@
 import { Message } from 'discord.js';
 import Factory from '../factories/base-factory';
 import ShowEmbed from '../factories/show-embed';
+import { EntryNotFoundError } from '../utils/errors';
 
 export default interface Command {
     execute(message: Message, messageAsList: Array<string>): Promise<void>;
@@ -22,10 +23,11 @@ export abstract class InfoCommand<T extends Factory<any> & ShowEmbed<any>> imple
 
         try {
             entry = await this.factoryInstance.getByName(entryName, message.guildId!);
-        } catch {
-            await message.reply(
-                `Não foi encontrado ${this.isFeminineWord ? 'uma' : 'um'} ${this.entryName} com o nome **${entryName}**.`,
-            );
+        } catch (e) {
+            if (e instanceof EntryNotFoundError)
+                await message.reply(
+                    `Não foi encontrado ${this.isFeminineWord ? 'uma' : 'um'} ${this.entryName} com o nome **${entryName}**.`,
+                );
             return;
         }
 
