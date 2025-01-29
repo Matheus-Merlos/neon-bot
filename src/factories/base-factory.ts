@@ -2,6 +2,11 @@ import { InferSelectModel, Table } from 'drizzle-orm';
 import getMostSimilarString from '../utils/levenshtein';
 
 export default abstract class Factory<T extends Table> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static getInstance(): Factory<any> {
+        throw new Error('Static method getInstance() must be implemented in the sublcass.');
+    }
+
     abstract create(...params: Array<unknown>): Promise<InferSelectModel<T>>;
 
     abstract getByName(...params: Array<unknown>): Promise<InferSelectModel<T>>;
