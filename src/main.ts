@@ -31,6 +31,7 @@ import DeleteMission from './commands/missions/delete-mission';
 import DeleteMissionDifficulty from './commands/missions/delete-mission-difficulty';
 import Mission from './commands/missions/mission';
 import MissionDifficulties from './commands/missions/mission-difficulties';
+import Missions from './commands/missions/missions';
 import SelectObjective from './commands/objectives/choose-objective';
 import CompletedObjective from './commands/objectives/completed-objective';
 import CompletedObjectives from './commands/objectives/completed-objectives';
@@ -101,5 +102,6 @@ client.addCommand('create-mission', new CreateMission());
 client.addCommand('delete-mission', new DeleteMission());
 client.addCommand('mission', new Mission());
 client.addCommand('completed-mission', new CompletedMission());
+client.addCommand('missions', new Missions());
 
 export default client;

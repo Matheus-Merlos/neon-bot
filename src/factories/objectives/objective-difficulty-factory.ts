@@ -41,4 +41,9 @@ export default class ObjectiveDifficultyFactory extends Factory<typeof objective
     async delete(id: number): Promise<void> {
         await db.delete(objectiveDifficulty).where(eq(objectiveDifficulty.id, id));
     }
+
+    async getFromId(id: number): Promise<{ id: number; name: string; guildId: bigint }> {
+        const [entry] = await db.select().from(objectiveDifficulty).where(eq(objectiveDifficulty.id, id));
+        return entry;
+    }
 }

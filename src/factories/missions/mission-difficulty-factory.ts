@@ -41,4 +41,9 @@ export default class MissionDifficultyFactory extends Factory<typeof missionDiff
     async delete(id: number): Promise<void> {
         await db.delete(missionDifficulty).where(eq(missionDifficulty.id, id));
     }
+
+    async getFromId(id: number): Promise<{ id: number; name: string; guildId: bigint }> {
+        const [entry] = await db.select().from(missionDifficulty).where(eq(missionDifficulty.id, id));
+        return entry;
+    }
 }

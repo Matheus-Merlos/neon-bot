@@ -1,29 +1,23 @@
-import { Colors, EmbedBuilder, Message } from 'discord.js';
+import { Colors } from 'discord.js';
+import { characterClass } from '../../db/schema';
 import ClassFactory from '../../factories/class-objectives/class-factory';
-import embedList from '../../utils/embed-list';
-import Command from '../base-command';
+import { ListCommand } from '../base-command';
 
-export default class Classes implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        const classes = await ClassFactory.getInstance().getAll(message.guildId!);
-
-        await embedList(classes, 5, message, (matrix: Array<typeof classes>, currentIndex: number) => {
-            const embed = new EmbedBuilder()
-                .setTitle(`Classes de ${message.guild!.name}`)
-                .setColor(Colors.Blurple)
-                .setFooter({ text: `Página ${currentIndex + 1}/${matrix.length}` });
-
-            const classes = matrix[currentIndex];
-
-            classes.forEach((cls) => {
-                embed.addFields({
-                    name: `${cls.name}`,
+export default class Objectives extends ListCommand<typeof characterClass, ClassFactory> {
+    constructor() {
+        super(ClassFactory.getInstance(), 'Classes do servidor', Colors.Blue, (entry) => {
+            return [
+                {
+                    name: entry.name,
                     value: ' ',
                     inline: false,
-                });
-            });
-
-            return embed;
+                },
+                {
+                    name: ' ',
+                    value: ' ',
+                    inline: false,
+                },
+            ];
         });
     }
 }

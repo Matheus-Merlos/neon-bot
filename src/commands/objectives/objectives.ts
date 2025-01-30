@@ -1,41 +1,26 @@
-import { Colors, EmbedBuilder, Message } from 'discord.js';
-import { InferSelectModel } from 'drizzle-orm';
+import { Colors } from 'discord.js';
 import { objective } from '../../db/schema';
+import ObjectiveDifficultyFactory from '../../factories/objectives/objective-difficulty-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
-import embedList from '../../utils/embed-list';
-import Command from '../base-command';
+import { ListCommand } from '../base-command';
 
-export default class Objectives implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        const objectives = await ObjectiveFactory.getInstance().getAll(message.guildId!);
+export default class Objectives extends ListCommand<typeof objective, ObjectiveFactory> {
+    constructor() {
+        super(ObjectiveFactory.getInstance(), 'Objetivos do servidor', Colors.Blurple, async (entry) => {
+            const objectiveDifficulty = await ObjectiveDifficultyFactory.getInstance().getFromId(entry.type);
 
-        await embedList(
-            objectives,
-            5,
-            message,
-            (objectives: Array<Array<InferSelectModel<typeof objective>>>, currentIndex: number) => {
-                const objectiveEmbed = new EmbedBuilder()
-                    .setTitle('Objetivos')
-                    .setColor(Colors.Blue)
-                    .setFooter({ text: `Página ${currentIndex + 1}/${objectives.length}` });
-
-                objectives[currentIndex].forEach((objective) => {
-                    objectiveEmbed.addFields(
-                        {
-                            name: objective.name,
-                            value: `XP: ${objective.xp}, dinheiro: ${objective.gold}`,
-                            inline: false,
-                        },
-                        {
-                            name: ' ',
-                            value: ' ',
-                            inline: false,
-                        },
-                    );
-                });
-
-                return objectiveEmbed;
-            },
-        );
+            return [
+                {
+                    name: `${entry.name} - ${objectiveDifficulty.name}`,
+                    value: `XP: ${entry.xp} | Dinheiro: $${entry.gold}`,
+                    inline: false,
+                },
+                {
+                    name: ' ',
+                    value: ' ',
+                    inline: false,
+                },
+            ];
+        });
     }
 }
