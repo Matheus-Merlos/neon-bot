@@ -6,7 +6,7 @@ import embedList from '../../utils/embed-list';
 import Command from '../base-command';
 
 export default class ClassObjectives implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+    async execute(message: Message): Promise<void> {
         const classObjectives = await db
             .select({
                 className: characterClass.name,
