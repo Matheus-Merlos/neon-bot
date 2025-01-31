@@ -10,9 +10,9 @@ export default interface Command {
     execute(message: Message, messageAsList: Array<string>): Promise<void>;
 }
 
-export abstract class InfoCommand<T extends Factory<any> & ShowEmbed<any>> implements Command {
+export abstract class InfoCommand implements Command {
     constructor(
-        protected readonly factoryInstance: T,
+        protected readonly factoryInstance: Factory<any> & ShowEmbed<any>,
         protected readonly entryName: string,
         protected readonly isFeminineWord: boolean = false,
     ) {}
@@ -43,9 +43,9 @@ type EmbedField = {
     inline?: boolean;
 };
 
-export abstract class ListCommand<T extends Table, U extends Factory<T>> implements Command {
+export abstract class ListCommand<T extends Table> implements Command {
     constructor(
-        protected readonly factoryInstance: U,
+        protected readonly factoryInstance: Factory<T>,
         protected readonly listName: string,
         protected readonly embedColor: ColorResolvable,
         protected readonly fieldCallbackFn: (

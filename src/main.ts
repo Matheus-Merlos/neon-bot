@@ -18,6 +18,7 @@ import Inventory from './commands/inventory/inventory';
 import Buy from './commands/inventory/items/buy';
 import { default as CreateItem } from './commands/inventory/items/create-item';
 import { default as DeleteItem } from './commands/inventory/items/delete-item';
+import EditItem from './commands/inventory/items/edit-item';
 import GiveItem from './commands/inventory/items/give-item';
 import Item from './commands/inventory/items/item';
 import Pay from './commands/inventory/items/pay';
@@ -103,5 +104,7 @@ client.addCommand('delete-mission', new DeleteMission());
 client.addCommand('mission', new Mission());
 client.addCommand('completed-mission', new CompletedMission());
 client.addCommand('missions', new Missions());
+
+client.addCommand('edit-item', new EditItem());
 
 export default client;
