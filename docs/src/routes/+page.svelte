@@ -70,4 +70,7 @@
     <p>
         Um bot de Discord versátil, com recursos de uso geral e comandos especializados para servidores de RPG. 
     </p>
+    <div>
+        <button>Convidar ao Servidor</button>
+    </div>
 </section>

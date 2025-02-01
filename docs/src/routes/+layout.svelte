@@ -2,7 +2,7 @@
     import "$lib/styles/global.css";
 
     import type { Snippet } from 'svelte';
-    import type { LayoutData } from './$types';
+    import type { LayoutData } from './$types'
 	import Header from "$lib/components/Header.svelte";
 
     let { data, children }: { data: LayoutData, children: Snippet } = $props();
