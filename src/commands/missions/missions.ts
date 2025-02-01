@@ -4,7 +4,7 @@ import MissionDifficultyFactory from '../../factories/missions/mission-difficult
 import MissionFactory from '../../factories/missions/mission-factory';
 import { ListCommand } from '../base-command';
 
-export default class Missions extends ListCommand<typeof mission, MissionFactory> {
+export default class Missions extends ListCommand<typeof mission> {
     constructor() {
         super(MissionFactory.getInstance(), 'Missões disponíveis do servidor', Colors.DarkRed, async (entry) => {
             const missionDifficulty = await MissionDifficultyFactory.getInstance().getFromId(entry.difficulty);

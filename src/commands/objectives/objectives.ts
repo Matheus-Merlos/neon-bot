@@ -4,7 +4,7 @@ import ObjectiveDifficultyFactory from '../../factories/objectives/objective-dif
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
 import { ListCommand } from '../base-command';
 
-export default class Objectives extends ListCommand<typeof objective, ObjectiveFactory> {
+export default class Objectives extends ListCommand<typeof objective> {
     constructor() {
         super(ObjectiveFactory.getInstance(), 'Objetivos do servidor', Colors.Blurple, async (entry) => {
             const objectiveDifficulty = await ObjectiveDifficultyFactory.getInstance().getFromId(entry.type);
