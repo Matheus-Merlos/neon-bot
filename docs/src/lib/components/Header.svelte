@@ -11,8 +11,8 @@
     </div>
     <nav>
         <a href="/" class='link'>Sobre</a>
-        <a href="/" class='link'>Comandos</a>
-        <a href="/" class='link'>Adicionar</a>
+        <a href="/commands" class='link'>Comandos</a>
+        <a href="/invite" class='link'>Adicionar</a>
     </nav>
     <a id="github-link" href="https://github.com/Matheus-Merlos/neon-bot">
         <div>

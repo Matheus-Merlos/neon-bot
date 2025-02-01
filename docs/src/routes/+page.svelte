@@ -1,7 +1,5 @@
 <script lang="ts">
-    import type { PageData } from './$types';
-
-    let { data }: { data: PageData } = $props();
+    import { goto } from '$app/navigation';
 </script>
 
 <style>
@@ -10,11 +8,11 @@
         align-items: center;
         flex-direction: column;
 
-        width: 100vw;
+        height: 87.5vh;
     }
     #main-icon {
-        width: 10%;
-        height: 10%;
+        width: 10vw;
+        height: 10vw;
 
         margin-bottom: 1%;
     }
@@ -27,7 +25,7 @@
 
         max-width: 50%;
 
-        margin-bottom: 2%;
+        margin-bottom: 2.5%;
     }
 
     p {
@@ -38,6 +36,8 @@
         text-align: center;
 
         max-width: 50%;
+
+        margin-bottom: 2%;
     }
 
     @keyframes color-change {
@@ -59,6 +59,41 @@
         animation: color-change 2.5s linear infinite alternate;
     }
 
+    #buttons {
+        width: 50%;
+
+        display: flex;
+        justify-content: space-evenly;
+        gap: 14%;
+    }
+
+    .buttons {
+        padding: 2.5% 1.5% 2.5% 1.5%;
+
+        font-size: 24pt;
+        border-radius: 0;   
+        border: none;
+
+        color: white;
+        font-weight: 600;
+    }
+
+    .buttons:hover {
+        cursor: pointer;
+    }
+
+    #invite-button {
+        flex: 10;
+
+        background-color: var(--dark-blue);
+    }
+
+    #command-button {
+        flex: 7;
+
+        background-color: var(--blue);
+    }
+
 </style>
 
 <section>
@@ -70,7 +105,8 @@
     <p>
         Um bot de Discord versátil, com recursos de uso geral e comandos especializados para servidores de RPG. 
     </p>
-    <div>
-        <button>Convidar ao Servidor</button>
+    <div id="buttons">
+        <button id="invite-button" class="buttons" on:click={() => goto('/invite')}>Convidar ao Servidor</button>
+        <button id="command-button" class="buttons" on:click={() => goto('/commands')}>Comandos</button>
     </div>
 </section>

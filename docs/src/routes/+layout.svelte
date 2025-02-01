@@ -11,7 +11,6 @@
 <style>
     main {
         background-color: var(--darker);
-        height: 100vh;
     }
 </style>
 

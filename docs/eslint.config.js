@@ -39,6 +39,6 @@ export default ts.config(
             svelte
         },
         processor: 'svelte/svelte',
-        rules: {},
+        rules: {}
     }
 );
