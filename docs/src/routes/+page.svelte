@@ -20,7 +20,7 @@
     #main-title {
         font-family: 'Inter', sans-serif;
         font-weight: 500;
-        font-size: 64pt;
+        font-size: 38pt;
         text-align: center;
 
         max-width: 50%;
@@ -30,14 +30,14 @@
 
     p {
         color: var(--gray-ish);
-        font-size: 34pt;
+        font-size: 24pt;
         font-family: 'Inter', sans-serif;
         font-weight: 500;
         text-align: center;
 
         max-width: 50%;
 
-        margin-bottom: 2%;
+        margin-bottom: 5%;
     }
 
     @keyframes color-change {
@@ -60,22 +60,22 @@
     }
 
     #buttons {
-        width: 50%;
+        width: 35%;
 
         display: flex;
         justify-content: space-evenly;
-        gap: 14%;
+        gap: 18%;
     }
 
     .buttons {
         padding: 2.5% 1.5% 2.5% 1.5%;
 
-        font-size: 24pt;
+        font-size: 18pt;
         border-radius: 0;   
         border: none;
 
         color: white;
-        font-weight: 600;
+        font-weight: 400;
     }
 
     .buttons:hover {
