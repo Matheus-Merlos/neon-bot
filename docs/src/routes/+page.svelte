@@ -76,6 +76,8 @@
 
         color: white;
         font-weight: 400;
+
+        transition: background-color 0.2s ease-out;
     }
 
     .buttons:hover {
@@ -83,15 +85,23 @@
     }
 
     #invite-button {
-        flex: 10;
+        flex: 11;
 
-        background-color: var(--dark-blue);
+        background-color: var(--button-color-2);
     }
 
     #command-button {
         flex: 7;
 
-        background-color: var(--blue);
+        background-color: var(--button-color-1);
+    }
+
+    #invite-button:hover {
+        background-color: var(--button-color-2-darker);
+    }
+
+    #command-button:hover {
+        background-color: var(--button-color-1-darker);
     }
 
 </style>

@@ -9,6 +9,11 @@
     --light-blue: #A7BEFF;
     --blue: #8099ce;
     --dark-blue: #002ED8;
+
+    --button-color-1: #8099ce;
+    --button-color-2: #002ED8;
+    --button-color-1-darker: #707fa8;
+    --button-color-2-darker: #0026ad;
 }
 
 * {
@@ -17,4 +22,8 @@
     box-sizing: border-box;
     outline: none;
     text-decoration: none;
+}
+
+body {
+    background-color: var(--darker);
 }

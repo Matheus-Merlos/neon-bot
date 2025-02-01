@@ -8,12 +8,6 @@
     let { data, children }: { data: LayoutData, children: Snippet } = $props();
 </script>
 
-<style>
-    main {
-        background-color: var(--darker);
-    }
-</style>
-
 <Header stars={data.stars} />
 <main>
     {@render children()}
