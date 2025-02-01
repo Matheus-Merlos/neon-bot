@@ -4,5 +4,3 @@
 
     let { data }: { data: PageData } = $props();
 </script>
-
-<Header stars={data.stars} />

@@ -1,7 +1,7 @@
 header {
     background-color: var(--dark);
 
-    height: 13.5vh;
+    height: 12.5vh;
 
     display: flex;
     justify-content: space-between;
@@ -37,14 +37,20 @@ nav {
     display: flex;
     justify-content: center;
     gap: 10%;
+}
 
-    a {
-        font-family: 'Inter', sans-serif;
-        color: white;
-        text-decoration: none;
-        font-size: 28pt;
-        font-weight:500;
-    }
+.link {
+    font-family: 'Inter', sans-serif;
+    color: var(--white-ish);
+    text-decoration: none;
+    font-size: 28pt;
+    font-weight:500;
+
+    transition: color 0.2s ease-out;
+}
+
+.link:hover {
+    color: white;
 }
 
 #github-link {
@@ -54,32 +60,39 @@ nav {
 
     display: flex;
     align-items: center;
+}
 
-    div {
-        padding: 1%;
-        height: 65%;
-        width: 50%;
+#github-link div:hover {
+    border: 1px solid white;
+    cursor: pointer;
+}
 
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
+#github-link div {
+    padding: 1%;
+    height: 65%;
+    width: 60%;
 
-        border: 1px solid white;
-        border-radius: 15%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 
-        img {
-            width: auto;
-            height: 80%;
-            display: block;
-        }
+    border: 1px solid gray;
+    transition: border 0.2s ease-out;
+    border-radius: 15%;
+    padding-right: 3%;
 
-        p {
-            font-family: 'Inter', sans-serif;
-            color: white;
-            text-decoration: none;
-            font-size: 36pt;
-            font-weight:500;
-        }
+    img {
+        width: auto;
+        height: 80%;
+        display: block;
+    }
+
+    p {
+        font-family: 'Inter', sans-serif;
+        color: white;
+        text-decoration: none;
+        font-size: 30pt;
+        font-weight:500;
     }
 }
 

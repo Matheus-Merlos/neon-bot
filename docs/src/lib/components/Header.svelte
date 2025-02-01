@@ -1,6 +1,7 @@
 <script lang="ts">
     import "$lib/styles/components/header.css";
-    export let stars: string;
+
+    let {stars}: {stars: string} = $props()
 </script>
 
 <header>
@@ -9,14 +10,14 @@
         <h1>NEON</h1>
     </div>
     <nav>
-        <a href="/">Sobre</a>
-        <a href="/">Comandos</a>
-        <a href="/">Adicionar</a>
+        <a href="/" class='link'>Sobre</a>
+        <a href="/" class='link'>Comandos</a>
+        <a href="/" class='link'>Adicionar</a>
     </nav>
-    <div id="github-link">
+    <a id="github-link" href="https://github.com/Matheus-Merlos/neon-bot">
         <div>
             <img src="/github-icon.png" alt="Github Icon">
-            <p>{stars}</p>
+            <p>{stars}☆</p>
         </div>
-    </div>
+    </a>
 </header>
