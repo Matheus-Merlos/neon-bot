@@ -13,22 +13,9 @@
 ## ✨ Table of Contents
 
 - Inviting to your server[WIP]
-- [File organization](#file-organization)
+- File organization[WIP]
 - Deploy on your Own[WIP]
 - [License](#license)
-
-## File Organization
-
-```
-docs/
-src/
-  /commands
-  /db
-  /decorators
-  /factories
-  /utils
-terraform/
-```
 
 ## ⚖️ License
 
