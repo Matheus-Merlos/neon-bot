@@ -14,6 +14,9 @@
     --button-color-2: #002ED8;
     --button-color-1-darker: #707fa8;
     --button-color-2-darker: #0026ad;
+
+    --white: #ddb6b6;
+    --darker-white: #b68686;
 }
 
 * {

@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
 import ts from 'typescript-eslint';
@@ -36,9 +37,12 @@ export default ts.config(
         },
         plugins: {
             '@typescript-eslint': typescriptEslint,
-            svelte
+            svelte,
+            prettier: prettierPlugin
         },
         processor: 'svelte/svelte',
-        rules: {}
+        rules: {
+            "prettier/prettier": "error"
+        }
     }
 );
