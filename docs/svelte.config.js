@@ -5,10 +5,10 @@ const config = {
     preprocess: [vitePreprocess()],
 
     kit: {
-        adapter: adapter()
+        adapter: adapter(),
     },
 
-    extensions: ['.svelte']
+    extensions: ['.svelte'],
 };
 
 export default config;

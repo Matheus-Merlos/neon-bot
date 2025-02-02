@@ -13,6 +13,6 @@ export const load = (async ({ fetch }) => {
         stars = 'Error';
     }
     return {
-        stars
+        stars,
     };
 }) satisfies LayoutLoad;
