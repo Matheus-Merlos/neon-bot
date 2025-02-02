@@ -11,33 +11,44 @@
     let commandUrl = urlSplit[urlSplit.length - 1];
 </script>
 
-<aside>
-    {#each commands as cmd}
-        <h3>{cmd.familyName}</h3>
-        <div>
-            {#each cmd.details as command}
-                <a
-                    class={commandUrl === command.slug ? 'selected-page' : ''}
-                    href={`${command.slug}`}>{command.name}</a
-                >
-            {/each}
-        </div>
-    {/each}
-</aside>
-<section>
-    {@render children()}
+<section id="main-page">
+    <aside>
+        {#each commands as cmd}
+            <h3>{cmd.familyName}</h3>
+            <div>
+                {#each cmd.details as command}
+                    <a
+                        class={commandUrl === command.slug ? 'selected-page' : ''}
+                        href={`${command.slug}`}
+                        data-sveltekit-reload>{command.name}</a
+                    >
+                {/each}
+            </div>
+        {/each}
+    </aside>
+    <section id="content">
+        {@render children()}
+    </section>
 </section>
 
 <style>
-    aside {
+    #main-page {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
 
-        width: 20vw;
+    #content {
+        padding: 2.5%;
+    }
+
+    aside {
+        width: 25vw;
         height: 87.5vh;
         border-right: 1px solid white;
 
         padding: 1%;
+        margin-right: 1%;
     }
 
     aside h3 {
@@ -50,6 +61,9 @@
     aside div {
         border-left: 1px solid var(--white);
         padding: 3% 0 1% 5%;
+
+        display: flex;
+        flex-direction: column;
     }
 
     aside a {
@@ -60,6 +74,8 @@
         font-size: 18pt;
 
         transition: color 0.2s ease-out;
+
+        margin-bottom: 4%;
     }
 
     aside a:hover {

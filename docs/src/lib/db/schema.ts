@@ -8,7 +8,7 @@ export const family = sqliteTable('family', {
 export const command = sqliteTable('command', {
     id: integer().primaryKey({ autoIncrement: true }),
     name: text().notNull(),
-    slug: text().notNull(),
+    slug: text().notNull().unique(),
     description: text().notNull(),
     family: integer()
         .notNull()

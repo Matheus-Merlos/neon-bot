@@ -43,6 +43,7 @@
 	},
 	"dependencies": {
 		"better-sqlite3": "^11.8.0",
+		"dompurify": "^3.2.4",
 		"drizzle-orm": "^0.38.4",
 		"marked": "^15.0.6"
 	}
