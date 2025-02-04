@@ -1,0 +1,100 @@
+header {
+    background-color: var(--dark);
+
+    height: 12.5vh;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 1px solid var(--gray-ish);
+}
+
+#logo {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+
+    flex: 1;
+
+    img {
+        width: auto;
+        height: 100%;
+        display: block;
+    }
+}
+
+#logo > h1 {
+    color: var(--light-blue);
+    font-family: 'Inter', sans-serif;
+    font-size: 50pt;
+    font-weight: lighter;
+    font-style: italic;
+}
+
+nav {
+    flex: 5;
+
+    display: flex;
+    justify-content: center;
+    gap: 10%;
+}
+
+.link {
+    font-family: 'Inter', sans-serif;
+    color: var(--white-ish);
+    text-decoration: none;
+    font-size: 28pt;
+    font-weight:500;
+
+    transition: color 0.2s ease-out;
+}
+
+.link:hover {
+    color: white;
+}
+
+#github-link {
+    flex: 1;
+    
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+}
+
+#github-link div:hover {
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+#github-link div {
+    padding: 1%;
+    height: 65%;
+    width: 60%;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    border: 1px solid gray;
+    transition: border 0.2s ease-out;
+    border-radius: 15%;
+    padding-right: 3%;
+
+    img {
+        width: auto;
+        height: 80%;
+        display: block;
+    }
+
+    p {
+        font-family: 'Inter', sans-serif;
+        color: white;
+        text-decoration: none;
+        font-size: 30pt;
+        font-weight:500;
+    }
+}
+
