@@ -1,5 +1,13 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import type { PageData } from './$types';
+
+    let { data }: { data: PageData } = $props();
+
+    function redirectToCommands() {
+        const { firstCommandSlug } = data;
+        goto(`/commands/${firstCommandSlug}`);
+    }
 </script>
 
 <section>
@@ -25,12 +33,10 @@
         servidores de RPG.
     </p>
     <div id="buttons">
-        <button id="invite-button" class="buttons" on:click={() => goto('/invite')}
+        <button id="invite-button" class="buttons" onclick={() => goto('/invite')}
             >Convidar ao Servidor</button
         >
-        <button id="command-button" class="buttons" on:click={() => goto('/commands')}
-            >Comandos</button
-        >
+        <button id="command-button" class="buttons" onclick={redirectToCommands}>Comandos</button>
     </div>
 </section>
 
