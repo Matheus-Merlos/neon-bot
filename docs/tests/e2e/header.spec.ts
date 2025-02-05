@@ -26,11 +26,17 @@ test.describe('Header structure testing', () => {
         test('GitHub stars have been retrieved?', async ({ page }: { page: Page }) => {
             const starsContainer = page.locator('#github-link').locator('div').locator('p');
 
-            const response = await page.request.get(
-                'https://api.github.com/repos/Matheus-Merlos/neon-bot',
-            );
-            const data = await response.json();
-            const stars = data.stargazers_count.toString();
+            let stars;
+            try {
+                const response = await page.request.get(
+                    'https://api.github.com/repos/Matheus-Merlos/neon-bot',
+                );
+                const data = await response.json();
+                stars = data.stargazers_count.toString();
+            } catch {
+                console.warn(`Error retrieving GitHub stars`);
+                test.skip();
+            }
 
             await expect(starsContainer).toBeVisible();
             await expect(starsContainer).not.toHaveText('Error');
