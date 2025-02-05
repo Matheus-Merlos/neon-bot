@@ -11,8 +11,11 @@ jobs:
     steps:
       - name: Checkout code from docs
         uses: actions/checkout@v4
-        with:
-          path: docs
+
+      - name: Configure sparse-checkout
+        run: |
+          git sparse-checkout init --cone
+          git sparse-checkout set docs
 
       - name: Setup node.js
         uses: actions/setup-node@v4
