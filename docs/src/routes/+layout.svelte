@@ -8,7 +8,7 @@
     let { data, children }: { data: LayoutData; children: Snippet } = $props();
 </script>
 
-<Header stars={data.stars} />
+<Header stars={data.stars} firstCommandSlug={data.firstCommandSlug} />
 <main>
     {@render children()}
 </main>

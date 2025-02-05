@@ -1,7 +1,7 @@
 <script lang="ts">
     import '$lib/styles/components/header.css';
 
-    let { stars }: { stars: string } = $props();
+    let { stars, firstCommandSlug }: { stars: string; firstCommandSlug: string } = $props();
 </script>
 
 <header>
@@ -11,7 +11,7 @@
     </div>
     <nav>
         <a href="/" class="link">Sobre</a>
-        <a href="/commands" class="link">Comandos</a>
+        <a href={`/commands/${firstCommandSlug}`} class="link">Comandos</a>
         <a href="/invite" class="link">Adicionar</a>
     </nav>
     <a id="github-link" href="https://github.com/Matheus-Merlos/neon-bot">
