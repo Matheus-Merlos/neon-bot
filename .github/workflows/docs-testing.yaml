@@ -22,10 +22,16 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npx playwright install --with-deps
 
-      - name: Install Playwright
-        run: npx playwright install --with-deps
+      - name: Create and seed database
+        run: |
+          npm run makemigrations
+          npm run migrate
+
+          ts-node ./src/lib/seed.ts
 
       - name: Run e2e tests
         run: |
