@@ -13,6 +13,5 @@ INSERT INTO family VALUES(5,'Itens');
 INSERT INTO family VALUES(6,'Missões');
 INSERT INTO family VALUES(7,'Uso Geral');
 
-
 INSERT INTO sqlite_sequence VALUES('family',7);
 INSERT INTO sqlite_sequence VALUES('command',5);
