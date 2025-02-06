@@ -15,6 +15,7 @@
 		"migrate": "drizzle-kit migrate",
 		"studio": "drizzle-kit studio",
 
+
 		"test:e2e": "playwright test"
 	},
 	"devDependencies": {
