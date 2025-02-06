@@ -59,6 +59,10 @@ async function seed() {
     console.log('Seeding completed!');
 }
 
-seed().catch((err) => {
-    console.error('Seeding failed:', err);
-});
+seed()
+    .then(() => {
+        console.log('Seeding completed.');
+    })
+    .catch((err) => {
+        console.error('Seeding failed:', err);
+    });
