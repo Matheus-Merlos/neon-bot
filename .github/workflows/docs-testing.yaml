@@ -32,7 +32,7 @@ jobs:
           npm run makemigrations
           npm run migrate
 
-          ts-node ./src/lib/seed.ts
+          npx ts-node ./src/lib/seed.ts
 
       - name: Run e2e tests
         run: npx playwright test
