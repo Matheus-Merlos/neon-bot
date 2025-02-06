@@ -5,17 +5,16 @@ on:
     paths:
       - 'docs/**'
 
+defaults:
+  run:
+    working-directory: ./docs
+
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code from docs
         uses: actions/checkout@v4
-
-      - name: Configure sparse-checkout
-        run: |
-          git sparse-checkout init --cone
-          git sparse-checkout set docs
 
       - name: Setup node.js
         uses: actions/setup-node@v4

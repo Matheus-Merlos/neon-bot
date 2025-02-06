@@ -3,6 +3,8 @@ name: Deploy to EC2
 on:
   push:
     branches: [ master ]
+    paths:
+    - 'src/**'
 
 jobs:
   cleanup:
@@ -34,7 +36,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-    
+
 
       - name: Build Typescript project
         run: |
