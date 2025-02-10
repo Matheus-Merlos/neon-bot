@@ -43,3 +43,8 @@ resource "aws_instance" "main_server" {
         Auto-Start = true
     }
 }
+
+# So that GitHub Actions can use "terraform output -raw server_dns" to get the instance dns other than using a eip
+output "server_dns" {
+  value = aws_instance.main_server.public_dns
+}
