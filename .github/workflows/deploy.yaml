@@ -14,7 +14,7 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo systemctl stop neon-bot
@@ -48,7 +48,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "dist/"
           target: "/home/admin/neon-bot"
@@ -59,7 +59,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "package.json,package-lock.json"
           target: "/home/admin/neon-bot"
@@ -69,7 +69,7 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
+          username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ~/neon-bot
