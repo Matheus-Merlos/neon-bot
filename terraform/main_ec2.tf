@@ -41,14 +41,5 @@ resource "aws_instance" "main_server" {
     tags = {
         Name       = "tf-neon-bot"
         Auto-Start = true
-        Backup     = true
     }
-}
-
-resource "aws_eip" "server_eip" {
-  instance = aws_instance.main_server.id
-
-  tags = {
-    Name = "tf-neon-bot-server-ip"
-  }
 }
