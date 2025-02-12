@@ -7,13 +7,39 @@ on:
     - 'src/**'
 
 jobs:
+  get-server-dns:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+    outputs:
+      server-dns: ${{ steps.define_variable.outputs.server-dns }}
+    steps:
+      - name: Bring code to container
+        uses: actions/checkout@v4
+
+      - name: Setup AWS env variables
+        run: |
+          apt install aws-cli
+          apt install terraform
+          export AWS_ACCESS_KEY_ID=${{ secrets.TERRAFORM_USER_ACCESS_KEY_ID }}
+          export AWS_SECRET_ACCESS_KEY=${{ secrets.TERRAFORM_USER_SECRET_ACCESS_KEY }}
+
+      - name: Get current server DNS and export to a variable
+        id: define_variable
+        run: |
+          terraform apply -refresh-only -auto-approve
+          terraform output -raw server_dns >> $GITHUB_OUTPUT
+
+
   cleanup:
     runs-on: ubuntu-latest
+    needs: get-server-dns
     steps:
       - name: Cleanup old release
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ needs.get-server-dns.outputs.server-dns }}
           username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
@@ -27,6 +53,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    needs: [get-server-dns, cleanup]
     steps:
       - name: Bring code to container
         uses: actions/checkout@v4
@@ -47,7 +74,7 @@ jobs:
       - name: Copy build files to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ needs.get-server-dns.outputs.server-dns }}
           username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "dist/"
@@ -58,7 +85,7 @@ jobs:
       - name: Copy dependencies to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ needs.get-server-dns.outputs.server-dns }}
           username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "package.json,package-lock.json"
@@ -68,7 +95,7 @@ jobs:
       - name: Add environment variables and start the bot
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ needs.get-server-dns.outputs.server-dns }}
           username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
