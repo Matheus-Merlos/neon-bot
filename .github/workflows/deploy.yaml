@@ -40,6 +40,8 @@ jobs:
       - name: Get current server DNS and export to a variable
         id: define_variable
         run: |
+          terraform init
+
           terraform apply -refresh-only -auto-approve
           terraform output -raw server_dns >> $GITHUB_OUTPUT
 
