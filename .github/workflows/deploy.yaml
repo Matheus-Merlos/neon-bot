@@ -18,8 +18,8 @@ jobs:
 
       - name: Setup AWS env variables
         run: |
-          apt install aws-cli
-          apt install terraform
+          sudo apt install aws-cli
+          sudo apt install terraform
           export AWS_ACCESS_KEY_ID=${{ secrets.TERRAFORM_USER_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.TERRAFORM_USER_SECRET_ACCESS_KEY }}
 
