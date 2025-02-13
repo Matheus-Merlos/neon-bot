@@ -3,7 +3,7 @@ name: Docs website test
 on:
   push:
     paths:
-      - 'docs/**'
+      - 'docs/src/**'
 
 defaults:
   run:
