@@ -36,6 +36,7 @@ jobs:
 
           export AWS_ACCESS_KEY_ID=${{ secrets.TERRAFORM_USER_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.TERRAFORM_USER_SECRET_ACCESS_KEY }}
+          export AWS_DEFAULT_REGION="us-east-1"
 
       - name: Get current server DNS and export to a variable
         id: define_variable

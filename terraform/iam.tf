@@ -1,5 +1,9 @@
 resource "aws_iam_user" "dns_checker" {
-  name = "dns-checker"
+    name = "dns-checker"
+
+    lifecycle {
+        ignore_changes = [ tags ]
+    }
 }
 
 data "aws_iam_policy_document" "dns_checker_policy" {
@@ -7,7 +11,8 @@ data "aws_iam_policy_document" "dns_checker_policy" {
     effect = "Allow"
     actions = [
         "s3:GetObject",
-        "s3:ListBucket"
+        "s3:ListBucket",
+        "s3:PutObject"
     ]
     resources = [
         "arn:aws:s3:::tf-neon-bot-terraform-remote-state",
