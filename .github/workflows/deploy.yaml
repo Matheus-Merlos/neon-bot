@@ -78,7 +78,7 @@ jobs:
       - name: Copy build files to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ needs.get-server-dns.outputs.server-dns }}
+          host: ${{ needs.get-server-dns.outputs.server_dns }}
           username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "dist/"
@@ -89,7 +89,7 @@ jobs:
       - name: Copy dependencies to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ needs.get-server-dns.outputs.server-dns }}
+          host: ${{ needs.get-server-dns.outputs.server_dns }}
           username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "package.json,package-lock.json"
@@ -99,7 +99,7 @@ jobs:
       - name: Add environment variables and start the bot
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ needs.get-server-dns.outputs.server-dns }}
+          host: ${{ needs.get-server-dns.outputs.server_dns }}
           username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
