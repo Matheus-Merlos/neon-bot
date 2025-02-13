@@ -12,18 +12,26 @@ data "aws_iam_policy_document" "dns_checker_policy" {
     actions = [
         "s3:GetObject",
         "s3:ListBucket",
-        "s3:PutObject"
+        "s3:PutObject",
+        "s3:Get*"
     ]
     resources = [
         "arn:aws:s3:::tf-neon-bot-terraform-remote-state",
-        "arn:aws:s3:::tf-neon-bot-terraform-remote-state/*"
+        "arn:aws:s3:::tf-neon-bot-terraform-remote-state/*",
+        "arn:aws:s3:::neon-bot-images",
     ]
   }
 
   statement {
     effect = "Allow"
     actions = [
-        "ec2:DescribeInstances"
+        "ec2:Describe*",
+        "iam:Get*",
+        "iam:List*",
+        "events:List*",
+        "events:Describe*",
+        "lambda:Get*",
+        "lambda:List*"
     ]
     resources = [ "*" ]
   }

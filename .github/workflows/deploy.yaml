@@ -11,7 +11,7 @@ jobs:
       run:
         working-directory: ./terraform
     outputs:
-      server-dns: ${{ steps.define_variable.outputs.server-dns }}
+      server_dns: ${{ steps.define_variable.outputs.server_dns }}
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.TERRAFORM_USER_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.TERRAFORM_USER_SECRET_ACCESS_KEY }}
@@ -43,7 +43,7 @@ jobs:
       - name: Cleanup old release
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ needs.get-server-dns.outputs.server-dns }}
+          host: ${{ needs.get-server-dns.outputs.server_dns }}
           username: admin
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
