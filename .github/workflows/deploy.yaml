@@ -3,6 +3,8 @@ name: Deploy to EC2
 on:
   push:
     branches: [ master ]
+    paths:
+    - 'src/**'
 
 jobs:
   get-server-dns:
