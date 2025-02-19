@@ -32,16 +32,16 @@ resource "aws_security_group" "ec2_security_group" {
 }
 
 resource "aws_instance" "main_server" {
-    ami             = "ami-0789039e34e739d67"
-    instance_type   = "t4g.nano"
+  ami             = "ami-0789039e34e739d67"
+  instance_type   = "t4g.nano"
 
-    key_name        = "neon-bot-key-pair"
-    security_groups = [aws_security_group.ec2_security_group.name]
+  key_name        = "neon-bot-key-pair"
+  security_groups = [aws_security_group.ec2_security_group.name]
 
-    tags = {
-        Name       = "tf-neon-bot"
-        Auto-Start = true
-    }
+  tags = {
+    Name       = "tf-neon-bot"
+    Auto-Start = true
+  }
 }
 
 # So that GitHub Actions can use "terraform output -raw server_dns" to get the instance dns other than using a eip
