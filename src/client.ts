@@ -47,6 +47,7 @@ export default class Client {
             }
 
             try {
+                commandAsList.splice(0, 1);
                 await this.commands[command].execute(message, commandAsList);
             } catch (e) {
                 console.log(e);
