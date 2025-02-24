@@ -18,14 +18,6 @@ export default class ClassFactory extends Factory<typeof characterClass> {
         return ClassFactory.instance;
     }
 
-    async create(name: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
-        const [createdClass] = await db
-            .insert(characterClass)
-            .values({ name, guildId: BigInt(guildId) })
-            .returning();
-        return createdClass;
-    }
-
     async getByName(name: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
         return await this.searchEntry(await this.getAll(guildId), 'name', name);
     }

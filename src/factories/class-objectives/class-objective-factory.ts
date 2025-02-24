@@ -18,22 +18,6 @@ export default class ClassObjectiveFactory extends Factory<typeof classObjective
         return ClassObjectiveFactory.instance;
     }
 
-    async create(
-        name: string,
-        xp: number,
-        gold: number,
-        classId: number,
-        guildId: string,
-        description: string,
-    ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number; guildId: bigint }> {
-        const [createdClassObjective] = await db
-            .insert(classObjective)
-            .values({ name, xp, gold, classId, description, guildId: BigInt(guildId) })
-            .returning();
-
-        return createdClassObjective;
-    }
-
     async getByName(
         name: string,
         guildId: string,

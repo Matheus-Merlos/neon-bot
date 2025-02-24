@@ -1,9 +1,6 @@
-import { LibsqlError } from '@libsql/client';
-import axios from 'axios';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import db from '../db/db';
-import { character, player } from '../db/schema';
-import client from '../main';
+import { character } from '../db/schema';
 import Factory from './base-factory';
 import ImageFactory from './image-factory';
 
@@ -22,6 +19,7 @@ export default class CharacterFactory extends Factory<typeof character> {
         return CharacterFactory.instance;
     }
 
+    /*
     async create(
         playerId: string,
         guildId: string,
@@ -116,6 +114,8 @@ export default class CharacterFactory extends Factory<typeof character> {
 
         return char;
     }
+
+    */
 
     async getByName(
         name: string,

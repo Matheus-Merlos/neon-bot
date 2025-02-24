@@ -1,3 +1,4 @@
-import CreateStrategy from './create-strategy';
+import Strategy from './base-strategy';
+import CreateObjectiveStrategy from './objectives/create-objective-strategy';
 
-export { CreateStrategy };
+export { CreateObjectiveStrategy, Strategy };

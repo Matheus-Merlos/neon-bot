@@ -1,4 +1,5 @@
-import { InferSelectModel, Table } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel, Table } from 'drizzle-orm';
+import db from '../db/db';
 import getMostSimilarString from '../utils/levenshtein';
 
 export default abstract class Factory<T extends Table> {
@@ -7,7 +8,11 @@ export default abstract class Factory<T extends Table> {
         throw new Error('Static method getInstance() must be implemented in the sublcass.');
     }
 
-    abstract create(...params: Array<unknown>): Promise<InferSelectModel<T>>;
+    async create(table: T, args: InferInsertModel<T>): Promise<InferSelectModel<T>> {
+        const [createdIndex] = (await db.insert(table).values(args).returning()) as InferSelectModel<T>[];
+
+        return createdIndex;
+    }
 
     abstract getByName(...params: Array<unknown>): Promise<InferSelectModel<T>>;
 

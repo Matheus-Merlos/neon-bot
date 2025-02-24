@@ -18,15 +18,6 @@ export default class MissionDifficultyFactory extends Factory<typeof missionDiff
         return MissionDifficultyFactory.instance;
     }
 
-    async create({ name, guildId }: { name: string; guildId: string }): Promise<{ id: number; name: string; guildId: bigint }> {
-        const [createdDifficulty] = await db
-            .insert(missionDifficulty)
-            .values({ name, guildId: BigInt(guildId) })
-            .returning();
-
-        return createdDifficulty;
-    }
-
     async getByName(difficultyName: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
         return await this.searchEntry(await this.getAll(guildId), 'name', difficultyName);
     }

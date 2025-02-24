@@ -18,29 +18,6 @@ export default class ObjectiveFactory extends Factory<typeof objective> {
         return ObjectiveFactory.instance;
     }
 
-    async create({
-        name,
-        xp,
-        gold,
-        difficultyId,
-        description,
-        guildId,
-    }: {
-        name: string;
-        xp: number;
-        gold: number;
-        difficultyId: number;
-        description: string;
-        guildId: string;
-    }): Promise<{ id: number; name: string; xp: number; gold: number; type: number; description: string; guildId: bigint }> {
-        const [createdObjective] = await db
-            .insert(objective)
-            .values({ name, xp, gold, type: difficultyId, description, guildId: BigInt(guildId) })
-            .returning();
-
-        return createdObjective;
-    }
-
     async getByName(
         objectiveName: string,
         guildId: string,

@@ -2,7 +2,6 @@ import { Colors, EmbedBuilder } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { mission } from '../../db/schema';
-import downloadImage from '../../utils/download-image';
 import toSlug from '../../utils/slug';
 import Factory from '../base-factory';
 import ImageFactory from '../image-factory';
@@ -55,68 +54,6 @@ export default class MissionFactory extends Factory<typeof mission> implements S
             .setImage(entry.imageUrl ? entry.imageUrl : '');
 
         return missionEmbed;
-    }
-
-    async create({
-        name,
-        description,
-        xp,
-        gold,
-        difficultyId,
-        guildId,
-        imageUrl,
-    }: {
-        name: string;
-        description: string;
-        xp: number;
-        gold: number;
-        difficultyId: number;
-        guildId: string;
-        imageUrl: string | null;
-    }): Promise<{
-        id: number;
-        name: string;
-        description: string;
-        xp: number;
-        gold: number;
-        difficulty: number;
-        guildId: bigint;
-        salt: string | null;
-        imageUrl: string | null;
-        completed: boolean;
-    }> {
-        let salt,
-            url = null;
-        if (imageUrl) {
-            const { stream, contentLenght, contentType } = await downloadImage(imageUrl);
-
-            const img = await ImageFactory.getInstance().uploadImage(
-                'missions',
-                `${toSlug(name)}.png`,
-                stream,
-                contentType,
-                contentLenght,
-            );
-
-            salt = img.salt;
-            url = img.url;
-        }
-
-        const [createdMission] = await db
-            .insert(mission)
-            .values({
-                name,
-                description,
-                xp,
-                gold,
-                difficulty: difficultyId,
-                guildId: BigInt(guildId),
-                salt,
-                imageUrl: url,
-            })
-            .returning();
-
-        return createdMission;
     }
 
     async getByName(

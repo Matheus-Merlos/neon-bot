@@ -18,15 +18,6 @@ export default class ObjectiveDifficultyFactory extends Factory<typeof objective
         return ObjectiveDifficultyFactory.instance;
     }
 
-    async create(name: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
-        const [createdObjectiveDifficulty] = await db
-            .insert(objectiveDifficulty)
-            .values({ name, guildId: BigInt(guildId) })
-            .returning();
-
-        return createdObjectiveDifficulty;
-    }
-
     async getByName(difficultyName: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
         return await this.searchEntry(await this.getAll(guildId), 'name', difficultyName);
     }
