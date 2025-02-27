@@ -2,6 +2,7 @@ import { Colors, Message } from 'discord.js';
 import ObjectiveDifficultyFactory from '../../factories/objectives/objective-difficulty-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
 import { CreateObjectiveStrategy, ListStrategy, Strategy } from '../../strategies';
+import DeleteStrategy from '../../strategies/generics/delete-strategy';
 import InfoStrategy from '../../strategies/generics/info-strategy';
 import Command from '../base-command';
 
@@ -30,11 +31,10 @@ export default class Objective implements Command {
                 ];
             }),
             info: new InfoStrategy(ObjectiveFactory.getInstance()),
+            delete: new DeleteStrategy(ObjectiveFactory.getInstance(), 'objetivo'),
         };
 
         switch (subCommand) {
-            case 'delete':
-                break;
             case 'choose':
                 break;
             case 'select':
