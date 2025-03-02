@@ -2,6 +2,8 @@ import { DeleteObjectCommand, ObjectCannedACL, S3Client } from '@aws-sdk/client-
 import { Upload } from '@aws-sdk/lib-storage';
 import { NodeHttpHandler } from '@aws-sdk/node-http-handler';
 import { randomBytes } from 'crypto';
+import { IncomingMessage } from 'http';
+import * as sharp from 'sharp';
 
 export default class ImageFactory {
     private static instance: ImageFactory | null = null;
@@ -48,22 +50,21 @@ export default class ImageFactory {
     public async uploadImage(
         directory: string,
         imageName: string,
-        stream: string,
-        contentType: string,
-        contentLength: number,
+        stream: IncomingMessage,
     ): Promise<{ salt: string; url: string }> {
         //Generates salt to prevent duplicate image names (which would cause errors)
         const salt = randomBytes(5).toString('hex').substring(0, 5);
         const imagePath = `${directory}/${this.env}/${salt}-${imageName}`;
 
+        const pngBuffer = await stream.pipe(sharp()).resize(512, 512, { fit: 'cover' }).png().toBuffer();
+
         //Uploads the image to a S3 Bucket
         const uploadParams = {
             Bucket: process.env.BUCKET_NAME,
             Key: imagePath,
-            Body: stream,
-            ContentType: contentType,
+            Body: pngBuffer,
+            ContentType: 'image/png',
             ACL: ObjectCannedACL.public_read,
-            ContentLength: contentLength,
         };
 
         const upload = new Upload({

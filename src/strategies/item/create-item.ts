@@ -24,8 +24,6 @@ export default class CreateItemStrategy implements Strategy {
         }
 
         let imageStream = null;
-        let contentType = null;
-        let contentLength = null;
         if (typeof img !== 'undefined' && img.contentType !== null && img.contentType!.includes('image')) {
             let image;
             try {
@@ -38,8 +36,6 @@ export default class CreateItemStrategy implements Strategy {
             }
 
             imageStream = image.data;
-            contentType = img.contentType;
-            contentLength = image.headers['content-length'];
         }
 
         const price = parseInt(messageAsList[priceIndex]);
@@ -57,13 +53,7 @@ export default class CreateItemStrategy implements Strategy {
             let salt = null;
             let url = null;
             if (imageStream !== null) {
-                const upload = await ImageFactory.getInstance().uploadImage(
-                    'items',
-                    `${toSlug(itemName)}.png`,
-                    imageStream,
-                    contentType!,
-                    contentLength!,
-                );
+                const upload = await ImageFactory.getInstance().uploadImage('items', `${toSlug(itemName)}.png`, imageStream);
 
                 url = upload.url;
                 salt = upload.salt;

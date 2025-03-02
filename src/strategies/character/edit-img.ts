@@ -24,14 +24,11 @@ export default class EditImageStrategy implements Strategy {
         await ImageFactory.getInstance().deleteImage('characters', `${char.salt}-${toSlug(char.name)}.png`);
 
         const imageDownload = await axios.get(img.url, { responseType: 'stream' });
-        const contentLenght: number = imageDownload.headers['content-length'];
 
         const { url, salt } = await ImageFactory.getInstance().uploadImage(
             'characters',
             `${toSlug(char.name)}.png`,
             imageDownload.data,
-            'image/png',
-            contentLenght,
         );
 
         await db.update(character).set({ imageUrl: url, salt }).where(eq(character.id, char.id));
