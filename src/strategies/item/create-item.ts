@@ -2,7 +2,6 @@ import axios from 'axios';
 import { Attachment, Message } from 'discord.js';
 import ImageFactory from '../../factories/image-factory';
 import ItemFactory from '../../factories/item-factory';
-import toSlug from '../../utils/slug';
 import Strategy from '../base-strategy';
 
 export default class CreateItemStrategy implements Strategy {
@@ -53,7 +52,7 @@ export default class CreateItemStrategy implements Strategy {
             let salt = null;
             let url = null;
             if (imageStream !== null) {
-                const upload = await ImageFactory.getInstance().uploadImage('items', `${toSlug(itemName)}.png`, imageStream);
+                const upload = await ImageFactory.getInstance().uploadImage('items', itemName, imageStream);
 
                 url = upload.url;
                 salt = upload.salt;

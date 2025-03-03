@@ -2,7 +2,6 @@ import { Colors, EmbedBuilder } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../db/db';
 import { item } from '../db/schema';
-import toSlug from '../utils/slug';
 import Factory from './base-factory';
 import ImageFactory from './image-factory';
 import ShowEmbed from './show-embed';
@@ -61,7 +60,7 @@ export default class ItemFactory extends Factory<typeof item> implements ShowEmb
     async delete(id: number): Promise<void> {
         const [DBItem] = await db.select().from(item).where(eq(item.id, id));
 
-        await ImageFactory.getInstance().deleteImage('items', `${DBItem.salt}-${toSlug(DBItem.name)}.png}.png`);
+        await ImageFactory.getInstance().deleteImage('items', DBItem.salt!, DBItem.name);
 
         await db.delete(item).where(eq(item.id, id));
     }

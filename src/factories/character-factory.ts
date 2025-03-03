@@ -5,7 +5,6 @@ import db from '../db/db';
 import { character, player } from '../db/schema';
 import client from '../main';
 import getMostSimilarString from '../utils/levenshtein';
-import toSlug from '../utils/slug';
 import ImageFactory from './image-factory';
 
 export default class CharacterFactory {
@@ -51,7 +50,7 @@ export default class CharacterFactory {
 
             const image = await axios.get(imgUrl, { responseType: 'stream' });
 
-            const upload = await ImageFactory.getInstance().uploadImage('characters', `${toSlug(charName!)}.png`, image.data);
+            const upload = await ImageFactory.getInstance().uploadImage('characters', charName!, image.data);
             url = upload.url;
             salt = upload.salt;
         } catch {
@@ -173,7 +172,7 @@ export default class CharacterFactory {
     async delete(id: number): Promise<void> {
         const [char] = await db.select().from(character).where(eq(character.id, id));
 
-        await ImageFactory.getInstance().deleteImage('characters', `${char.salt}-${char.name}.png`);
+        await ImageFactory.getInstance().deleteImage('characters', char.salt!, char.name);
 
         await db.delete(character).where(eq(character.id, id));
     }

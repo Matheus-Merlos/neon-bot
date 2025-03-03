@@ -17,7 +17,7 @@ export default class NewGen implements Command {
                 async callbackFnAccept(confirmationMessage: Message) {
                     const chars = await db.select().from(character);
                     chars.forEach(async (char) => {
-                        await ImageFactory.getInstance().deleteImage('characters', `${char.salt}-${char.name}.png`);
+                        await ImageFactory.getInstance().deleteImage('characters', char.salt!, char.name);
 
                         await db.delete(character).where(eq(character.id, char.id));
                     });

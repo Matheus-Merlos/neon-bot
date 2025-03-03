@@ -4,6 +4,7 @@ import { NodeHttpHandler } from '@aws-sdk/node-http-handler';
 import { randomBytes } from 'crypto';
 import { IncomingMessage } from 'http';
 import * as sharp from 'sharp';
+import { toSlug } from '../utils';
 
 export default class ImageFactory {
     private static instance: ImageFactory | null = null;
@@ -54,7 +55,7 @@ export default class ImageFactory {
     ): Promise<{ salt: string; url: string }> {
         //Generates salt to prevent duplicate image names (which would cause errors)
         const salt = randomBytes(5).toString('hex').substring(0, 5);
-        const imagePath = `${directory}/${this.env}/${salt}-${imageName}`;
+        const imagePath = `${directory}/${this.env}/${salt}-${toSlug(imageName)}.png`;
 
         const pngBuffer = await stream.pipe(sharp()).resize(512, 512, { fit: 'cover' }).png().toBuffer();
 
@@ -80,8 +81,8 @@ export default class ImageFactory {
         };
     }
 
-    public async deleteImage(directory: string, imageName: string): Promise<void> {
-        const imagePath = `${directory}/${this.env}/${imageName}`;
+    public async deleteImage(directory: string, salt: string, imageName: string): Promise<void> {
+        const imagePath = `${directory}/${this.env}/${salt}-${toSlug(imageName)}.png`;
 
         const deleteParams = {
             Bucket: process.env.BUCKET_NAME,

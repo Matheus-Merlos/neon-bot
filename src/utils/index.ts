@@ -1,3 +1,4 @@
 import getCharacter from './get-character';
+import toSlug from './slug';
 
-export { getCharacter };
+export { getCharacter, toSlug };

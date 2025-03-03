@@ -21,7 +21,7 @@ export default class EditImageStrategy implements Strategy {
 
         const char = await getCharacter(message, messageAsList);
 
-        await ImageFactory.getInstance().deleteImage('characters', `${char.salt}-${toSlug(char.name)}.png`);
+        await ImageFactory.getInstance().deleteImage('characters', char.salt!, char.name);
 
         const imageDownload = await axios.get(img.url, { responseType: 'stream' });
 
