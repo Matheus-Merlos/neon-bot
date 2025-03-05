@@ -5,11 +5,10 @@ import { completedObjective, objective, selectedObjective } from '../../db/schem
 import CharacterFactory from '../../factories/character-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
 import getIdFromMention from '../../utils/get-id-from-mention';
-import Command from '../base-command';
+import Strategy from '../base-strategy';
 
-export default class SelectObjective implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        messageAsList.splice(0, 1);
+export default class SelectObjectiveStrategy implements Strategy {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         let char;
         if (messageAsList[0].includes('@')) {
             char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guildId!);

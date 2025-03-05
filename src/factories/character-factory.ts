@@ -1,15 +1,16 @@
-import { eq } from 'drizzle-orm';
+import { LibsqlError } from '@libsql/client/.';
+import axios from 'axios';
+import { and, eq, InferSelectModel } from 'drizzle-orm';
 import db from '../db/db';
-import { character } from '../db/schema';
-import Factory from './base-factory';
+import { character, player } from '../db/schema';
+import client from '../main';
+import getMostSimilarString from '../utils/levenshtein';
 import ImageFactory from './image-factory';
 
-export default class CharacterFactory extends Factory<typeof character> {
+export default class CharacterFactory {
     private static instance: CharacterFactory | null = null;
 
-    private constructor() {
-        super();
-    }
+    private constructor() {}
 
     static getInstance(): CharacterFactory {
         if (CharacterFactory.instance === null) {
@@ -19,7 +20,6 @@ export default class CharacterFactory extends Factory<typeof character> {
         return CharacterFactory.instance;
     }
 
-    /*
     async create(
         playerId: string,
         guildId: string,
@@ -115,7 +115,31 @@ export default class CharacterFactory extends Factory<typeof character> {
         return char;
     }
 
-    */
+    protected searchEntry(
+        entries: Array<InferSelectModel<typeof character>>,
+        searchColumn: keyof InferSelectModel<typeof character>,
+        searchName: string,
+    ): InferSelectModel<typeof character> {
+        const entryList = [...entries];
+
+        const entryListLowerCase = entries.map((entry) => ({
+            ...entry,
+            [searchColumn]: (entry[searchColumn] as string).toLowerCase(),
+        }));
+
+        const desiredEntryName = getMostSimilarString(
+            entryListLowerCase.map((entry) => entry[searchColumn] as string),
+            searchName,
+        );
+
+        const desiredEntryNameId = entryList.find(
+            (entry) => (entry[searchColumn] as string).toLowerCase() === desiredEntryName,
+        )!.id;
+
+        const entry = entryList.find((entry) => entry.id === desiredEntryNameId);
+
+        return entry!;
+    }
 
     async getByName(
         name: string,
@@ -131,7 +155,7 @@ export default class CharacterFactory extends Factory<typeof character> {
         salt: string | null;
         characterClass: number | null;
     }> {
-        return await this.searchEntry(await this.getAll(guildId), 'name', name);
+        return this.searchEntry(await this.getAll(guildId), 'name', name);
     }
 
     async getAll(guildId: string): Promise<

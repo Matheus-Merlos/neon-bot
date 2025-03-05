@@ -5,6 +5,7 @@ import { CreateObjectiveStrategy, ListStrategy, Strategy } from '../../strategie
 import DefaultStrategy from '../../strategies/generics/default-strategy';
 import DeleteStrategy from '../../strategies/generics/delete-strategy';
 import InfoStrategy from '../../strategies/generics/info-strategy';
+import SelectObjectiveStrategy from '../../strategies/objectives/select-objective-strategy';
 import Command from '../base-command';
 
 export default class Objective implements Command {
@@ -31,6 +32,7 @@ export default class Objective implements Command {
             }),
             info: new InfoStrategy(ObjectiveFactory.getInstance()),
             delete: new DeleteStrategy(ObjectiveFactory.getInstance(), 'objetivo'),
+            select: new SelectObjectiveStrategy(),
         };
 
         const strategy: Strategy =
@@ -55,8 +57,7 @@ export default class Objective implements Command {
                 },
             ]);
 
-        //TODO: choose
-        //TODO: select
+        //TODO: selected
         //TODO: completed
 
         await strategy.execute(message as Message<true>, messageAsList);
