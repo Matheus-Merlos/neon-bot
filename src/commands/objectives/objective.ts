@@ -1,11 +1,17 @@
 import { Colors, Message } from 'discord.js';
 import ObjectiveDifficultyFactory from '../../factories/objectives/objective-difficulty-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
-import { CreateObjectiveStrategy, ListStrategy, Strategy } from '../../strategies';
-import DefaultStrategy from '../../strategies/generics/default-strategy';
+import {
+    CompleteObjectiveStrategy,
+    CreateObjectiveStrategy,
+    InfoStrategy,
+    ListCompletedObjectivesStrategy,
+    ListStrategy,
+    SelectObjectiveStrategy,
+    SelectedObjectivesStrategy,
+    Strategy,
+} from '../../strategies';
 import DeleteStrategy from '../../strategies/generics/delete-strategy';
-import InfoStrategy from '../../strategies/generics/info-strategy';
-import SelectObjectiveStrategy from '../../strategies/objectives/select-objective-strategy';
 import Command from '../base-command';
 
 export default class Objective implements Command {
@@ -33,32 +39,12 @@ export default class Objective implements Command {
             info: new InfoStrategy(ObjectiveFactory.getInstance()),
             delete: new DeleteStrategy(ObjectiveFactory.getInstance(), 'objetivo'),
             select: new SelectObjectiveStrategy(),
+            selected: new SelectedObjectivesStrategy(),
+            completed: new CompleteObjectiveStrategy(),
+            'list-completed': new ListCompletedObjectivesStrategy(),
         };
 
-        const strategy: Strategy =
-            subCommands[subCommand] ??
-            new DefaultStrategy(';objective', [
-                {
-                    name: 'create',
-                    description:
-                        'Comando para criar um objetivo, seguindo a sintaxe:\n`<nome_objetivo> <xp> <gold> <dificuldade> <descrição>`',
-                },
-                {
-                    name: 'list',
-                    description: 'Listar todos os objetivos do servidor',
-                },
-                {
-                    name: 'info',
-                    description: 'Ver sobre um objetivo em específico, com a simples sintaxe:\n`<nome_objetivo>`',
-                },
-                {
-                    name: 'delete',
-                    description: 'Deletar um objetivo em específico, com a sintaxe de:\n`<nome_objetivo>`',
-                },
-            ]);
-
-        //TODO: selected
-        //TODO: completed
+        const strategy: Strategy = subCommands[subCommand];
 
         await strategy.execute(message as Message<true>, messageAsList);
     }
