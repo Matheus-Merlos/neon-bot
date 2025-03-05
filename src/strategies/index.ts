@@ -3,11 +3,11 @@ import DefaultStrategy from './generics/default-strategy';
 import InfoStrategy from './generics/info-strategy';
 import ListStrategy from './generics/list-strategy';
 
-import CompleteObjectiveStrategy from './objectives/complete-objective-strategy';
-import CreateObjectiveStrategy from './objectives/create-objective-strategy';
-import ListCompletedObjectivesStrategy from './objectives/list-completed-objectives-strategy';
-import SelectObjectiveStrategy from './objectives/select-objective-strategy';
-import SelectedObjectivesStrategy from './objectives/selected-objectives-strategy';
+import CompleteObjectiveStrategy from './objectives/complete-objective';
+import CreateObjectiveStrategy from './objectives/create-objective';
+import ListCompletedObjectivesStrategy from './objectives/list-completed-objectives';
+import SelectObjectiveStrategy from './objectives/select-objective';
+import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
 export {
     CompleteObjectiveStrategy,
