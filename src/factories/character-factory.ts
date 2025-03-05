@@ -1,4 +1,4 @@
-import { LibsqlError } from '@libsql/client/.';
+import { LibsqlError } from '@libsql/client';
 import axios from 'axios';
 import { and, eq, InferSelectModel } from 'drizzle-orm';
 import db from '../db/db';

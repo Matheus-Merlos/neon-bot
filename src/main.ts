@@ -1,6 +1,9 @@
 import { config } from 'dotenv';
 import { default as Client } from './client';
-import Objective from './commands/objectives/objective';
+import Objective from './commands/objective';
+import Calculate from './commands/rpg/calculate';
+import Roll from './commands/rpg/roll';
+import TurnList from './commands/rpg/turn-list';
 
 config();
 
@@ -28,13 +31,6 @@ const client = new Client(';');
 //client.addCommand(['newgen', 'novagen'], new NewGen());
 
 //client.addCommand(['coj', 'create-objective-difficulty'], new CreateObjectiveDifficulty());
-//client.addCommand('create-objective', new CreateObjective());
-//client.addCommand('delete-objective', new DeleteObjective());
-//client.addCommand('objectives', new Objectives());
-//client.addCommand(['choose-objective', 'select-objective'], new SelectObjective());
-//client.addCommand('completed-objective', new CompletedObjective());
-//client.addCommand('completed-objectives', new CompletedObjectives());
-//client.addCommand('selected-objectives', new SelectedObjectives());
 
 //client.addCommand(['create-class', 'criar-classe'], new CreateClass());
 //client.addCommand(['delete-class', 'deletar-classe'], new DeleteClass());
@@ -46,9 +42,9 @@ const client = new Client(';');
 //client.addCommand('completed-class-objectives', new CompletedClassObjectives());
 //client.addCommand('class-objectives', new ClassObjectives());
 
-//client.addCommand(['turn-list', 'turnos'], new TurnList());
-//client.addCommand(['calc', 'r', 'calculate'], new Calculate());
-//client.addCommand('roll', new Roll());
+client.addCommand(['turn-list', 'turnos'], new TurnList());
+client.addCommand(['calc', 'r', 'calculate'], new Calculate());
+client.addCommand('roll', new Roll());
 //client.addCommand(['limpar-chat', 'clear-chat'], new ClearChat());
 
 //client.addCommand('create-mission-difficulty', new CreateMissionDifficulty());

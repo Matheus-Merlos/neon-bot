@@ -10,7 +10,7 @@ import Strategy from '../base-strategy';
 export default class SelectObjectiveStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         let char;
-        if (messageAsList[0].includes('@')) {
+        if (messageAsList[0] && messageAsList[0].includes('@')) {
             char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guildId!);
             messageAsList.splice(0, 1);
         } else {

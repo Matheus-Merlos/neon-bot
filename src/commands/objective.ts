@@ -1,6 +1,6 @@
 import { Colors, Message } from 'discord.js';
-import ObjectiveDifficultyFactory from '../../factories/objectives/objective-difficulty-factory';
-import ObjectiveFactory from '../../factories/objectives/objective-factory';
+import ObjectiveDifficultyFactory from '../factories/objectives/objective-difficulty-factory';
+import ObjectiveFactory from '../factories/objectives/objective-factory';
 import {
     CompleteObjectiveStrategy,
     CreateObjectiveStrategy,
@@ -10,9 +10,9 @@ import {
     SelectObjectiveStrategy,
     SelectedObjectivesStrategy,
     Strategy,
-} from '../../strategies';
-import DeleteStrategy from '../../strategies/generics/delete-strategy';
-import Command from '../base-command';
+} from '../strategies';
+import DeleteStrategy from '../strategies/generics/delete';
+import Command from './base-command';
 
 export default class Objective implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {

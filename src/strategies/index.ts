@@ -1,7 +1,7 @@
 import Strategy from './base-strategy';
-import DefaultStrategy from './generics/default-strategy';
-import InfoStrategy from './generics/info-strategy';
-import ListStrategy from './generics/list-strategy';
+import DefaultStrategy from './generics/default';
+import InfoStrategy from './generics/info';
+import ListStrategy from './generics/list';
 
 import CompleteObjectiveStrategy from './objectives/complete-objective';
 import CreateObjectiveStrategy from './objectives/create-objective';
