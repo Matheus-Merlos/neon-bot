@@ -3,6 +3,7 @@ import { ColorResolvable, EmbedBuilder, Message } from 'discord.js';
 import { InferSelectModel, Table } from 'drizzle-orm';
 import Factory from '../factories/base-factory';
 import ShowEmbed from '../factories/show-embed';
+import { DefaultStrategy, Strategy } from '../strategies';
 import embedList from '../utils/embed-list';
 import { EntryNotFoundError } from '../utils/errors';
 
@@ -72,5 +73,27 @@ export abstract class ListCommand<T extends Table> implements Command {
 
             return embed;
         });
+    }
+}
+
+export abstract class StrategyCommand implements Command {
+    constructor(
+        protected readonly commandName: string,
+        protected readonly subCommands: Record<string, Strategy> = {},
+        protected readonly defaultStrategy: DefaultStrategy | null = null,
+    ) {
+        if (defaultStrategy === null) {
+            this.defaultStrategy = new DefaultStrategy(this.commandName, [
+                { name: 'Erro', description: 'Este comando não possui subcomandos' },
+            ]);
+        }
+    }
+
+    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+        const subCommand = messageAsList.splice(0, 1)[0];
+
+        const strategy: Strategy = this.subCommands[subCommand] ?? this.defaultStrategy;
+
+        await strategy.execute(message as Message<true>, messageAsList);
     }
 }

@@ -1,9 +1,6 @@
 import { config } from 'dotenv';
-import { default as Client } from './client';
-import Objective from './commands/objective';
-import Calculate from './commands/rpg/calculate';
-import Roll from './commands/rpg/roll';
-import TurnList from './commands/rpg/turn-list';
+import Client from './client';
+import { Calculate, NewGen, Objective, ObjectiveDifficulty, Reset, Roll, TurnList } from './commands';
 
 config();
 
@@ -27,8 +24,8 @@ const client = new Client(';');
 //client.addCommand(['buy', 'buy-item'], new Buy());
 //client.addCommand('use', new Use());
 
-//client.addCommand(['reset', 'clear'], new Reset());
-//client.addCommand(['newgen', 'novagen'], new NewGen());
+client.addCommand(['reset', 'clear'], new Reset());
+client.addCommand(['newgen', 'novagen'], new NewGen());
 
 //client.addCommand(['coj', 'create-objective-difficulty'], new CreateObjectiveDifficulty());
 
@@ -57,5 +54,6 @@ client.addCommand('roll', new Roll());
 //client.addCommand('missions', new Missions());
 
 client.addCommand('objective', new Objective());
+client.addCommand('objective-difficulty', new ObjectiveDifficulty());
 
 export default client;
