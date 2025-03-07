@@ -1,33 +1,10 @@
 import { Colors } from 'discord.js';
+import { objectiveDifficulty } from '../db/schema';
 import ObjectiveDifficultyFactory from '../factories/objectives/objective-difficulty-factory';
-import { CreateStrategy, ListStrategy } from '../strategies';
-import DeleteStrategy from '../strategies/generics/delete';
-import { StrategyCommand } from './base-command';
+import { SimpleTableCommand } from './base-command';
 
-export default class ObjectiveDifficulty extends StrategyCommand {
+export default class ObjectiveDifficulty extends SimpleTableCommand<typeof objectiveDifficulty, ObjectiveDifficultyFactory> {
     constructor() {
-        super('objective-difficulty', {
-            create: new CreateStrategy(ObjectiveDifficultyFactory.getInstance(), 'dificuldade de objetivo'),
-            list: new ListStrategy(
-                ObjectiveDifficultyFactory.getInstance(),
-                'Dificuldade de objetivos',
-                Colors.DarkRed,
-                (entry) => {
-                    return [
-                        {
-                            name: `${entry.name}`,
-                            value: ' ',
-                            inline: false,
-                        },
-                        {
-                            name: ' ',
-                            value: ' ',
-                            inline: false,
-                        },
-                    ];
-                },
-            ),
-            delete: new DeleteStrategy(ObjectiveDifficultyFactory.getInstance(), 'dificuldade de objetivo'),
-        });
+        super('objective-difficulty', ObjectiveDifficultyFactory.getInstance(), Colors.DarkRed, 'dificuldade de objetivos');
     }
 }

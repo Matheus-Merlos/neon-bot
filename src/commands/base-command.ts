@@ -3,7 +3,7 @@ import { ColorResolvable, EmbedBuilder, Message } from 'discord.js';
 import { InferSelectModel, Table } from 'drizzle-orm';
 import Factory from '../factories/base-factory';
 import ShowEmbed from '../factories/show-embed';
-import { DefaultStrategy, Strategy } from '../strategies';
+import { CreateStrategy, DefaultStrategy, DeleteStrategy, ListStrategy, Strategy } from '../strategies';
 import embedList from '../utils/embed-list';
 import { EntryNotFoundError } from '../utils/errors';
 
@@ -95,5 +95,28 @@ export abstract class StrategyCommand implements Command {
         const strategy: Strategy = this.subCommands[subCommand] ?? this.defaultStrategy;
 
         await strategy.execute(message as Message<true>, messageAsList);
+    }
+}
+
+export abstract class SimpleTableCommand<T extends Table, U extends Factory<T>> extends StrategyCommand {
+    constructor(commandName: string, factoryInstance: U, embedColor: ColorResolvable, entityName: string) {
+        super(commandName, {
+            create: new CreateStrategy(factoryInstance, entityName),
+            list: new ListStrategy(factoryInstance, entityName, embedColor, (entry) => {
+                return [
+                    {
+                        name: `${entry.name}`,
+                        value: ' ',
+                        inline: false,
+                    },
+                    {
+                        name: ' ',
+                        value: ' ',
+                        inline: false,
+                    },
+                ];
+            }),
+            delete: new DeleteStrategy(factoryInstance, entityName),
+        });
     }
 }

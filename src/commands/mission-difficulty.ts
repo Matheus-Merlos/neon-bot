@@ -1,28 +1,10 @@
 import { Colors } from 'discord.js';
+import { missionDifficulty } from '../db/schema';
 import MissionDifficultyFactory from '../factories/missions/mission-difficulty-factory';
-import { CreateStrategy, ListStrategy } from '../strategies';
-import DeleteStrategy from '../strategies/generics/delete';
-import { StrategyCommand } from './base-command';
+import { SimpleTableCommand } from './base-command';
 
-export default class MissionDifficulty extends StrategyCommand {
+export default class MissionDifficulty extends SimpleTableCommand<typeof missionDifficulty, MissionDifficultyFactory> {
     constructor() {
-        super('mission-difficulty', {
-            create: new CreateStrategy(MissionDifficultyFactory.getInstance(), 'dificuldade de missão'),
-            list: new ListStrategy(MissionDifficultyFactory.getInstance(), 'dificuldades de missão', Colors.White, (entry) => {
-                return [
-                    {
-                        name: `${entry.name}`,
-                        value: ' ',
-                        inline: false,
-                    },
-                    {
-                        name: ' ',
-                        value: ' ',
-                        inline: false,
-                    },
-                ];
-            }),
-            delete: new DeleteStrategy(MissionDifficultyFactory.getInstance(), 'dificuldade de missão'),
-        });
+        super('mission-difficulty', MissionDifficultyFactory.getInstance(), Colors.White, 'dificuldade de missão');
     }
 }

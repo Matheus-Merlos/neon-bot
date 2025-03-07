@@ -1,27 +1,10 @@
 import { Colors } from 'discord.js';
+import { characterClass } from '../db/schema';
 import ClassFactory from '../factories/class-objectives/class-factory';
-import { CreateStrategy, DeleteStrategy, ListStrategy } from '../strategies';
-import { StrategyCommand } from './base-command';
+import { SimpleTableCommand } from './base-command';
 
-export default class Class extends StrategyCommand {
+export default class Class extends SimpleTableCommand<typeof characterClass, ClassFactory> {
     constructor() {
-        super('class', {
-            create: new CreateStrategy(ClassFactory.getInstance(), 'classe'),
-            list: new ListStrategy(ClassFactory.getInstance(), 'Classes', Colors.Yellow, (entry) => {
-                return [
-                    {
-                        name: entry.name,
-                        value: ' ',
-                        inline: false,
-                    },
-                    {
-                        name: ' ',
-                        value: ' ',
-                        inline: false,
-                    },
-                ];
-            }),
-            delete: new DeleteStrategy(ClassFactory.getInstance(), 'classe'),
-        });
+        super('class', ClassFactory.getInstance(), Colors.Yellow, 'classes');
     }
 }
