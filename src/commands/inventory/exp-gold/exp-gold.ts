@@ -13,8 +13,8 @@ class AddRemoveCommand {
         operator: '+' | '-',
         attribute: 'gold' | 'xp',
     ): Promise<void> {
-        const playerId = getIdFromMention(messageAsList[1]);
-        const quantity = parseInt(messageAsList[2]);
+        const playerId = getIdFromMention(messageAsList[0]);
+        const quantity = parseInt(messageAsList[1]);
 
         const char = await CharacterFactory.getInstance().getFromPlayerId(playerId, message.guild!.id);
 

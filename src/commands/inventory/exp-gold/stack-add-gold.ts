@@ -8,9 +8,9 @@ import Command from '../../base-command';
 
 export default class StackAddGold implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        const quantity = parseInt(messageAsList[1]);
+        const quantity = parseInt(messageAsList[0]);
 
-        messageAsList.splice(0, 2);
+        messageAsList.splice(0, 1);
 
         const playersId = messageAsList.map((mention) => getIdFromMention(mention));
         const characters = [];

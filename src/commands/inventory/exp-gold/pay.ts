@@ -9,8 +9,8 @@ import Command from '../../base-command';
 export default class Pay implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         const senderId = message.author.id;
-        const receiverId = getIdFromMention(messageAsList[1]);
-        const quantity = parseInt(messageAsList[2]);
+        const receiverId = getIdFromMention(messageAsList[0]);
+        const quantity = parseInt(messageAsList[1]);
 
         const sender = await CharacterFactory.getInstance().getFromPlayerId(senderId, message.guildId!);
         const receiver = await CharacterFactory.getInstance().getFromPlayerId(receiverId, message.guildId!);

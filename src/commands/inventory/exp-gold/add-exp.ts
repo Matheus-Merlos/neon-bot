@@ -9,8 +9,8 @@ import Command from '../../base-command';
 
 export default class AddExp implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        const playerId = getIdFromMention(messageAsList[1]);
-        const quantity = parseInt(messageAsList[2]);
+        const playerId = getIdFromMention(messageAsList[0]);
+        const quantity = parseInt(messageAsList[1]);
 
         const char = await CharacterFactory.getInstance().getFromPlayerId(playerId, message.guild!.id);
 

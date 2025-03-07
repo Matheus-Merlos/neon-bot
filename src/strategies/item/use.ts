@@ -7,6 +7,7 @@ import Strategy from '../base-strategy';
 
 export default class UseStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
+        console.log(messageAsList);
         const hasQuantity = !isNaN(parseInt(messageAsList[0]));
 
         let quantity = 1;
@@ -46,6 +47,7 @@ export default class UseStrategy implements Strategy {
 
         if (totalDurability < quantity) {
             await message.reply(`Você não possui **${item.name}** o suficiente para utilizar **${quantity}** vezes.`);
+            return;
         }
 
         for (const invItem of inventoryItems) {
