@@ -25,7 +25,6 @@ import {
 import ClassObjectives from './commands/class-objectives/class-objectives';
 import CompletedClassObjective from './commands/class-objectives/completed-class-objective';
 import CompletedClassObjectives from './commands/class-objectives/completed-class-objectives';
-import CreateClass from './commands/class-objectives/create-class';
 import CreateClassObjective from './commands/class-objectives/create-class-objective';
 import SetClass from './commands/class-objectives/set-class';
 import Buy from './commands/inventory/items/buy';
@@ -67,7 +66,6 @@ client.addCommand('mission-difficulty', new MissionDifficulty());
 client.addCommand('class', new Class());
 
 //TODO:
-client.addCommand(['create-class', 'criar-classe'], new CreateClass());
 client.addCommand('set-class', new SetClass());
 
 client.addCommand('create-class-objective', new CreateClassObjective());
