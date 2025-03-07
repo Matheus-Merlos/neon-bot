@@ -30,14 +30,14 @@ export default class CreateClassObjective implements Command {
             .join(' ')
             .replaceAll('"', '');
 
-        const created = await ClassObjectiveFactory.getInstance().create(
-            objectiveName,
+        const created = await ClassObjectiveFactory.getInstance().create({
+            name: objectiveName,
             xp,
             gold,
-            cls.id,
+            classId: cls.id,
             description,
-            message.guildId!,
-        );
+            guildId: BigInt(message.guildId!),
+        });
 
         message.reply(`Objetivo de classe **${created.name}** criado com sucesso para a classe **${cls.name}**`);
         return;

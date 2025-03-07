@@ -54,16 +54,14 @@ export default class CreateItem implements Command {
         let createdItem;
 
         try {
-            createdItem = await ItemFactory.getInstance().create(
-                itemName,
-                description!,
-                imageStream,
-                contentType,
-                contentLength,
+            createdItem = await ItemFactory.getInstance().create({
+                name: itemName,
+                description,
                 price,
                 durability,
-                message.guildId!,
-            );
+                guildId: BigInt(message.guildId!),
+                canBuy: true,
+            });
         } catch (error) {
             if (error instanceof Error) {
                 if (error.message.toUpperCase().includes('UNIQUE'))

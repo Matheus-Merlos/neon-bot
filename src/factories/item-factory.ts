@@ -11,7 +11,7 @@ export default class ItemFactory extends Factory<typeof item> implements ShowEmb
     private static instance: ItemFactory | null = null;
 
     private constructor() {
-        super();
+        super(item);
     }
 
     static getInstance(): ItemFactory {
@@ -20,58 +20,6 @@ export default class ItemFactory extends Factory<typeof item> implements ShowEmb
         }
 
         return ItemFactory.instance;
-    }
-
-    async create(
-        name: string,
-        description: string,
-        imageStream: string | null,
-        contentType: string | null,
-        contentLenght: number | null,
-        price: number,
-        durability: number,
-        guildId: string,
-    ): Promise<{
-        id: number;
-        name: string;
-        description: string | null;
-        price: number;
-        durability: number;
-        canBuy: boolean;
-        image: string | null;
-        salt: string | null;
-        guildId: bigint;
-    }> {
-        let salt = null;
-        let url = null;
-        if (imageStream !== null) {
-            const upload = await ImageFactory.getInstance().uploadImage(
-                'items',
-                `${toSlug(name)}.png`,
-                imageStream,
-                contentType!,
-                contentLenght!,
-            );
-
-            url = upload.url;
-            salt = upload.salt;
-        }
-
-        const [createdItem] = await db
-            .insert(item)
-            .values({
-                name,
-                description,
-                image: url,
-                price,
-                durability,
-                canBuy: true,
-                salt,
-                guildId: BigInt(guildId),
-            })
-            .returning();
-
-        return createdItem;
     }
 
     async getByName(
