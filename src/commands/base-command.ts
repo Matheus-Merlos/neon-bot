@@ -78,9 +78,9 @@ export abstract class ListCommand<T extends Table> implements Command {
 
 export abstract class StrategyCommand implements Command {
     constructor(
-        protected readonly commandName: string,
-        protected readonly subCommands: Record<string, Strategy> = {},
-        protected readonly defaultStrategy: DefaultStrategy | null = null,
+        private readonly commandName: string,
+        private readonly subCommands: Record<string, Strategy> = {},
+        private readonly defaultStrategy: DefaultStrategy | null = null,
     ) {
         if (defaultStrategy === null) {
             this.defaultStrategy = new DefaultStrategy(this.commandName, [
@@ -99,24 +99,33 @@ export abstract class StrategyCommand implements Command {
 }
 
 export abstract class SimpleTableCommand<T extends Table, U extends Factory<T>> extends StrategyCommand {
-    constructor(commandName: string, factoryInstance: U, embedColor: ColorResolvable, entityName: string) {
+    constructor(
+        commandName: string,
+        factoryInstance: U,
+        embedColor: ColorResolvable,
+        entityName: string,
+        extraSubcommands: Record<string, Strategy> = {},
+    ) {
         super(commandName, {
-            create: new CreateStrategy(factoryInstance, entityName),
-            list: new ListStrategy(factoryInstance, entityName, embedColor, (entry) => {
-                return [
-                    {
-                        name: `${entry.name}`,
-                        value: ' ',
-                        inline: false,
-                    },
-                    {
-                        name: ' ',
-                        value: ' ',
-                        inline: false,
-                    },
-                ];
-            }),
-            delete: new DeleteStrategy(factoryInstance, entityName),
+            ...{
+                create: new CreateStrategy(factoryInstance, entityName),
+                list: new ListStrategy(factoryInstance, entityName, embedColor, (entry) => {
+                    return [
+                        {
+                            name: `${entry.name}`,
+                            value: ' ',
+                            inline: false,
+                        },
+                        {
+                            name: ' ',
+                            value: ' ',
+                            inline: false,
+                        },
+                    ];
+                }),
+                delete: new DeleteStrategy(factoryInstance, entityName),
+            },
+            ...extraSubcommands,
         });
     }
 }

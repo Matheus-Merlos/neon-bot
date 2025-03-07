@@ -10,6 +10,7 @@ import ListCompletedObjectivesStrategy from './objectives/list-completed-objecti
 import SelectObjectiveStrategy from './objectives/select-objective';
 import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
+import SetClassStrategy from './class-objectives/set-class';
 import CreateStrategy from './generics/create';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
@@ -27,6 +28,7 @@ export {
     ListStrategy,
     SelectedObjectivesStrategy,
     SelectObjectiveStrategy,
+    SetClassStrategy,
     Strategy
 };
 
