@@ -1,11 +1,9 @@
-import { Message, PermissionFlagsBits } from 'discord.js';
-import hasPermission from '../../decorators/has-permission';
+import { Message } from 'discord.js';
 import ClassFactory from '../../factories/class-objectives/class-factory';
-import Command from '../base-command';
+import Strategy from '../base-strategy';
 
-export default class CreateClass implements Command {
-    @hasPermission(PermissionFlagsBits.ManageRoles)
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+export default class CreateClassStrategy implements Strategy {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         if (messageAsList.length > 2 || messageAsList.length <= 1) {
             message.reply(`A classe só pode ter uma palavra,`);
             return;

@@ -4,6 +4,7 @@ import {
     AddExp,
     AddGold,
     Calculate,
+    Class,
     ClearChat,
     Inventory,
     Leaderboard,
@@ -22,12 +23,10 @@ import {
     TurnList,
 } from './commands';
 import ClassObjectives from './commands/class-objectives/class-objectives';
-import Classes from './commands/class-objectives/classes';
 import CompletedClassObjective from './commands/class-objectives/completed-class-objective';
 import CompletedClassObjectives from './commands/class-objectives/completed-class-objectives';
 import CreateClass from './commands/class-objectives/create-class';
 import CreateClassObjective from './commands/class-objectives/create-class-objective';
-import DeleteClass from './commands/class-objectives/delete-class';
 import SetClass from './commands/class-objectives/set-class';
 import Buy from './commands/inventory/items/buy';
 import CreateItem from './commands/inventory/items/create-item';
@@ -65,10 +64,10 @@ client.addCommand('objective-difficulty', new ObjectiveDifficulty());
 client.addCommand('mission', new Mission());
 client.addCommand('mission-difficulty', new MissionDifficulty());
 
+client.addCommand('class', new Class());
+
 //TODO:
 client.addCommand(['create-class', 'criar-classe'], new CreateClass());
-client.addCommand(['delete-class', 'deletar-classe'], new DeleteClass());
-client.addCommand(['classes', 'class-list'], new Classes());
 client.addCommand('set-class', new SetClass());
 
 client.addCommand('create-class-objective', new CreateClassObjective());

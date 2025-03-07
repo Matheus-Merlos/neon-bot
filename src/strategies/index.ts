@@ -11,6 +11,7 @@ import ListCompletedObjectivesStrategy from './objectives/list-completed-objecti
 import SelectObjectiveStrategy from './objectives/select-objective';
 import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
+import CreateClassStrategy from './class-objectives/create-class';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
 import CreateMissionDifficultyStrategy from './missions/create-mission-difficulty';
@@ -18,6 +19,7 @@ import CreateMissionDifficultyStrategy from './missions/create-mission-difficult
 export {
     CompletedMissionStrategy,
     CompleteObjectiveStrategy,
+    CreateClassStrategy,
     CreateMissionDifficultyStrategy,
     CreateMissionStrategy,
     CreateObjectiveDifficultyStrategy,

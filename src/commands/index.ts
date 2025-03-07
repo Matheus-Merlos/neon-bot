@@ -12,6 +12,7 @@ import MissionDifficulty from './mission-difficulty';
 
 import Mission from './mission';
 
+import Class from './class';
 import AddExp from './inventory/exp-gold/add-exp';
 import { AddGold, RemoveExp, RemoveGold } from './inventory/exp-gold/exp-gold';
 import StackAddExp from './inventory/exp-gold/stack-add-exp';
@@ -24,6 +25,7 @@ export {
     AddExp,
     AddGold,
     Calculate,
+    Class,
     ClearChat,
     Inventory,
     Leaderboard,
