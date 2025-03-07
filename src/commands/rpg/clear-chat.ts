@@ -1,9 +1,7 @@
-import { DiscordAPIError, Message, PermissionFlagsBits, TextChannel } from 'discord.js';
-import hasPermission from '../../decorators/has-permission';
+import { DiscordAPIError, Message, TextChannel } from 'discord.js';
 import Command from '../base-command';
 
 export default class ClearChat implements Command {
-    @hasPermission(PermissionFlagsBits.ManageMessages)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         const messages = await message.channel.messages.fetch({ limit: 100 });

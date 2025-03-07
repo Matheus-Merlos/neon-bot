@@ -1,12 +1,10 @@
-import { Message, PermissionFlagsBits } from 'discord.js';
-import hasPermission from '../../../decorators/has-permission';
+import { Message } from 'discord.js';
 import CharacterFactory from '../../../factories/character-factory';
 import addConfirmation from '../../../utils/confirmation-row';
 import getIdFromMention from '../../../utils/get-id-from-mention';
 import Command from '../../base-command';
 
 export default class Reset implements Command {
-    @hasPermission(PermissionFlagsBits.Administrator)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         await addConfirmation({
             message: message,

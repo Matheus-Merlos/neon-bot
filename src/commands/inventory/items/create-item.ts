@@ -1,11 +1,9 @@
 import axios from 'axios';
-import { Attachment, Message, PermissionFlagsBits } from 'discord.js';
-import hasPermission from '../../../decorators/has-permission';
+import { Attachment, Message } from 'discord.js';
 import ItemFactory from '../../../factories/item-factory';
 import Command from '../../base-command';
 
 export default class CreateItem implements Command {
-    @hasPermission(PermissionFlagsBits.ManageChannels)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         const img: Attachment | undefined | null = message.attachments.first();
 

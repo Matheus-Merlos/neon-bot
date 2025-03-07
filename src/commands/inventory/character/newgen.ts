@@ -1,14 +1,12 @@
-import { Message, PermissionFlagsBits } from 'discord.js';
+import { Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { character } from '../../../db/schema';
-import hasPermission from '../../../decorators/has-permission';
 import ImageFactory from '../../../factories/image-factory';
 import addConfirmation from '../../../utils/confirmation-row';
 import Command from '../../base-command';
 
 export default class NewGen implements Command {
-    @hasPermission(PermissionFlagsBits.Administrator)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         await addConfirmation({
             message: message,

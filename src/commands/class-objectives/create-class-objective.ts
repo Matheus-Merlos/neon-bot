@@ -1,11 +1,9 @@
-import { Message, PermissionFlagsBits } from 'discord.js';
-import hasPermission from '../../decorators/has-permission';
+import { Message } from 'discord.js';
 import ClassFactory from '../../factories/class-objectives/class-factory';
 import ClassObjectiveFactory from '../../factories/class-objectives/class-objective-factory';
 import Command from '../base-command';
 
 export default class CreateClassObjective implements Command {
-    @hasPermission(PermissionFlagsBits.ManageRoles)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         messageAsList.splice(0, 1);
         const clsName = messageAsList[0];

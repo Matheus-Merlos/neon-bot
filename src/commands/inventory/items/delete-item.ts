@@ -1,11 +1,9 @@
-import { Message, PermissionFlagsBits } from 'discord.js';
-import hasPermission from '../../../decorators/has-permission';
+import { Message } from 'discord.js';
 import ItemFactory from '../../../factories/item-factory';
 import addConfirmation from '../../../utils/confirmation-row';
 import Command from '../../base-command';
 
 export default class DeleteItem implements Command {
-    @hasPermission(PermissionFlagsBits.ManageChannels)
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
         messageAsList.splice(0, 1);
 
