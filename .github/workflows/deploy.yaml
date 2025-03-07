@@ -53,7 +53,7 @@ jobs:
 
             cd /home/admin/neon-bot
 
-            rm -rf commands db decorators factories node_modules utils || true
+            rm -rf commands db strategies factories node_modules utils || true
             rm .env client.js drizzle-dev.config.js drizzle-prod.config.js main.js package-lock.json package.json || true
 
 
