@@ -20,6 +20,7 @@ import StackAddGold from './inventory/exp-gold/stack-add-gold';
 import Inventory from './inventory/inventory';
 import Pay from './inventory/items/pay';
 import Leaderboard from './inventory/leaderboard';
+import Item from './item';
 
 export {
     AddExp,
@@ -28,6 +29,7 @@ export {
     Class,
     ClearChat,
     Inventory,
+    Item,
     Leaderboard,
     Mission,
     MissionDifficulty,

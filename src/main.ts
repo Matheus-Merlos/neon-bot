@@ -7,6 +7,7 @@ import {
     Class,
     ClearChat,
     Inventory,
+    Item,
     Leaderboard,
     Mission,
     MissionDifficulty,
@@ -27,11 +28,7 @@ import CompletedClassObjective from './commands/class-objectives/completed-class
 import CompletedClassObjectives from './commands/class-objectives/completed-class-objectives';
 import CreateClassObjective from './commands/class-objectives/create-class-objective';
 import Buy from './commands/inventory/items/buy';
-import CreateItem from './commands/inventory/items/create-item';
-import DeleteItem from './commands/inventory/items/delete-item';
-import GiveItem from './commands/inventory/items/give-item';
-import Item from './commands/inventory/items/item';
-import Shop from './commands/inventory/items/shop';
+import { default as GiveItem } from './commands/inventory/items/give-item';
 import Use from './commands/inventory/items/use';
 
 config();
@@ -64,17 +61,15 @@ client.addCommand('mission-difficulty', new MissionDifficulty());
 
 client.addCommand('class', new Class());
 
+client.addCommand('item', new Item());
+
 //TODO:
 client.addCommand('create-class-objective', new CreateClassObjective());
 client.addCommand('completed-class-objective', new CompletedClassObjective());
 client.addCommand('completed-class-objectives', new CompletedClassObjectives());
 client.addCommand('class-objectives', new ClassObjectives());
 
-client.addCommand('create-item', new CreateItem());
-client.addCommand('delete-item', new DeleteItem());
 client.addCommand('give-item', new GiveItem());
-client.addCommand(['item', 'item-info', 'view-item'], new Item());
-client.addCommand(['shop', 'loja', 'items'], new Shop());
 client.addCommand(['buy', 'buy-item'], new Buy());
 client.addCommand('use', new Use());
 

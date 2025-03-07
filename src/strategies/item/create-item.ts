@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { Attachment, Message } from 'discord.js';
-import ItemFactory from '../../../factories/item-factory';
-import Command from '../../base-command';
+import ItemFactory from '../../factories/item-factory';
+import Strategy from '../base-strategy';
 
-export default class CreateItem implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+export default class CreateItemStrategy implements Strategy {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const img: Attachment | undefined | null = message.attachments.first();
 
         const priceIndex = messageAsList.findIndex((element) => !isNaN(parseInt(element)) && element.trim() !== '');

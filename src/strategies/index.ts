@@ -12,12 +12,14 @@ import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
 import SetClassStrategy from './class-objectives/set-class';
 import CreateStrategy from './generics/create';
+import CreateItemStrategy from './item/create-item';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
 
 export {
     CompletedMissionStrategy,
     CompleteObjectiveStrategy,
+    CreateItemStrategy,
     CreateMissionStrategy,
     CreateObjectiveStrategy,
     CreateStrategy,
