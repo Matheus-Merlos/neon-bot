@@ -1,5 +1,5 @@
 import { Colors, EmbedBuilder, Message } from 'discord.js';
-import { asc, count, desc, eq, gt } from 'drizzle-orm';
+import { and, asc, count, desc, eq, gt } from 'drizzle-orm';
 import db from '../../db/db';
 import { inventory, item, rank, reachedRank } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
@@ -10,7 +10,6 @@ import Command from '../base-command';
 
 export default class Inventory implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        messageAsList.splice(0, 1);
         let char;
         let playerId;
         if (messageAsList[0]) {
@@ -104,7 +103,7 @@ export default class Inventory implements Command {
                         await db
                             .select({ durability: inventory.durability })
                             .from(inventory)
-                            .where(eq(inventory.itemId, item.itemId))
+                            .where(and(eq(inventory.itemId, item.itemId), eq(inventory.characterId, char.id)))
                             .orderBy(asc(inventory.durability))
                     ).map((i) => i.durability);
 
