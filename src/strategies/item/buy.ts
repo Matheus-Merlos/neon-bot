@@ -1,16 +1,15 @@
 import { Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
-import db from '../../../db/db';
-import { character, inventory } from '../../../db/schema';
-import CharacterFactory from '../../../factories/character-factory';
-import ItemFactory from '../../../factories/item-factory';
-import Command from '../../base-command';
+import db from '../../db/db';
+import { character, inventory } from '../../db/schema';
+import CharacterFactory from '../../factories/character-factory';
+import ItemFactory from '../../factories/item-factory';
+import Strategy from '../base-strategy';
 
-export default class Buy implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+export default class BuyStrategy implements Strategy {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         let quantity = 1;
 
-        messageAsList.splice(0, 1);
         if (!isNaN(parseInt(messageAsList[0]))) {
             quantity = parseInt(messageAsList[0]);
             messageAsList.splice(0, 1);

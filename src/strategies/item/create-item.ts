@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { Attachment, Message } from 'discord.js';
+import ImageFactory from '../../factories/image-factory';
 import ItemFactory from '../../factories/item-factory';
+import toSlug from '../../utils/slug';
 import Strategy from '../base-strategy';
 
 export default class CreateItemStrategy implements Strategy {
@@ -52,6 +54,20 @@ export default class CreateItemStrategy implements Strategy {
         let createdItem;
 
         try {
+            let salt = null;
+            let url = null;
+            if (imageStream !== null) {
+                const upload = await ImageFactory.getInstance().uploadImage(
+                    'items',
+                    `${toSlug(itemName)}.png`,
+                    imageStream,
+                    contentType!,
+                    contentLength!,
+                );
+
+                url = upload.url;
+                salt = upload.salt;
+            }
             createdItem = await ItemFactory.getInstance().create({
                 name: itemName,
                 description,
@@ -59,6 +75,8 @@ export default class CreateItemStrategy implements Strategy {
                 durability,
                 guildId: BigInt(message.guildId!),
                 canBuy: true,
+                salt,
+                image: url,
             });
         } catch (error) {
             if (error instanceof Error) {

@@ -15,10 +15,10 @@ import Mission from './mission';
 import Class from './class';
 import AddExp from './inventory/exp-gold/add-exp';
 import { AddGold, RemoveExp, RemoveGold } from './inventory/exp-gold/exp-gold';
+import Pay from './inventory/exp-gold/pay';
 import StackAddExp from './inventory/exp-gold/stack-add-exp';
 import StackAddGold from './inventory/exp-gold/stack-add-gold';
 import Inventory from './inventory/inventory';
-import Pay from './inventory/items/pay';
 import Leaderboard from './inventory/leaderboard';
 import Item from './item';
 

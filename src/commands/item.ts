@@ -1,6 +1,14 @@
 import { Colors } from 'discord.js';
 import ItemFactory from '../factories/item-factory';
-import { CreateItemStrategy, DeleteStrategy, InfoStrategy, ListStrategy } from '../strategies';
+import {
+    BuyStrategy,
+    CreateItemStrategy,
+    DeleteStrategy,
+    GiveItemStrategy,
+    InfoStrategy,
+    ListStrategy,
+    UseStrategy,
+} from '../strategies';
 import { StrategyCommand } from './base-command';
 
 export default class Item extends StrategyCommand {
@@ -25,6 +33,9 @@ export default class Item extends StrategyCommand {
             list: listStrategy,
             shop: listStrategy,
             delete: new DeleteStrategy(ItemFactory.getInstance(), 'item'),
+            buy: new BuyStrategy(),
+            give: new GiveItemStrategy(),
+            use: new UseStrategy(),
         });
     }
 }

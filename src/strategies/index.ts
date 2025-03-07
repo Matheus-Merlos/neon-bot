@@ -12,11 +12,15 @@ import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
 import SetClassStrategy from './class-objectives/set-class';
 import CreateStrategy from './generics/create';
+import BuyStrategy from './item/buy';
 import CreateItemStrategy from './item/create-item';
+import GiveItemStrategy from './item/give';
+import UseStrategy from './item/use';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
 
 export {
+    BuyStrategy,
     CompletedMissionStrategy,
     CompleteObjectiveStrategy,
     CreateItemStrategy,
@@ -25,12 +29,14 @@ export {
     CreateStrategy,
     DefaultStrategy,
     DeleteStrategy,
+    GiveItemStrategy,
     InfoStrategy,
     ListCompletedObjectivesStrategy,
     ListStrategy,
     SelectedObjectivesStrategy,
     SelectObjectiveStrategy,
     SetClassStrategy,
-    Strategy
+    Strategy,
+    UseStrategy
 };
 

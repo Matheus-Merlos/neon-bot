@@ -1,22 +1,22 @@
 import { Message } from 'discord.js';
-import db from '../../../db/db';
-import { inventory } from '../../../db/schema';
-import CharacterFactory from '../../../factories/character-factory';
-import ItemFactory from '../../../factories/item-factory';
-import getIdFromMention from '../../../utils/get-id-from-mention';
-import Command from '../../base-command';
+import db from '../../db/db';
+import { inventory } from '../../db/schema';
+import CharacterFactory from '../../factories/character-factory';
+import ItemFactory from '../../factories/item-factory';
+import getIdFromMention from '../../utils/get-id-from-mention';
+import Strategy from '../base-strategy';
 
-export default class GiveItem implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+export default class GiveItemStrategy implements Strategy {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         let quantity = 1;
         let char;
-        if (messageAsList[1].includes('@')) {
-            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[1]), message.guildId!);
+        if (messageAsList[0].includes('@')) {
+            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[0]), message.guildId!);
         } else {
             char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guildId!);
         }
 
-        messageAsList.splice(0, 2);
+        messageAsList.splice(0, 1);
         if (!isNaN(parseInt(messageAsList[0]))) {
             quantity = parseInt(messageAsList[0]);
             messageAsList.splice(0, 1);

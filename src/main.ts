@@ -27,9 +27,6 @@ import ClassObjectives from './commands/class-objectives/class-objectives';
 import CompletedClassObjective from './commands/class-objectives/completed-class-objective';
 import CompletedClassObjectives from './commands/class-objectives/completed-class-objectives';
 import CreateClassObjective from './commands/class-objectives/create-class-objective';
-import Buy from './commands/inventory/items/buy';
-import { default as GiveItem } from './commands/inventory/items/give-item';
-import Use from './commands/inventory/items/use';
 
 config();
 
@@ -68,9 +65,5 @@ client.addCommand('create-class-objective', new CreateClassObjective());
 client.addCommand('completed-class-objective', new CompletedClassObjective());
 client.addCommand('completed-class-objectives', new CompletedClassObjectives());
 client.addCommand('class-objectives', new ClassObjectives());
-
-client.addCommand('give-item', new GiveItem());
-client.addCommand(['buy', 'buy-item'], new Buy());
-client.addCommand('use', new Use());
 
 export default client;
