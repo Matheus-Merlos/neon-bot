@@ -12,4 +12,33 @@ import MissionDifficulty from './mission-difficulty';
 
 import Mission from './mission';
 
-export { Calculate, ClearChat, Mission, MissionDifficulty, NewGen, Objective, ObjectiveDifficulty, Reset, Roll, TurnList };
+import AddExp from './inventory/exp-gold/add-exp';
+import { AddGold, RemoveExp, RemoveGold } from './inventory/exp-gold/exp-gold';
+import StackAddExp from './inventory/exp-gold/stack-add-exp';
+import StackAddGold from './inventory/exp-gold/stack-add-gold';
+import Inventory from './inventory/inventory';
+import Pay from './inventory/items/pay';
+import Leaderboard from './inventory/leaderboard';
+
+export {
+    AddExp,
+    AddGold,
+    Calculate,
+    ClearChat,
+    Inventory,
+    Leaderboard,
+    Mission,
+    MissionDifficulty,
+    NewGen,
+    Objective,
+    ObjectiveDifficulty,
+    Pay,
+    RemoveExp,
+    RemoveGold,
+    Reset,
+    Roll,
+    StackAddExp,
+    StackAddGold,
+    TurnList
+};
+
