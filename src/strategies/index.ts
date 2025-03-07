@@ -1,5 +1,6 @@
 import Strategy from './base-strategy';
 import DefaultStrategy from './generics/default';
+import DeleteStrategy from './generics/delete';
 import InfoStrategy from './generics/info';
 import ListStrategy from './generics/list';
 
@@ -10,11 +11,19 @@ import ListCompletedObjectivesStrategy from './objectives/list-completed-objecti
 import SelectObjectiveStrategy from './objectives/select-objective';
 import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
+import CompletedMissionStrategy from './missions/completed-mission';
+import CreateMissionStrategy from './missions/create-mission';
+import CreateMissionDifficultyStrategy from './missions/create-mission-difficulty';
+
 export {
+    CompletedMissionStrategy,
     CompleteObjectiveStrategy,
+    CreateMissionDifficultyStrategy,
+    CreateMissionStrategy,
     CreateObjectiveDifficultyStrategy,
     CreateObjectiveStrategy,
     DefaultStrategy,
+    DeleteStrategy,
     InfoStrategy,
     ListCompletedObjectivesStrategy,
     ListStrategy,

@@ -1,7 +1,17 @@
 import { config } from 'dotenv';
 import Client from './client';
-import { Calculate, ClearChat, NewGen, Objective, ObjectiveDifficulty, Reset, Roll, TurnList } from './commands';
-import Mission from './commands/mission';
+import {
+    Calculate,
+    ClearChat,
+    Mission,
+    MissionDifficulty,
+    NewGen,
+    Objective,
+    ObjectiveDifficulty,
+    Reset,
+    Roll,
+    TurnList,
+} from './commands';
 
 config();
 
@@ -44,8 +54,6 @@ client.addCommand('roll', new Roll());
 client.addCommand(['limpar-chat', 'clear-chat'], new ClearChat());
 
 //client.addCommand('create-mission-difficulty', new CreateMissionDifficulty());
-//client.addCommand('delete-mission-difficulty', new DeleteMissionDifficulty());
-//client.addCommand('mission-difficulties', new MissionDifficulties());
 //client.addCommand('create-mission', new CreateMission());
 //client.addCommand('delete-mission', new DeleteMission());
 //client.addCommand('mission', new Mission());
@@ -56,5 +64,6 @@ client.addCommand('objective', new Objective());
 client.addCommand('objective-difficulty', new ObjectiveDifficulty());
 
 client.addCommand('mission', new Mission());
+client.addCommand('mission-difficulty', new MissionDifficulty());
 
 export default client;

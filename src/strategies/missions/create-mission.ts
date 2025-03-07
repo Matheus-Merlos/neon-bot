@@ -1,14 +1,11 @@
-import { Message, PermissionFlagsBits } from 'discord.js';
-import hasPermission from '../../decorators/has-permission';
+import { Message } from 'discord.js';
 import MissionDifficultyFactory from '../../factories/missions/mission-difficulty-factory';
 import MissionFactory from '../../factories/missions/mission-factory';
 import { EntryNotFoundError } from '../../utils/errors';
-import Command from '../base-command';
+import Strategy from '../base-strategy';
 
-export default class CreateMission implements Command {
-    @hasPermission(PermissionFlagsBits.ManageRoles)
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        messageAsList.splice(0, 1);
+export default class CreateMissionStrategy implements Strategy {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const difficultyName = messageAsList[0];
 
         let missionDifficulty;
@@ -39,9 +36,9 @@ export default class CreateMission implements Command {
             name: missionName,
             xp,
             gold,
-            difficultyId: missionDifficulty.id,
+            difficulty: missionDifficulty.id,
             description,
-            guildId: message.guildId!,
+            guildId: BigInt(message.guildId!),
             imageUrl: typeof imageUrl === 'undefined' ? null : imageUrl.url,
         });
 

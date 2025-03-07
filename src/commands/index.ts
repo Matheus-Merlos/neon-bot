@@ -8,4 +8,8 @@ import ClearChat from './rpg/clear-chat';
 import Roll from './rpg/roll';
 import TurnList from './rpg/turn-list';
 
-export { Calculate, ClearChat, NewGen, Objective, ObjectiveDifficulty, Reset, Roll, TurnList };
+import MissionDifficulty from './mission-difficulty';
+
+import Mission from './mission';
+
+export { Calculate, ClearChat, Mission, MissionDifficulty, NewGen, Objective, ObjectiveDifficulty, Reset, Roll, TurnList };

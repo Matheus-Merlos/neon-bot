@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { eq, InferSelectModel } from 'drizzle-orm';
+import { InferSelectModel, eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { character, missionComplete, mission as missionTable } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
@@ -7,11 +7,10 @@ import MissionFactory from '../../factories/missions/mission-factory';
 import { checkCaracterLevelUpTransaction } from '../../utils/check-character-levelup';
 import { EntryNotFoundError } from '../../utils/errors';
 import getIdFromMention from '../../utils/get-id-from-mention';
-import Command from '../base-command';
+import Strategy from '../base-strategy';
 
-export default class CompletedMission implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        messageAsList.splice(0, 1);
+export default class CompletedMissionStrategy implements Strategy {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const firstMentionIndex = messageAsList.findIndex((entry) => entry.includes('@'));
 
         const missionName = messageAsList.slice(0, firstMentionIndex).join(' ');
