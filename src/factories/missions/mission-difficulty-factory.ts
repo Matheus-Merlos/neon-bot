@@ -7,7 +7,7 @@ export default class MissionDifficultyFactory extends Factory<typeof missionDiff
     private static instance: MissionDifficultyFactory | null = null;
 
     private constructor() {
-        super();
+        super(missionDifficulty);
     }
 
     static getInstance(): MissionDifficultyFactory {

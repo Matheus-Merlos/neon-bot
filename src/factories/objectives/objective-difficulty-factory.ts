@@ -7,7 +7,7 @@ export default class ObjectiveDifficultyFactory extends Factory<typeof objective
     private static instance: ObjectiveDifficultyFactory | null = null;
 
     private constructor() {
-        super();
+        super(objectiveDifficulty);
     }
 
     static getInstance(): ObjectiveDifficultyFactory {
@@ -19,7 +19,7 @@ export default class ObjectiveDifficultyFactory extends Factory<typeof objective
     }
 
     async getByName(difficultyName: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
-        return await this.searchEntry(await this.getAll(guildId), 'name', difficultyName);
+        return this.searchEntry(await this.getAll(guildId), 'name', difficultyName);
     }
 
     async getAll(guildId: string): Promise<{ id: number; name: string; guildId: bigint }[]> {

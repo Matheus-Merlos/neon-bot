@@ -3,13 +3,15 @@ import db from '../db/db';
 import getMostSimilarString from '../utils/levenshtein';
 
 export default abstract class Factory<T extends Table> {
+    constructor(protected readonly table: T) {}
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static getInstance(): Factory<any> {
         throw new Error('Static method getInstance() must be implemented in the sublcass.');
     }
 
-    async create(table: T, args: InferInsertModel<T>): Promise<InferSelectModel<T>> {
-        const [createdIndex] = (await db.insert(table).values(args).returning()) as InferSelectModel<T>[];
+    async create(args: InferInsertModel<T>): Promise<InferSelectModel<T>> {
+        const [createdIndex] = (await db.insert(this.table).values(args).returning()) as InferSelectModel<T>[];
 
         return createdIndex;
     }

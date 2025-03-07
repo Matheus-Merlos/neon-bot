@@ -9,7 +9,7 @@ export default class ObjectiveFactory extends Factory<typeof objective> implemen
     private static instance: ObjectiveFactory | null = null;
 
     private constructor() {
-        super();
+        super(objective);
     }
     show(entry: {
         id: number;

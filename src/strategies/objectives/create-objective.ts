@@ -1,5 +1,4 @@
 import { Colors, EmbedBuilder, Message } from 'discord.js';
-import { objective } from '../../db/schema';
 import ObjectiveDifficultyFactory from '../../factories/objectives/objective-difficulty-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
 import Strategy from '../base-strategy';
@@ -27,7 +26,7 @@ export default class CreateObjectiveStrategy implements Strategy {
             return;
         }
 
-        const createdObjective = await ObjectiveFactory.getInstance().create(objective, {
+        const createdObjective = await ObjectiveFactory.getInstance().create({
             name: objectiveName,
             xp,
             gold,

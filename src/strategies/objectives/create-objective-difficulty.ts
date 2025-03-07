@@ -1,5 +1,4 @@
 import { Message } from 'discord.js';
-import { objectiveDifficulty } from '../../db/schema';
 import ObjectiveDifficultyFactory from '../../factories/objectives/objective-difficulty-factory';
 import Strategy from '../base-strategy';
 
@@ -21,7 +20,7 @@ export default class CreateObjectiveDifficultyStrategy implements Strategy {
             return;
         }
 
-        const createdDifficulty = await ObjectiveDifficultyFactory.getInstance().create(objectiveDifficulty, {
+        const createdDifficulty = await ObjectiveDifficultyFactory.getInstance().create({
             name,
             guildId: BigInt(message.guildId),
         });

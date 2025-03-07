@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import Client from './client';
-import { Calculate, NewGen, Objective, ObjectiveDifficulty, Reset, Roll, TurnList } from './commands';
+import { Calculate, ClearChat, NewGen, Objective, ObjectiveDifficulty, Reset, Roll, TurnList } from './commands';
 
 config();
 
@@ -27,8 +27,6 @@ const client = new Client(';');
 client.addCommand(['reset', 'clear'], new Reset());
 client.addCommand(['newgen', 'novagen'], new NewGen());
 
-//client.addCommand(['coj', 'create-objective-difficulty'], new CreateObjectiveDifficulty());
-
 //client.addCommand(['create-class', 'criar-classe'], new CreateClass());
 //client.addCommand(['delete-class', 'deletar-classe'], new DeleteClass());
 //client.addCommand(['classes', 'class-list'], new Classes());
@@ -42,7 +40,7 @@ client.addCommand(['newgen', 'novagen'], new NewGen());
 client.addCommand(['turn-list', 'turnos'], new TurnList());
 client.addCommand(['calc', 'r', 'calculate'], new Calculate());
 client.addCommand('roll', new Roll());
-//client.addCommand(['limpar-chat', 'clear-chat'], new ClearChat());
+client.addCommand(['limpar-chat', 'clear-chat'], new ClearChat());
 
 //client.addCommand('create-mission-difficulty', new CreateMissionDifficulty());
 //client.addCommand('delete-mission-difficulty', new DeleteMissionDifficulty());

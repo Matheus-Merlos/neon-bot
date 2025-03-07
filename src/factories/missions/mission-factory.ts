@@ -11,7 +11,7 @@ export default class MissionFactory extends Factory<typeof mission> implements S
     private static instance: MissionFactory | null = null;
 
     private constructor() {
-        super();
+        super(mission);
     }
 
     static getInstance(): MissionFactory {

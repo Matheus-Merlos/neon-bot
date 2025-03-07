@@ -7,7 +7,7 @@ export default class ClassFactory extends Factory<typeof characterClass> {
     private static instance: ClassFactory | null = null;
 
     private constructor() {
-        super();
+        super(characterClass);
     }
 
     static getInstance(): ClassFactory {

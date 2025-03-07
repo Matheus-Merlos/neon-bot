@@ -7,7 +7,7 @@ export default class ClassObjectiveFactory extends Factory<typeof classObjective
     private static instance: ClassObjectiveFactory | null = null;
 
     private constructor() {
-        super();
+        super(classObjective);
     }
 
     static getInstance(): ClassObjectiveFactory {
