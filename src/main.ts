@@ -5,6 +5,7 @@ import {
     AddGold,
     Calculate,
     Class,
+    ClassObjective,
     ClearChat,
     Inventory,
     Item,
@@ -23,11 +24,6 @@ import {
     StackAddGold,
     TurnList,
 } from './commands';
-import ClassObjectives from './commands/class-objectives/class-objectives';
-import CompletedClassObjective from './commands/class-objectives/completed-class-objective';
-import CompletedClassObjectives from './commands/class-objectives/completed-class-objectives';
-import CreateClassObjective from './commands/class-objectives/create-class-objective';
-
 config();
 
 const client = new Client(';');
@@ -60,10 +56,6 @@ client.addCommand('class', new Class());
 
 client.addCommand('item', new Item());
 
-//TODO:
-client.addCommand('create-class-objective', new CreateClassObjective());
-client.addCommand('completed-class-objective', new CompletedClassObjective());
-client.addCommand('completed-class-objectives', new CompletedClassObjectives());
-client.addCommand('class-objectives', new ClassObjectives());
+client.addCommand('class-objective', new ClassObjective());
 
 export default client;

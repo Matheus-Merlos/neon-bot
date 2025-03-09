@@ -10,6 +10,9 @@ import ListCompletedObjectivesStrategy from './objectives/list-completed-objecti
 import SelectObjectiveStrategy from './objectives/select-objective';
 import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
+import CompletedClassObjectiveStrategy from './class-objectives/completed';
+import CreateClassObjectiveStrategy from './class-objectives/create';
+import ListCompletedClassObjectivesStrategy from './class-objectives/list-completed';
 import SetClassStrategy from './class-objectives/set-class';
 import CreateStrategy from './generics/create';
 import BuyStrategy from './item/buy';
@@ -21,8 +24,10 @@ import CreateMissionStrategy from './missions/create-mission';
 
 export {
     BuyStrategy,
+    CompletedClassObjectiveStrategy,
     CompletedMissionStrategy,
     CompleteObjectiveStrategy,
+    CreateClassObjectiveStrategy,
     CreateItemStrategy,
     CreateMissionStrategy,
     CreateObjectiveStrategy,
@@ -31,6 +36,7 @@ export {
     DeleteStrategy,
     GiveItemStrategy,
     InfoStrategy,
+    ListCompletedClassObjectivesStrategy,
     ListCompletedObjectivesStrategy,
     ListStrategy,
     SelectedObjectivesStrategy,

@@ -13,6 +13,7 @@ import MissionDifficulty from './mission-difficulty';
 import Mission from './mission';
 
 import Class from './class';
+import ClassObjective from './class-objective';
 import AddExp from './inventory/exp-gold/add-exp';
 import { AddGold, RemoveExp, RemoveGold } from './inventory/exp-gold/exp-gold';
 import Pay from './inventory/exp-gold/pay';
@@ -27,6 +28,7 @@ export {
     AddGold,
     Calculate,
     Class,
+    ClassObjective,
     ClearChat,
     Inventory,
     Item,
