@@ -7,7 +7,6 @@ import Strategy from '../base-strategy';
 
 export default class UseStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        console.log(messageAsList);
         const hasQuantity = !isNaN(parseInt(messageAsList[0]));
 
         let quantity = 1;

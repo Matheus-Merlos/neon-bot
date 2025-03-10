@@ -2,21 +2,14 @@ import { Message } from 'discord.js';
 import { and, eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { character, completedObjective, selectedObjective } from '../../db/schema';
-import CharacterFactory from '../../factories/character-factory';
 import ObjectiveFactory from '../../factories/objectives/objective-factory';
+import { getCharacter } from '../../utils';
 import checkCaracterLevelUp from '../../utils/check-character-levelup';
-import getIdFromMention from '../../utils/get-id-from-mention';
 import Strategy from '../base-strategy';
 
 export default class CompleteObjectiveStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        let char;
-        if (messageAsList[0] && messageAsList[0].includes('@')) {
-            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[0]), message.guildId!);
-            messageAsList.splice(0, 1);
-        } else {
-            char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guildId!);
-        }
+        const char = await getCharacter(message, messageAsList);
 
         const objectiveName = messageAsList.join(' ');
         let objective;
