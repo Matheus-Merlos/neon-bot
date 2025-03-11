@@ -5,6 +5,7 @@ import db from '../db/db';
 import { character, player } from '../db/schema';
 import client from '../main';
 import getMostSimilarString from '../utils/levenshtein';
+import toSlug from '../utils/slug';
 import ImageFactory from './image-factory';
 
 export default class CharacterFactory {
@@ -54,7 +55,7 @@ export default class CharacterFactory {
 
             const upload = await ImageFactory.getInstance().uploadImage(
                 'characters',
-                `${charName!}.png`,
+                `${toSlug(charName!)}.png`,
                 image.data,
                 'image/png',
                 contentLenght,

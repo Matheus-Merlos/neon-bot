@@ -4,6 +4,7 @@ import {
     AddExp,
     AddGold,
     Calculate,
+    Character,
     Class,
     ClassObjective,
     ClearChat,
@@ -57,5 +58,7 @@ client.addCommand('class', new Class());
 client.addCommand('item', new Item());
 
 client.addCommand('class-objective', new ClassObjective());
+
+client.addCommand('character', new Character());
 
 export default client;

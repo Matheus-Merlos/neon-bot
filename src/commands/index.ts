@@ -12,13 +12,14 @@ import MissionDifficulty from './mission-difficulty';
 
 import Mission from './mission';
 
+import Character from './character';
 import Class from './class';
 import ClassObjective from './class-objective';
 import AddExp from './inventory/exp-gold/add-exp';
 import { AddGold, RemoveExp, RemoveGold } from './inventory/exp-gold/exp-gold';
 import Pay from './inventory/exp-gold/pay';
 import StackAddExp from './inventory/exp-gold/stack-add-exp';
-import StackAddGold from './inventory/exp-gold/stack-add-gold';
+import { default as StackAddGold } from './inventory/exp-gold/stack-add-gold';
 import Inventory from './inventory/inventory';
 import Leaderboard from './inventory/leaderboard';
 import Item from './item';
@@ -27,6 +28,7 @@ export {
     AddExp,
     AddGold,
     Calculate,
+    Character,
     Class,
     ClassObjective,
     ClearChat,
