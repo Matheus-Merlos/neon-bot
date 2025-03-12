@@ -3,8 +3,6 @@ import Command from '../base-command';
 
 export default class Roll implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        messageAsList.splice(0, 1);
-
         if (messageAsList.length === 0) {
             message.reply(`Você rolou um \`1d6\` e conseguiu **${this.simpleRoll()}**`);
             return;

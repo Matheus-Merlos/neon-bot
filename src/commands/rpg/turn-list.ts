@@ -5,7 +5,6 @@ import Command from '../base-command';
 
 export default class TurnList implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        messageAsList.splice(0, 1);
         const guildId = message.guildId!;
 
         const foes: Array<string> = messageAsList.filter((entry) => !entry.includes('@'));

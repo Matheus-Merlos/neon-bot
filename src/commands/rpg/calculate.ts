@@ -3,8 +3,6 @@ import Command from '../base-command';
 
 export default class Calculate implements Command {
     async execute(message: Message, messageAsList: Array<string>): Promise<void> {
-        messageAsList.splice(0, 1);
-
         const formula = messageAsList.join(' ');
 
         let result;
