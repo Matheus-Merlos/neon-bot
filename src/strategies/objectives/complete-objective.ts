@@ -37,7 +37,10 @@ export default class CompleteObjectiveStrategy implements Strategy {
         await checkCaracterLevelUp(message, char, objective.xp);
 
         await db.transaction(async (trx) => {
-            await trx.update(character).set({ xp: char.xp + objective.xp, gold: char.gold + objective.gold });
+            await trx
+                .update(character)
+                .set({ xp: char.xp + objective.xp, gold: char.gold + objective.gold })
+                .where(eq(character.id, char.id));
 
             await trx
                 .delete(selectedObjective)
