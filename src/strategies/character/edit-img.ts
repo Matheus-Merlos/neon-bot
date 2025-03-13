@@ -3,9 +3,8 @@ import { Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { character } from '../../db/schema';
-import { ImageFactory } from '../../factories';
 import { getCharacter } from '../../utils';
-import toSlug from '../../utils/slug';
+import ImageHandler, { BucketDirectories } from '../../utils/image-handler';
 import Strategy from '../base-strategy';
 
 export default class EditImageStrategy implements Strategy {
@@ -21,13 +20,13 @@ export default class EditImageStrategy implements Strategy {
 
         const char = await getCharacter(message, messageAsList);
 
-        await ImageFactory.getInstance().deleteImage('characters', char.salt!, char.name);
+        await ImageHandler.getInstance().deleteImage(BucketDirectories.CHARACTERS_DIR, char.salt!, char.name);
 
         const imageDownload = await axios.get(img.url, { responseType: 'stream' });
 
-        const { url, salt } = await ImageFactory.getInstance().uploadImage(
-            'characters',
-            `${toSlug(char.name)}.png`,
+        const { url, salt } = await ImageHandler.getInstance().uploadImage(
+            BucketDirectories.CHARACTERS_DIR,
+            char.name,
             imageDownload.data,
         );
 

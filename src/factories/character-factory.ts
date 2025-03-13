@@ -4,8 +4,8 @@ import { and, eq, InferSelectModel } from 'drizzle-orm';
 import db from '../db/db';
 import { character, player } from '../db/schema';
 import client from '../main';
+import { ImageHandler } from '../utils';
 import getMostSimilarString from '../utils/levenshtein';
-import ImageFactory from './image-factory';
 
 export default class CharacterFactory {
     private static instance: CharacterFactory | null = null;
@@ -50,7 +50,7 @@ export default class CharacterFactory {
 
             const image = await axios.get(imgUrl, { responseType: 'stream' });
 
-            const upload = await ImageFactory.getInstance().uploadImage('characters', charName!, image.data);
+            const upload = await ImageHandler.getInstance().uploadImage('characters', charName!, image.data);
             url = upload.url;
             salt = upload.salt;
         } catch {
@@ -172,7 +172,7 @@ export default class CharacterFactory {
     async delete(id: number): Promise<void> {
         const [char] = await db.select().from(character).where(eq(character.id, id));
 
-        await ImageFactory.getInstance().deleteImage('characters', char.salt!, char.name);
+        await ImageHandler.getInstance().deleteImage('characters', char.salt!, char.name);
 
         await db.delete(character).where(eq(character.id, id));
     }

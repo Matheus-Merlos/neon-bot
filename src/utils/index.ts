@@ -1,4 +1,4 @@
 import getCharacter from './get-character';
-import toSlug from './slug';
+import ImageHandler, { BucketDirectories } from './image-handler';
 
-export { getCharacter, toSlug };
+export { BucketDirectories, getCharacter, ImageHandler };

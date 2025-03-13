@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../../db/db';
 import { character } from '../../../db/schema';
-import ImageFactory from '../../../factories/image-factory';
+import { ImageHandler } from '../../../utils';
 import addConfirmation from '../../../utils/confirmation-row';
 import Command from '../../base-command';
 
@@ -17,7 +17,7 @@ export default class NewGen implements Command {
                 async callbackFnAccept(confirmationMessage: Message) {
                     const chars = await db.select().from(character);
                     chars.forEach(async (char) => {
-                        await ImageFactory.getInstance().deleteImage('characters', char.salt!, char.name);
+                        await ImageHandler.getInstance().deleteImage('characters', char.salt!, char.name);
 
                         await db.delete(character).where(eq(character.id, char.id));
                     });
