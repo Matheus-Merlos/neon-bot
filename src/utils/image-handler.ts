@@ -4,10 +4,25 @@ import { NodeHttpHandler } from '@aws-sdk/node-http-handler';
 import { randomBytes } from 'crypto';
 import { IncomingMessage } from 'http';
 import * as sharp from 'sharp';
-import { toSlug } from '../utils';
 
-export default class ImageFactory {
-    private static instance: ImageFactory | null = null;
+function toSlug(str: string): string {
+    //Removes words with diacritics in them
+    const noDiacritics = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    const noSpace = noDiacritics.replaceAll(' ', '-');
+    return noSpace.toLowerCase();
+}
+
+enum BucketDirectories {
+    ITEMS_DIR = 'items',
+    CHARACTERS_DIR = 'characters',
+    MISSIONS_DIR = 'missions',
+}
+
+export { BucketDirectories };
+
+export default class ImageHandler {
+    private static instance: ImageHandler | null = null;
     private s3Client: S3Client;
     private env: string;
 
@@ -40,16 +55,16 @@ export default class ImageFactory {
         });
     }
 
-    public static getInstance(): ImageFactory {
-        if (ImageFactory.instance === null) {
-            ImageFactory.instance = new ImageFactory();
+    public static getInstance(): ImageHandler {
+        if (ImageHandler.instance === null) {
+            ImageHandler.instance = new ImageHandler();
         }
 
-        return ImageFactory.instance;
+        return ImageHandler.instance;
     }
 
     public async uploadImage(
-        directory: string,
+        directory: `${BucketDirectories}`,
         imageName: string,
         stream: IncomingMessage,
     ): Promise<{ salt: string; url: string }> {
@@ -81,7 +96,7 @@ export default class ImageFactory {
         };
     }
 
-    public async deleteImage(directory: string, salt: string, imageName: string): Promise<void> {
+    public async deleteImage(directory: `${BucketDirectories}`, salt: string, imageName: string): Promise<void> {
         const imagePath = `${directory}/${this.env}/${salt}-${toSlug(imageName)}.png`;
 
         const deleteParams = {

@@ -2,8 +2,8 @@ import { Colors, EmbedBuilder } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { mission } from '../../db/schema';
+import { ImageHandler } from '../../utils';
 import Factory from '../base-factory';
-import ImageFactory from '../image-factory';
 import ShowEmbed from '../show-embed';
 
 export default class MissionFactory extends Factory<typeof mission> implements ShowEmbed<typeof mission> {
@@ -97,7 +97,7 @@ export default class MissionFactory extends Factory<typeof mission> implements S
     async delete(id: number): Promise<void> {
         const [DBMission] = await db.select().from(mission).where(eq(mission.id, id));
 
-        await ImageFactory.getInstance().deleteImage('missions', DBMission.salt!, DBMission.name);
+        await ImageHandler.getInstance().deleteImage('missions', DBMission.salt!, DBMission.name);
 
         await db.delete(mission).where(eq(mission.id, id));
     }
