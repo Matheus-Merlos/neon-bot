@@ -8,6 +8,7 @@ import {
     Class,
     ClassObjective,
     ClearChat,
+    Image,
     Inventory,
     Item,
     Leaderboard,
@@ -60,5 +61,7 @@ client.addCommand('item', new Item());
 client.addCommand('class-objective', new ClassObjective());
 
 client.addCommand('character', new Character());
+
+client.addCommand('img', new Image());
 
 export default client;

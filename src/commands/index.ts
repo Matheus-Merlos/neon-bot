@@ -23,6 +23,7 @@ import { default as StackAddGold } from './inventory/exp-gold/stack-add-gold';
 import Inventory from './inventory/inventory';
 import Leaderboard from './inventory/leaderboard';
 import Item from './item';
+import Image from './search/img';
 
 export {
     AddExp,
@@ -32,6 +33,7 @@ export {
     Class,
     ClassObjective,
     ClearChat,
+    Image,
     Inventory,
     Item,
     Leaderboard,
