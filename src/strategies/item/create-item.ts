@@ -1,61 +1,53 @@
 import axios from 'axios';
-import { Attachment, Message } from 'discord.js';
+import { Message } from 'discord.js';
 import ItemFactory from '../../factories/item-factory';
-import { ImageHandler } from '../../utils';
+import { BucketDirectories, ImageHandler } from '../../utils';
 import Strategy from '../base-strategy';
 
 export default class CreateItemStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        const img: Attachment | undefined | null = message.attachments.first();
-
         const priceIndex = messageAsList.findIndex((element) => !isNaN(parseInt(element)) && element.trim() !== '');
-        let itemName: string;
 
         if (priceIndex === 1) {
             await message.reply('O nome do item não deve começar com um número');
             return;
         }
 
-        if (priceIndex === 2) {
-            itemName = messageAsList[1].replaceAll('"', '');
-        } else {
-            itemName = message.content.split('"')[1];
-        }
-
-        let imageStream = null;
-        if (typeof img !== 'undefined' && img.contentType !== null && img.contentType!.includes('image')) {
-            let image;
-            try {
-                image = await axios.get(img.url, { responseType: 'stream' });
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    message.reply(`Erro ao fazer o download da imagem: ${error.name}:${error.message}`);
-                }
-                return;
-            }
-
-            imageStream = image.data;
-        }
+        const itemName = messageAsList.slice(0, priceIndex).join(' ').replaceAll('"', '');
 
         const price = parseInt(messageAsList[priceIndex]);
         const durability = parseInt(messageAsList[priceIndex + 1]);
-        let description: string | null = messageAsList
+        const description: string | null = messageAsList
             .slice(priceIndex + 2, messageAsList.length)
             .join(' ')
             .trim();
 
-        description = description === '' ? null : description;
-
         let createdItem;
 
         try {
-            let salt = null;
-            let url = null;
-            if (imageStream !== null) {
-                const upload = await ImageHandler.getInstance().uploadImage('items', itemName, imageStream);
+            const img = message.attachments.first();
+            const isValidImage = img && img.contentType && img.contentType.includes('image');
 
-                url = upload.url;
-                salt = upload.salt;
+            let url = null;
+            let salt = null;
+
+            if (isValidImage) {
+                let image;
+                try {
+                    image = await axios.get(img.url, { responseType: 'stream' });
+                } catch (error: unknown) {
+                    if (error instanceof Error) {
+                        message.reply(`Erro ao fazer o download da imagem: ${error.name}:${error.message}`);
+                    }
+                    return;
+                }
+
+                const imageStream = image.data;
+
+                const result = await ImageHandler.getInstance().uploadImage(BucketDirectories.ITEMS_DIR, itemName, imageStream);
+
+                url = result.url;
+                salt = result.salt;
             }
             createdItem = await ItemFactory.getInstance().create({
                 name: itemName,

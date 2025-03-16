@@ -1,6 +1,8 @@
 import { Message } from 'discord.js';
-import { Table } from 'drizzle-orm';
+import { InferSelectModel, Table } from 'drizzle-orm';
+import { ItemFactory, MissionFactory } from '../../factories';
 import Factory from '../../factories/base-factory';
+import { BucketDirectories, ImageHandler } from '../../utils';
 import addConfirmation from '../../utils/confirmation-row';
 import Strategy from '../base-strategy';
 
@@ -12,7 +14,7 @@ export default class DeleteStrategy<T extends Table, U extends Factory<T>> imple
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const entryName = messageAsList.join(' ');
 
-        let entry;
+        let entry: InferSelectModel<T>;
         try {
             entry = await this.factoryInstance.getByName(entryName, message.guildId!);
         } catch {
@@ -27,6 +29,22 @@ export default class DeleteStrategy<T extends Table, U extends Factory<T>> imple
             interactionFilter: (i) => i.user.id === message.author.id,
             actions: {
                 callbackFnAccept: async (confirmationMessage: Message) => {
+                    //Deletes the image from the bucket (if existis a image)
+                    if (Object.keys(entry).includes('salt') && entry.salt! !== null) {
+                        let directory;
+                        if (this.factoryInstance instanceof ItemFactory) {
+                            directory = BucketDirectories.ITEMS_DIR;
+                        }
+                        if (this.factoryInstance instanceof MissionFactory) {
+                            directory = BucketDirectories.MISSIONS_DIR;
+                        }
+
+                        if (directory === undefined) {
+                            throw new Error('Could not delete image');
+                        }
+
+                        await ImageHandler.getInstance().deleteImage(directory, entry.salt!, entry.name!);
+                    }
                     await this.factoryInstance.delete(entry.id!);
 
                     confirmationMessage.edit({
