@@ -1,5 +1,6 @@
-import { ColorResolvable, Message } from 'discord.js';
+import { ColorResolvable, Message, PermissionFlagsBits } from 'discord.js';
 import { Table } from 'drizzle-orm';
+import { HasStrategyPermission } from '../decorators';
 import Factory from '../factories/base-factory';
 import { CreateStrategy, DefaultStrategy, DeleteStrategy, ListStrategy, Strategy } from '../strategies';
 
@@ -14,9 +15,9 @@ export abstract class StrategyCommand implements Command {
         private readonly defaultStrategy: DefaultStrategy | null = null,
     ) {
         if (defaultStrategy === null) {
-            this.defaultStrategy = new DefaultStrategy(this.commandName, [
-                { name: 'Erro', description: 'Este comando não possui subcomandos' },
-            ]);
+            this.defaultStrategy = new DefaultStrategy(this.commandName, {
+                Erro: 'Este comando não possui subcomandos',
+            });
         }
     }
 
@@ -39,7 +40,10 @@ export abstract class SimpleTableCommand<T extends Table, U extends Factory<T>> 
     ) {
         super(commandName, {
             ...{
-                create: new CreateStrategy(factoryInstance, entityName),
+                create: new HasStrategyPermission(
+                    new CreateStrategy(factoryInstance, entityName),
+                    PermissionFlagsBits.Administrator,
+                ),
                 list: new ListStrategy(factoryInstance, entityName, embedColor, (entry) => {
                     return [
                         {
@@ -54,7 +58,10 @@ export abstract class SimpleTableCommand<T extends Table, U extends Factory<T>> 
                         },
                     ];
                 }),
-                delete: new DeleteStrategy(factoryInstance, entityName),
+                delete: new HasStrategyPermission(
+                    new DeleteStrategy(factoryInstance, entityName),
+                    PermissionFlagsBits.Administrator,
+                ),
             },
             ...extraSubcommands,
         });

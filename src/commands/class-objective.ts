@@ -1,7 +1,8 @@
-import { Colors } from 'discord.js';
+import { Colors, PermissionFlagsBits } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../db/db';
 import { characterClass } from '../db/schema';
+import { HasStrategyPermission } from '../decorators';
 import ClassObjectiveFactory from '../factories/class-objectives/class-objective-factory';
 import {
     CompletedClassObjectiveStrategy,
@@ -15,8 +16,11 @@ import { StrategyCommand } from './base-command';
 export default class ClassObjective extends StrategyCommand {
     constructor() {
         super('class-objective', {
-            create: new CreateClassObjectiveStrategy(),
-            delete: new DeleteStrategy(ClassObjectiveFactory.getInstance(), 'objetivo de classe'),
+            create: new HasStrategyPermission(new CreateClassObjectiveStrategy(), PermissionFlagsBits.Administrator),
+            delete: new HasStrategyPermission(
+                new DeleteStrategy(ClassObjectiveFactory.getInstance(), 'objetivo de classe'),
+                PermissionFlagsBits.Administrator,
+            ),
             'list-all': new ListStrategy(
                 ClassObjectiveFactory.getInstance(),
                 'Objetivos de classe',
@@ -38,7 +42,7 @@ export default class ClassObjective extends StrategyCommand {
                 },
             ),
             'list-completed': new ListCompletedClassObjectivesStrategy(),
-            completed: new CompletedClassObjectiveStrategy(),
+            completed: new HasStrategyPermission(new CompletedClassObjectiveStrategy(), PermissionFlagsBits.ManageGuild),
         });
     }
 }

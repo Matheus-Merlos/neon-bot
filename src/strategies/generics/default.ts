@@ -4,7 +4,7 @@ import Strategy from '../base-strategy';
 export default class DefaultStrategy implements Strategy {
     constructor(
         private readonly commandName: string,
-        private readonly infoObj: Array<{ name: string; description: string }>,
+        private readonly infoObj: Record<string, string>,
     ) {}
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const embed = new EmbedBuilder()
@@ -12,10 +12,10 @@ export default class DefaultStrategy implements Strategy {
             .setColor(Colors.Blue)
             .setDescription('Sub-comandos: ')
             .setFields(
-                this.infoObj.map((entry) => {
+                Object.entries(this.infoObj).map((entry) => {
                     return {
-                        name: `• \`${entry.name}\``,
-                        value: entry.description,
+                        name: `• \`${entry[0]}\``,
+                        value: entry[1],
                         inline: false,
                     };
                 }),

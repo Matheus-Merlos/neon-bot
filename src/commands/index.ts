@@ -12,6 +12,7 @@ import MissionDifficulty from './mission-difficulty';
 
 import Mission from './mission';
 
+import Command from './base-command';
 import Character from './character';
 import Class from './class';
 import ClassObjective from './class-objective';
@@ -33,6 +34,7 @@ export {
     Class,
     ClassObjective,
     ClearChat,
+    Command,
     Image,
     Inventory,
     Item,

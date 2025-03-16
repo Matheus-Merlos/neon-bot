@@ -1,4 +1,5 @@
-import { Colors } from 'discord.js';
+import { Colors, PermissionFlagsBits } from 'discord.js';
+import { HasStrategyPermission } from '../decorators';
 import MissionDifficultyFactory from '../factories/missions/mission-difficulty-factory';
 import MissionFactory from '../factories/missions/mission-factory';
 import { CompletedMissionStrategy, CreateMissionStrategy, DeleteStrategy, InfoStrategy, ListStrategy } from '../strategies';
@@ -7,7 +8,7 @@ import { StrategyCommand } from './base-command';
 export default class Mission extends StrategyCommand {
     constructor() {
         super('mission', {
-            create: new CreateMissionStrategy(),
+            create: new HasStrategyPermission(new CreateMissionStrategy(), PermissionFlagsBits.ManageChannels),
             info: new InfoStrategy(MissionFactory.getInstance()),
             list: new ListStrategy(MissionFactory.getInstance(), 'missões', Colors.Fuchsia, async (entry) => {
                 const missionDifficulty = await MissionDifficultyFactory.getInstance().getFromId(entry.difficulty);
@@ -25,8 +26,11 @@ export default class Mission extends StrategyCommand {
                     },
                 ];
             }),
-            delete: new DeleteStrategy(MissionFactory.getInstance(), 'missão'),
-            complete: new CompletedMissionStrategy(),
+            delete: new HasStrategyPermission(
+                new DeleteStrategy(MissionFactory.getInstance(), 'missão'),
+                PermissionFlagsBits.ManageChannels,
+            ),
+            complete: new HasStrategyPermission(new CompletedMissionStrategy(), PermissionFlagsBits.ManageChannels),
         });
     }
 }

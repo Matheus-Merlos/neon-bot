@@ -1,4 +1,5 @@
-import { Colors } from 'discord.js';
+import { Colors, PermissionFlagsBits } from 'discord.js';
+import { HasStrategyPermission } from '../decorators';
 import ItemFactory from '../factories/item-factory';
 import {
     BuyStrategy,
@@ -28,13 +29,16 @@ export default class Item extends StrategyCommand {
             ];
         });
         super('item', {
-            create: new CreateItemStrategy(),
+            create: new HasStrategyPermission(new CreateItemStrategy(), PermissionFlagsBits.ManageChannels),
             info: new InfoStrategy(ItemFactory.getInstance()),
             list: listStrategy,
             shop: listStrategy,
-            delete: new DeleteStrategy(ItemFactory.getInstance(), 'item'),
+            delete: new HasStrategyPermission(
+                new DeleteStrategy(ItemFactory.getInstance(), 'item'),
+                PermissionFlagsBits.ManageChannels,
+            ),
             buy: new BuyStrategy(),
-            give: new GiveItemStrategy(),
+            give: new HasStrategyPermission(new GiveItemStrategy(), PermissionFlagsBits.ManageGuild),
             use: new UseStrategy(),
         });
     }

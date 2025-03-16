@@ -1,3 +1,4 @@
+import { PermissionFlagsBits } from 'discord.js';
 import { config } from 'dotenv';
 import Client from './client';
 import {
@@ -26,27 +27,28 @@ import {
     StackAddGold,
     TurnList,
 } from './commands';
+import { HasCommandPermission } from './decorators';
 config();
 
 const client = new Client(';');
 
-client.addCommand('add-exp', new AddExp());
-client.addCommand('remove-exp', new RemoveExp());
-client.addCommand(['add-gold', 'add-money'], new AddGold());
-client.addCommand('remove-gold', new RemoveGold());
-client.addCommand('stack-add-exp', new StackAddExp());
-client.addCommand('stack-add-gold', new StackAddGold());
+client.addCommand('add-exp', new HasCommandPermission(new AddExp(), PermissionFlagsBits.ManageGuild));
+client.addCommand('remove-exp', new HasCommandPermission(new RemoveExp(), PermissionFlagsBits.ManageGuild));
+client.addCommand(['add-gold', 'add-money'], new HasCommandPermission(new AddGold(), PermissionFlagsBits.ManageGuild));
+client.addCommand('remove-gold', new HasCommandPermission(new RemoveGold(), PermissionFlagsBits.ManageGuild));
+client.addCommand('stack-add-exp', new HasCommandPermission(new StackAddExp(), PermissionFlagsBits.ManageGuild));
+client.addCommand('stack-add-gold', new HasCommandPermission(new StackAddGold(), PermissionFlagsBits.ManageGuild));
 client.addCommand(['inv', 'inventory', 'profile'], new Inventory());
 client.addCommand('leaderboard', new Leaderboard());
 client.addCommand(['pay', 'pagar'], new Pay());
 
-client.addCommand(['reset', 'clear'], new Reset());
-client.addCommand(['newgen', 'novagen'], new NewGen());
+client.addCommand(['reset', 'clear'], new HasCommandPermission(new Reset(), PermissionFlagsBits.Administrator));
+client.addCommand(['newgen', 'novagen'], new HasCommandPermission(new NewGen(), PermissionFlagsBits.Administrator));
 
-client.addCommand(['turn-list', 'turnos'], new TurnList());
+client.addCommand(['turn-list', 'turnos'], new HasCommandPermission(new TurnList(), PermissionFlagsBits.ManageGuild));
 client.addCommand(['calc', 'r', 'calculate'], new Calculate());
 client.addCommand('roll', new Roll());
-client.addCommand(['limpar-chat', 'clear-chat'], new ClearChat());
+client.addCommand(['limpar-chat', 'clear-chat'], new HasCommandPermission(new ClearChat(), PermissionFlagsBits.ManageMessages));
 
 client.addCommand('objective', new Objective());
 client.addCommand('objective-difficulty', new ObjectiveDifficulty());
