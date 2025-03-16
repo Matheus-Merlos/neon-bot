@@ -5,6 +5,6 @@ import { SimpleTableCommand } from './base-command';
 
 export default class ObjectiveDifficulty extends SimpleTableCommand<typeof objectiveDifficulty, ObjectiveDifficultyFactory> {
     constructor() {
-        super('objective-difficulty', ObjectiveDifficultyFactory.getInstance(), Colors.DarkRed, 'dificuldade de objetivos');
+        super('objective-difficulty', ObjectiveDifficultyFactory.getInstance(), Colors.DarkRed, 'dificuldade de objetivo');
     }
 }

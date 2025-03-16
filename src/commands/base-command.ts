@@ -38,32 +38,40 @@ export abstract class SimpleTableCommand<T extends Table, U extends Factory<T>> 
         entityName: string,
         extraSubcommands: Record<string, Strategy> = {},
     ) {
-        super(commandName, {
-            ...{
-                create: new HasStrategyPermission(
-                    new CreateStrategy(factoryInstance, entityName),
-                    PermissionFlagsBits.Administrator,
-                ),
-                list: new ListStrategy(factoryInstance, entityName, embedColor, (entry) => {
-                    return [
-                        {
-                            name: `${entry.name}`,
-                            value: ' ',
-                            inline: false,
-                        },
-                        {
-                            name: ' ',
-                            value: ' ',
-                            inline: false,
-                        },
-                    ];
-                }),
-                delete: new HasStrategyPermission(
-                    new DeleteStrategy(factoryInstance, entityName),
-                    PermissionFlagsBits.Administrator,
-                ),
+        super(
+            commandName,
+            {
+                ...{
+                    create: new HasStrategyPermission(
+                        new CreateStrategy(factoryInstance, entityName),
+                        PermissionFlagsBits.Administrator,
+                    ),
+                    list: new ListStrategy(factoryInstance, entityName, embedColor, (entry) => {
+                        return [
+                            {
+                                name: `${entry.name}`,
+                                value: ' ',
+                                inline: false,
+                            },
+                            {
+                                name: ' ',
+                                value: ' ',
+                                inline: false,
+                            },
+                        ];
+                    }),
+                    delete: new HasStrategyPermission(
+                        new DeleteStrategy(factoryInstance, entityName),
+                        PermissionFlagsBits.Administrator,
+                    ),
+                },
+                ...extraSubcommands,
             },
-            ...extraSubcommands,
-        });
+            new DefaultStrategy(commandName, {
+                create: `Cria um(a) novo(a) ${entityName}, requer permissão de **Administrador**`,
+                list: `Exibe uma lista de todos(as) os(as) ${entityName} do servidor.`,
+                delete: `Remove o(a) ${entityName} especificada do servidor, excluindo todos os objetos que dependem do(a) mesmo(a)`,
+            }),
+        );
     }
 }
