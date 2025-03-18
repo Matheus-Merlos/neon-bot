@@ -17,6 +17,7 @@ enum BucketDirectories {
     ITEMS_DIR = 'items',
     CHARACTERS_DIR = 'characters',
     MISSIONS_DIR = 'missions',
+    MISC_DIR = 'misc',
 }
 
 export { BucketDirectories };

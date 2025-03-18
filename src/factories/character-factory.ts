@@ -6,11 +6,14 @@ import { character, player } from '../db/schema';
 import client from '../main';
 import { ImageHandler } from '../utils';
 import getMostSimilarString from '../utils/levenshtein';
+import Factory from './base-factory';
 
-export default class CharacterFactory {
+export default class CharacterFactory extends Factory<typeof character> {
     private static instance: CharacterFactory | null = null;
 
-    private constructor() {}
+    private constructor() {
+        super(character);
+    }
 
     static getInstance(): CharacterFactory {
         if (CharacterFactory.instance === null) {
@@ -20,7 +23,7 @@ export default class CharacterFactory {
         return CharacterFactory.instance;
     }
 
-    async create(
+    async createCharacter(
         playerId: string,
         guildId: string,
     ): Promise<{
@@ -40,22 +43,14 @@ export default class CharacterFactory {
         const playerName = guildPlayer.nickname;
         const charName = playerName?.split(' ')[0].replace(',', '');
 
-        let url = null;
-        let salt = null;
-        try {
-            const imgUrl = guildPlayer.displayAvatarURL({
-                extension: 'png',
-                size: 512,
-            });
+        const imgUrl = guildPlayer.displayAvatarURL({
+            extension: 'png',
+            size: 512,
+        });
 
-            const image = await axios.get(imgUrl, { responseType: 'stream' });
+        const image = await axios.get(imgUrl, { responseType: 'stream' });
 
-            const upload = await ImageHandler.getInstance().uploadImage('characters', charName!, image.data);
-            url = upload.url;
-            salt = upload.salt;
-        } catch {
-            //pass
-        }
+        const { url, salt } = await ImageHandler.getInstance().uploadImage('characters', charName!, image.data);
 
         try {
             await db.insert(player).values({ discordId: BigInt(playerId) });
@@ -101,7 +96,7 @@ export default class CharacterFactory {
             .where(and(eq(character.player, BigInt(playerId)), eq(character.guildId, BigInt(guildId))));
 
         if (!char) {
-            char = await this.create(playerId, guildId);
+            char = await this.createCharacter(playerId, guildId);
         }
 
         return char;

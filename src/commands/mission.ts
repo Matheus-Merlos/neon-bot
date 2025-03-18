@@ -1,8 +1,17 @@
 import { Colors, PermissionFlagsBits } from 'discord.js';
+import { mission } from '../db/schema';
 import { HasStrategyPermission } from '../decorators';
 import MissionDifficultyFactory from '../factories/missions/mission-difficulty-factory';
 import MissionFactory from '../factories/missions/mission-factory';
-import { CompletedMissionStrategy, CreateMissionStrategy, DeleteStrategy, InfoStrategy, ListStrategy } from '../strategies';
+import {
+    CompletedMissionStrategy,
+    CreateMissionStrategy,
+    DeleteStrategy,
+    EditImageStrategy,
+    EditStrategy,
+    InfoStrategy,
+    ListStrategy,
+} from '../strategies';
 import { StrategyCommand } from './base-command';
 
 export default class Mission extends StrategyCommand {
@@ -31,6 +40,12 @@ export default class Mission extends StrategyCommand {
                 PermissionFlagsBits.ManageChannels,
             ),
             complete: new HasStrategyPermission(new CompletedMissionStrategy(), PermissionFlagsBits.ManageChannels),
+            edit: new EditStrategy({
+                image: new HasStrategyPermission(
+                    new EditImageStrategy(MissionFactory.getInstance(), mission),
+                    PermissionFlagsBits.ManageChannels,
+                ),
+            }),
         });
     }
 }
