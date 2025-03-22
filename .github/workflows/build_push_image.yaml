@@ -6,11 +6,9 @@ on:
 
 jobs:
   build-and-push-image:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build and push image
-        uses: Matheus-Merlos/infrastructure/.github/workflows/create_task_definition.yaml@master
-        with:
-          image-name: neon-bot
-          cpu: 256
-          mem: 512
+    uses: Matheus-Merlos/infrastructure/.github/workflows/create_task_definition.yaml@master
+    with:
+      image-name: neon-bot
+      cpu: 256
+      memory: 512
+    secrets: inherit
