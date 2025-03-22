@@ -28,10 +28,10 @@ export default class ImageHandler {
     private env: string;
 
     private constructor() {
-        if (typeof process.env.AWS_ACCESS_KEY_ID === 'undefined') {
+        if (typeof process.env.IMAGE_AWS_ACCESS_KEY_ID === 'undefined') {
             throw new Error(`'AWS_ACCESS_KEY_ID' not found in environment variables`);
         }
-        if (typeof process.env.AWS_SECRET_ACCESS_KEY === 'undefined') {
+        if (typeof process.env.IMAGE_AWS_SECRET_ACCESS_KEY === 'undefined') {
             throw new Error(`'AWS_SECRET_ACCESS_KEY' not found in environment variables`);
         }
         if (typeof process.env.AWS_REGION === 'undefined') {
@@ -50,8 +50,8 @@ export default class ImageHandler {
             maxAttempts: 3,
             requestHandler: new NodeHttpHandler({ connectionTimeout: 5000 }),
             credentials: {
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                accessKeyId: process.env.IMAGE_AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.IMAGE_AWS_SECRET_ACCESS_KEY,
             },
         });
     }
