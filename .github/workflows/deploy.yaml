@@ -11,7 +11,9 @@ jobs:
   get-server-dns:
     name: Get Server DNS
     uses: Matheus-Merlos/infrastructure/.github/workflows/neon_bot_server_dns.yaml@master
-    secrets: inherit
+    secrets:
+      TERRAFORM_AWS_ACCESS_KEY_ID: ${{ secrets.TERRAFORM_USER_ACCESS_KEY_ID}}
+      TERRAFORM_AWS_SECRET_ACCESS_KEY: ${{ secrets.TERRAFORM_USER_SECRET_ACCESS_KEY }}
 
   cleanup:
     runs-on: ubuntu-latest
