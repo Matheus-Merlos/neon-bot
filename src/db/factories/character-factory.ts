@@ -24,14 +24,21 @@ class CharacterClass extends Factory<Character> {
             const guild = await client.getClient.guilds.fetch(guildId);
             const guildPlayer = await guild.members.fetch(playerId);
 
-            const playerName = guildPlayer.nickname;
-            const charName = playerName?.split(' ')[0].replace(',', '');
+            const charName = guildPlayer.nickname
+                ? guildPlayer.nickname.split(' ')[0]
+                : guildPlayer.user.username.split(' ')[0];
+
+            const imgUrl = guildPlayer.displayAvatarURL({
+                extension: 'png',
+                size: 512,
+            });
 
             this.create({
-                name: charName!,
+                name: charName,
                 xp: 0,
                 gold: 0,
                 playerId,
+                imageUrl: imgUrl,
                 guildId: BigInt(guildId),
             });
 

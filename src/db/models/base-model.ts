@@ -1,5 +1,6 @@
 type Model = {
     id?: number;
+    name: string;
     guildId: bigint;
 };
 

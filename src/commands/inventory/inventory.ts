@@ -19,9 +19,9 @@ export default class Inventory implements Command {
                 { name: ' ', value: ' ' },
             );
 
-        //if (char.imageUrl) {
-        //    embed.setThumbnail(char.imageUrl);
-        //}
+        if (char.imageUrl) {
+            embed.setThumbnail(char.imageUrl);
+        }
 
         await message.reply({ embeds: [embed] });
     }

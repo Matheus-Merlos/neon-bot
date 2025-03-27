@@ -1,5 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import axios from 'axios';
+import { BucketDirectories, ImageHandler } from '../../utils';
 import { Model } from '../models';
 
 export default abstract class Factory<T extends Model> {
@@ -25,6 +27,17 @@ export default abstract class Factory<T extends Model> {
     }
 
     async create(args: T) {
+        if ('imageUrl' in args) {
+            const image = await axios.get(args.imageUrl as string, { responseType: 'stream' });
+
+            const { url, salt } = await ImageHandler.getInstance().uploadImage(
+                BucketDirectories.CHARACTERS_DIR,
+                args.name,
+                image.data,
+            );
+            args.imageUrl = url;
+            args = { ...args, salt };
+        }
         const params = {
             TableName: this.tableName,
             Item: args,
