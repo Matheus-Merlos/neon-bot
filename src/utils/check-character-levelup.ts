@@ -1,7 +1,7 @@
-import { ResultSet } from '@libsql/client/.';
 import { Message } from 'discord.js';
 import { eq, ExtractTablesWithRelations, InferSelectModel } from 'drizzle-orm';
-import { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
+import { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
+import { PgTransaction } from 'drizzle-orm/pg-core';
 import db from '../db/db';
 import { character, rank, reachedRank } from '../db/schema';
 
@@ -32,12 +32,7 @@ export async function checkCaracterLevelUpTransaction(
     message: Message,
     char: InferSelectModel<typeof character>,
     quantityAdded: number,
-    transaction: SQLiteTransaction<
-        'async',
-        ResultSet,
-        Record<string, never>,
-        ExtractTablesWithRelations<Record<string, never>>
-    >,
+    transaction: PgTransaction<NodePgQueryResultHKT, Record<string, never>, ExtractTablesWithRelations<Record<string, never>>>,
 ) {
     const ranks = await transaction.select().from(rank);
     const achievedRanks = (

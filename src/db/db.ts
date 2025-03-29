@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { drizzle } from 'drizzle-orm/libsql';
+import { drizzle } from 'drizzle-orm/node-postgres';
 config();
 
 const db = drizzle(
