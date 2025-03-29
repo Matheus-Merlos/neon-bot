@@ -16,7 +16,7 @@ export default class CompletedMissionStrategy implements Strategy {
         const missionName = messageAsList.slice(0, firstMentionIndex).join(' ');
         let mission;
         try {
-            mission = await MissionFactory.getInstance().getByName(missionName, message.guildId!);
+            mission = await MissionFactory.getByName(missionName, message.guildId!);
         } catch (e) {
             if (e instanceof EntryNotFoundError) {
                 message.reply(`Não foi encontrado uma missão com o nome **${missionName}**`);
@@ -27,7 +27,7 @@ export default class CompletedMissionStrategy implements Strategy {
         const mentions = messageAsList.slice(firstMentionIndex, messageAsList.length);
         const chars: Array<InferSelectModel<typeof character>> = [];
         for (const mention of mentions) {
-            chars.push(await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(mention), message.guildId!));
+            chars.push(await CharacterFactory.getFromPlayerId(getIdFromMention(mention), message.guildId!));
         }
 
         await db.transaction(async (trx) => {

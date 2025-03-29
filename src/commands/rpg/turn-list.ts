@@ -12,7 +12,7 @@ export default class TurnList implements Command {
 
         const charNames: Array<string> = [];
         for (const player of players) {
-            const char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(player), guildId);
+            const char = await CharacterFactory.getFromPlayerId(getIdFromMention(player), guildId);
             charNames.push(char.name);
         }
 

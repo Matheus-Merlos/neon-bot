@@ -18,9 +18,9 @@ export default class Mission extends StrategyCommand {
     constructor() {
         super('mission', {
             create: new HasStrategyPermission(new CreateMissionStrategy(), PermissionFlagsBits.ManageChannels),
-            info: new InfoStrategy(MissionFactory.getInstance()),
-            list: new ListStrategy(MissionFactory.getInstance(), 'missões', Colors.Fuchsia, async (entry) => {
-                const missionDifficulty = await MissionDifficultyFactory.getInstance().getFromId(entry.difficulty);
+            info: new InfoStrategy(MissionFactory),
+            list: new ListStrategy(MissionFactory, 'missões', Colors.Fuchsia, async (entry) => {
+                const missionDifficulty = await MissionDifficultyFactory.getFromId(entry.difficulty);
 
                 return [
                     {
@@ -35,14 +35,11 @@ export default class Mission extends StrategyCommand {
                     },
                 ];
             }),
-            delete: new HasStrategyPermission(
-                new DeleteStrategy(MissionFactory.getInstance(), 'missão'),
-                PermissionFlagsBits.ManageChannels,
-            ),
+            delete: new HasStrategyPermission(new DeleteStrategy(MissionFactory, 'missão'), PermissionFlagsBits.ManageChannels),
             complete: new HasStrategyPermission(new CompletedMissionStrategy(), PermissionFlagsBits.ManageChannels),
             edit: new EditStrategy({
                 image: new HasStrategyPermission(
-                    new EditImageStrategy(MissionFactory.getInstance(), mission),
+                    new EditImageStrategy(MissionFactory, mission),
                     PermissionFlagsBits.ManageChannels,
                 ),
             }),

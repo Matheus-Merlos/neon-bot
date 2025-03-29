@@ -3,19 +3,9 @@ import db from '../../db/db';
 import { classObjective } from '../../db/schema';
 import Factory from '../base-factory';
 
-export default class ClassObjectiveFactory extends Factory<typeof classObjective> {
-    private static instance: ClassObjectiveFactory | null = null;
-
-    private constructor() {
+class ClassObjectiveFactory extends Factory<typeof classObjective> {
+    constructor() {
         super(classObjective);
-    }
-
-    static getInstance(): ClassObjectiveFactory {
-        if (ClassObjectiveFactory.instance === null) {
-            ClassObjectiveFactory.instance = new ClassObjectiveFactory();
-        }
-
-        return ClassObjectiveFactory.instance;
     }
 
     async getByName(
@@ -40,3 +30,5 @@ export default class ClassObjectiveFactory extends Factory<typeof classObjective
         await db.delete(classObjective).where(eq(classObjective.id, id));
     }
 }
+
+export default new ClassObjectiveFactory();

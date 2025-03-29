@@ -10,7 +10,7 @@ export default class Character extends StrategyCommand {
         super('character', {
             edit: new EditStrategy({
                 image: new HasStrategyPermission(
-                    new EditImageStrategy(CharacterFactory.getInstance(), character),
+                    new EditImageStrategy(CharacterFactory, character),
                     PermissionFlagsBits.Administrator,
                 ),
             }),

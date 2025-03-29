@@ -44,12 +44,12 @@ export default class CreateItemStrategy implements Strategy {
 
                 const imageStream = image.data;
 
-                const result = await ImageHandler.getInstance().uploadImage(BucketDirectories.ITEMS_DIR, itemName, imageStream);
+                const result = await ImageHandler.uploadImage(BucketDirectories.ITEMS_DIR, itemName, imageStream);
 
                 url = result.url;
                 salt = result.salt;
             }
-            createdItem = await ItemFactory.getInstance().create({
+            createdItem = await ItemFactory.create({
                 name: itemName,
                 description,
                 price,
@@ -69,7 +69,7 @@ export default class CreateItemStrategy implements Strategy {
 
         message.reply({
             content: `Item **${itemName}** criado com sucesso!`,
-            embeds: [ItemFactory.getInstance().show(createdItem!)],
+            embeds: [ItemFactory.show(createdItem!)],
         });
     }
 }

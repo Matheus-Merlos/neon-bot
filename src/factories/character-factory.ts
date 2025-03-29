@@ -8,19 +8,9 @@ import { ImageHandler } from '../utils';
 import getMostSimilarString from '../utils/levenshtein';
 import Factory from './base-factory';
 
-export default class CharacterFactory extends Factory<typeof character> {
-    private static instance: CharacterFactory | null = null;
-
-    private constructor() {
+class CharacterFactory extends Factory<typeof character> {
+    constructor() {
         super(character);
-    }
-
-    static getInstance(): CharacterFactory {
-        if (CharacterFactory.instance === null) {
-            CharacterFactory.instance = new CharacterFactory();
-        }
-
-        return CharacterFactory.instance;
     }
 
     async createCharacter(
@@ -50,7 +40,7 @@ export default class CharacterFactory extends Factory<typeof character> {
 
         const image = await axios.get(imgUrl, { responseType: 'stream' });
 
-        const { url, salt } = await ImageHandler.getInstance().uploadImage('characters', charName!, image.data);
+        const { url, salt } = await ImageHandler.uploadImage('characters', charName!, image.data);
 
         try {
             await db.insert(player).values({ discordId: BigInt(playerId) });
@@ -167,8 +157,10 @@ export default class CharacterFactory extends Factory<typeof character> {
     async delete(id: number): Promise<void> {
         const [char] = await db.select().from(character).where(eq(character.id, id));
 
-        await ImageHandler.getInstance().deleteImage('characters', char.salt!, char.name);
+        await ImageHandler.deleteImage('characters', char.salt!, char.name);
 
         await db.delete(character).where(eq(character.id, id));
     }
 }
+
+export default new CharacterFactory();

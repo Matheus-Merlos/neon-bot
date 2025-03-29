@@ -14,7 +14,7 @@ export default class SelectObjectiveStrategy implements Strategy {
 
         let objectiveToSelect;
         try {
-            objectiveToSelect = await ObjectiveFactory.getInstance().getByName(objectiveName, message.guildId!);
+            objectiveToSelect = await ObjectiveFactory.getByName(objectiveName, message.guildId!);
         } catch {
             message.reply(`Não existe um objetivo com o nome **${objectiveName}**.`);
             return;

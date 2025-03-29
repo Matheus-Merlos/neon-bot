@@ -12,7 +12,7 @@ export default class SetClassStrategy implements Strategy {
 
         let cls;
         try {
-            cls = await ClassFactory.getInstance().getByName(messageAsList.join(' '), message.guildId!);
+            cls = await ClassFactory.getByName(messageAsList.join(' '), message.guildId!);
         } catch {
             message.reply(`Não foi encontrada nenhuma classe com o nome **${messageAsList.join(' ')}**.`);
             return;

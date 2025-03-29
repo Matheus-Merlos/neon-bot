@@ -9,7 +9,7 @@ export default class CreateClassObjectiveStrategy implements Strategy {
 
         let cls;
         try {
-            cls = await ClassFactory.getInstance().getByName(clsName, message.guildId!);
+            cls = await ClassFactory.getByName(clsName, message.guildId!);
         } catch {
             message.reply(`Não foi encontrado uma classe com o nome **${clsName}**`);
             return;
@@ -27,7 +27,7 @@ export default class CreateClassObjectiveStrategy implements Strategy {
             .join(' ')
             .replaceAll('"', '');
 
-        const created = await ClassObjectiveFactory.getInstance().create({
+        const created = await ClassObjectiveFactory.create({
             name: objectiveName,
             xp,
             gold,

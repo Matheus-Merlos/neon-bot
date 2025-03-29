@@ -14,7 +14,7 @@ export default class CompleteObjectiveStrategy implements Strategy {
         const objectiveName = messageAsList.join(' ');
         let objective;
         try {
-            objective = await ObjectiveFactory.getInstance().getByName(objectiveName, message.guildId!);
+            objective = await ObjectiveFactory.getByName(objectiveName, message.guildId!);
         } catch {
             message.reply(`Não existe um objetivo com o nome **${objectiveName}**.`);
             return;

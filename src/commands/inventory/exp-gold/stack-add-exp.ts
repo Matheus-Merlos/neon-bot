@@ -16,7 +16,7 @@ export default class StackAddExp implements Command {
         const playersId = messageAsList.map((mention) => getIdFromMention(mention));
         const characters = [];
         for (const playerId of playersId) {
-            characters.push(await CharacterFactory.getInstance().getFromPlayerId(playerId, message.guild!.id));
+            characters.push(await CharacterFactory.getFromPlayerId(playerId, message.guild!.id));
         }
 
         for (const char of characters) {

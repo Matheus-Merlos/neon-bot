@@ -22,12 +22,12 @@ enum BucketDirectories {
 
 export { BucketDirectories };
 
-export default class ImageHandler {
+class ImageHandler {
     private static instance: ImageHandler | null = null;
     private s3Client: S3Client;
     private env: string;
 
-    private constructor() {
+    constructor() {
         this.env = process.env.ENV!;
         this.s3Client = new S3Client({
             region: process.env.AWS_REGION!,
@@ -38,14 +38,6 @@ export default class ImageHandler {
                 secretAccessKey: process.env.IMAGE_AWS_SECRET_ACCESS_KEY!,
             },
         });
-    }
-
-    public static getInstance(): ImageHandler {
-        if (ImageHandler.instance === null) {
-            ImageHandler.instance = new ImageHandler();
-        }
-
-        return ImageHandler.instance;
     }
 
     public async uploadImage(
@@ -94,3 +86,5 @@ export default class ImageHandler {
         await this.s3Client.send(deleteCommand);
     }
 }
+
+export default new ImageHandler();

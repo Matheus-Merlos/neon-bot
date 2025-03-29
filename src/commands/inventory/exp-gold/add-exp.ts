@@ -12,7 +12,7 @@ export default class AddExp implements Command {
         const playerId = getIdFromMention(messageAsList[0]);
         const quantity = parseInt(messageAsList[1]);
 
-        const char = await CharacterFactory.getInstance().getFromPlayerId(playerId, message.guild!.id);
+        const char = await CharacterFactory.getFromPlayerId(playerId, message.guild!.id);
 
         await checkCaracterLevelUp(message, char, quantity);
 

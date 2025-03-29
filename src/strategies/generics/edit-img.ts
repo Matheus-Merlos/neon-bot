@@ -46,23 +46,25 @@ export default class EditImageStrategy<T extends Table, U extends Factory<T>, V 
         }
 
         let entry: InferSelectModel<V> | characterSelectModel;
-        if (this.factoryInstance instanceof CharacterFactory) {
+        if (this.factoryInstance instanceof Object.getPrototypeOf(CharacterFactory).constructor) {
             entry = await getCharacter(message, messageAsList);
         } else {
             entry = await this.factoryInstance.getByName(messageAsList.join(' '), message.guildId);
         }
 
         let bucketDirectory = BucketDirectories.MISC_DIR;
-        if (this.factoryInstance instanceof CharacterFactory) bucketDirectory = BucketDirectories.CHARACTERS_DIR;
-        if (this.factoryInstance instanceof ItemFactory) bucketDirectory = BucketDirectories.ITEMS_DIR;
-        if (this.factoryInstance instanceof MissionFactory) bucketDirectory = BucketDirectories.MISSIONS_DIR;
+        if (this.factoryInstance instanceof Object.getPrototypeOf(CharacterFactory).constructor)
+            bucketDirectory = BucketDirectories.CHARACTERS_DIR;
+        if (this.factoryInstance instanceof Object.getPrototypeOf(ItemFactory).constructor)
+            bucketDirectory = BucketDirectories.ITEMS_DIR;
+        if (this.factoryInstance instanceof Object.getPrototypeOf(MissionFactory).constructor)
+            bucketDirectory = BucketDirectories.MISSIONS_DIR;
 
-        if (entry.salt !== null && entry.name !== null)
-            await ImageHandler.getInstance().deleteImage(bucketDirectory, entry.salt, entry.name);
+        if (entry.salt !== null && entry.name !== null) await ImageHandler.deleteImage(bucketDirectory, entry.salt, entry.name);
 
         const imageDownload = await axios.get(img.url, { responseType: 'stream' });
 
-        const { url, salt } = await ImageHandler.getInstance().uploadImage(bucketDirectory, entry.name!, imageDownload.data);
+        const { url, salt } = await ImageHandler.uploadImage(bucketDirectory, entry.name!, imageDownload.data);
 
         await db.update(this.table).set({ imageUrl: url, salt }).where(eq(this.table.id, entry.id));
 

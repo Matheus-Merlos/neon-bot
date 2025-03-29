@@ -5,9 +5,9 @@ import ClassFactory from '../factories/class-objectives/class-factory';
 import { SetClassStrategy } from '../strategies';
 import { SimpleTableCommand } from './base-command';
 
-export default class Class extends SimpleTableCommand<typeof characterClass, ClassFactory> {
+export default class Class extends SimpleTableCommand<typeof characterClass, typeof ClassFactory> {
     constructor() {
-        super('class', ClassFactory.getInstance(), Colors.Yellow, 'classes', {
+        super('class', ClassFactory, Colors.Yellow, 'classes', {
             set: new HasStrategyPermission(new SetClassStrategy(), PermissionFlagsBits.ManageGuild),
         });
     }

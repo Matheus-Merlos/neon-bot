@@ -12,8 +12,8 @@ export default class Pay implements Command {
         const receiverId = getIdFromMention(messageAsList[0]);
         const quantity = parseInt(messageAsList[1]);
 
-        const sender = await CharacterFactory.getInstance().getFromPlayerId(senderId, message.guildId!);
-        const receiver = await CharacterFactory.getInstance().getFromPlayerId(receiverId, message.guildId!);
+        const sender = await CharacterFactory.getFromPlayerId(senderId, message.guildId!);
+        const receiver = await CharacterFactory.getFromPlayerId(receiverId, message.guildId!);
 
         if (sender.gold < quantity) {
             await message.reply('Você não possui dinheiro o suficiente para realizar essa transação.');

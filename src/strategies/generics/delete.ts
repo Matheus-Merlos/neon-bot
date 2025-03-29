@@ -32,10 +32,10 @@ export default class DeleteStrategy<T extends Table, U extends Factory<T>> imple
                     //Deletes the image from the bucket (if existis a image)
                     if (Object.keys(entry).includes('salt') && entry.salt! !== null) {
                         let directory;
-                        if (this.factoryInstance instanceof ItemFactory) {
+                        if (this.factoryInstance instanceof Object.getPrototypeOf(ItemFactory).constructor) {
                             directory = BucketDirectories.ITEMS_DIR;
                         }
-                        if (this.factoryInstance instanceof MissionFactory) {
+                        if (this.factoryInstance instanceof Object.getPrototypeOf(MissionFactory).constructor) {
                             directory = BucketDirectories.MISSIONS_DIR;
                         }
 
@@ -43,7 +43,7 @@ export default class DeleteStrategy<T extends Table, U extends Factory<T>> imple
                             throw new Error('Could not delete image');
                         }
 
-                        await ImageHandler.getInstance().deleteImage(directory, entry.salt!, entry.name!);
+                        await ImageHandler.deleteImage(directory, entry.salt!, entry.name!);
                     }
                     await this.factoryInstance.delete(entry.id!);
 

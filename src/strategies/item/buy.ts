@@ -19,12 +19,12 @@ export default class BuyStrategy implements Strategy {
         let item;
 
         try {
-            item = await ItemFactory.getInstance().getByName(itemName, message.guildId!);
+            item = await ItemFactory.getByName(itemName, message.guildId!);
         } catch {
             await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;
         }
-        const char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guild!.id);
+        const char = await CharacterFactory.getFromPlayerId(message.author.id, message.guild!.id);
 
         const totalPrice = item.price * quantity;
 

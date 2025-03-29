@@ -13,12 +13,9 @@ export default class Reset implements Command {
             interactionFilter: (i) => i.user.id === message.author.id,
             actions: {
                 async callbackFnAccept(confirmationMessage: Message) {
-                    const char = await CharacterFactory.getInstance().getFromPlayerId(
-                        getIdFromMention(messageAsList[0]),
-                        message.guild!.id,
-                    );
+                    const char = await CharacterFactory.getFromPlayerId(getIdFromMention(messageAsList[0]), message.guild!.id);
 
-                    await CharacterFactory.getInstance().delete(char.id);
+                    await CharacterFactory.delete(char.id);
 
                     await confirmationMessage.edit({
                         content: `Personagem de **${messageAsList[0]}** resetado com sucesso.`,

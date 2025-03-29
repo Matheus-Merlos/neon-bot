@@ -6,19 +6,9 @@ import { ImageHandler } from '../utils';
 import Factory from './base-factory';
 import ShowEmbed from './show-embed';
 
-export default class ItemFactory extends Factory<typeof item> implements ShowEmbed<typeof item> {
-    private static instance: ItemFactory | null = null;
-
-    private constructor() {
+class ItemFactory extends Factory<typeof item> implements ShowEmbed<typeof item> {
+    constructor() {
         super(item);
-    }
-
-    static getInstance(): ItemFactory {
-        if (ItemFactory.instance === null) {
-            ItemFactory.instance = new ItemFactory();
-        }
-
-        return ItemFactory.instance;
     }
 
     async getByName(
@@ -60,7 +50,7 @@ export default class ItemFactory extends Factory<typeof item> implements ShowEmb
     async delete(id: number): Promise<void> {
         const [DBItem] = await db.select().from(item).where(eq(item.id, id));
 
-        await ImageHandler.getInstance().deleteImage('items', DBItem.salt!, DBItem.name);
+        await ImageHandler.deleteImage('items', DBItem.salt!, DBItem.name);
 
         await db.delete(item).where(eq(item.id, id));
     }
@@ -122,3 +112,5 @@ export default class ItemFactory extends Factory<typeof item> implements ShowEmb
         return itemEmbed;
     }
 }
+
+export default new ItemFactory();

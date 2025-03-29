@@ -19,7 +19,7 @@ export default class UseStrategy implements Strategy {
         const itemName = messageAsList.join(' ');
         let item;
         try {
-            item = await ItemFactory.getInstance().getByName(itemName, message.guildId!);
+            item = await ItemFactory.getByName(itemName, message.guildId!);
         } catch {
             await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;

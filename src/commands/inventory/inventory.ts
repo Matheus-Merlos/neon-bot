@@ -14,10 +14,10 @@ export default class Inventory implements Command {
         let playerId;
         if (messageAsList[0]) {
             playerId = getIdFromMention(messageAsList[0]);
-            char = await CharacterFactory.getInstance().getFromPlayerId(getIdFromMention(messageAsList[0]), message.guild!.id);
+            char = await CharacterFactory.getFromPlayerId(getIdFromMention(messageAsList[0]), message.guild!.id);
             messageAsList.splice(0, 1);
         } else {
-            char = await CharacterFactory.getInstance().getFromPlayerId(message.author.id, message.guild!.id);
+            char = await CharacterFactory.getFromPlayerId(message.author.id, message.guild!.id);
             playerId = message.author.id;
         }
 

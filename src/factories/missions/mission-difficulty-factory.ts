@@ -3,19 +3,9 @@ import db from '../../db/db';
 import { missionDifficulty } from '../../db/schema';
 import Factory from '../base-factory';
 
-export default class MissionDifficultyFactory extends Factory<typeof missionDifficulty> {
-    private static instance: MissionDifficultyFactory | null = null;
-
-    private constructor() {
+class MissionDifficultyFactory extends Factory<typeof missionDifficulty> {
+    constructor() {
         super(missionDifficulty);
-    }
-
-    static getInstance(): MissionDifficultyFactory {
-        if (MissionDifficultyFactory.instance === null) {
-            MissionDifficultyFactory.instance = new MissionDifficultyFactory();
-        }
-
-        return MissionDifficultyFactory.instance;
     }
 
     async getByName(difficultyName: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
@@ -38,3 +28,5 @@ export default class MissionDifficultyFactory extends Factory<typeof missionDiff
         return entry;
     }
 }
+
+export default new MissionDifficultyFactory();

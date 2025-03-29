@@ -17,16 +17,13 @@ export default class CreateObjectiveStrategy implements Strategy {
 
         let difficulty;
         try {
-            difficulty = await ObjectiveDifficultyFactory.getInstance().getByName(
-                messageAsList[expIndex + 2],
-                message.guildId!,
-            );
+            difficulty = await ObjectiveDifficultyFactory.getByName(messageAsList[expIndex + 2], message.guildId!);
         } catch {
             message.reply(`Não existe uma dificuldade de objetivo com o nome **${messageAsList[expIndex + 2]}**.`);
             return;
         }
 
-        const createdObjective = await ObjectiveFactory.getInstance().create({
+        const createdObjective = await ObjectiveFactory.create({
             name: objectiveName,
             xp,
             gold,

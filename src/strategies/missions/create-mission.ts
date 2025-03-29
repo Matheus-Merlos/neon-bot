@@ -12,7 +12,7 @@ export default class CreateMissionStrategy implements Strategy {
 
         let missionDifficulty;
         try {
-            missionDifficulty = await MissionDifficultyFactory.getInstance().getByName(difficultyName, message.guildId!);
+            missionDifficulty = await MissionDifficultyFactory.getByName(difficultyName, message.guildId!);
         } catch (error) {
             if (error instanceof EntryNotFoundError) {
                 message.reply(`Não foi encontrado uma dificuldade de missão com o nome **${difficultyName}**`);
@@ -51,17 +51,13 @@ export default class CreateMissionStrategy implements Strategy {
 
             const imageStream = image.data;
 
-            const result = await ImageHandler.getInstance().uploadImage(
-                BucketDirectories.MISSIONS_DIR,
-                missionName,
-                imageStream,
-            );
+            const result = await ImageHandler.uploadImage(BucketDirectories.MISSIONS_DIR, missionName, imageStream);
 
             imgUrl = result.url;
             salt = result.salt;
         }
 
-        const created = await MissionFactory.getInstance().create({
+        const created = await MissionFactory.create({
             name: missionName,
             xp,
             gold,
@@ -74,7 +70,7 @@ export default class CreateMissionStrategy implements Strategy {
 
         await message.reply({
             content: `Missão **${created.name}** criado com sucesso com a dificuldade **${missionDifficulty.name}**:`,
-            embeds: [MissionFactory.getInstance().show(created)],
+            embeds: [MissionFactory.show(created)],
         });
     }
 }

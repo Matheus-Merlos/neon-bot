@@ -5,10 +5,8 @@ import { objective } from '../../db/schema';
 import Factory from '../base-factory';
 import ShowEmbed from '../show-embed';
 
-export default class ObjectiveFactory extends Factory<typeof objective> implements ShowEmbed<typeof objective> {
-    private static instance: ObjectiveFactory | null = null;
-
-    private constructor() {
+class ObjectiveFactory extends Factory<typeof objective> implements ShowEmbed<typeof objective> {
+    constructor() {
         super(objective);
     }
     show(entry: {
@@ -40,14 +38,6 @@ export default class ObjectiveFactory extends Factory<typeof objective> implemen
         return objectiveEmbed;
     }
 
-    static getInstance(): ObjectiveFactory {
-        if (ObjectiveFactory.instance === null) {
-            ObjectiveFactory.instance = new ObjectiveFactory();
-        }
-
-        return ObjectiveFactory.instance;
-    }
-
     async getByName(
         objectiveName: string,
         guildId: string,
@@ -69,3 +59,5 @@ export default class ObjectiveFactory extends Factory<typeof objective> implemen
         await db.delete(objective).where(eq(objective.id, id));
     }
 }
+
+export default new ObjectiveFactory();

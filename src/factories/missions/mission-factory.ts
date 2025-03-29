@@ -6,19 +6,9 @@ import { ImageHandler } from '../../utils';
 import Factory from '../base-factory';
 import ShowEmbed from '../show-embed';
 
-export default class MissionFactory extends Factory<typeof mission> implements ShowEmbed<typeof mission> {
-    private static instance: MissionFactory | null = null;
-
-    private constructor() {
+class MissionFactory extends Factory<typeof mission> implements ShowEmbed<typeof mission> {
+    constructor() {
         super(mission);
-    }
-
-    static getInstance(): MissionFactory {
-        if (MissionFactory.instance === null) {
-            MissionFactory.instance = new MissionFactory();
-        }
-
-        return MissionFactory.instance;
     }
 
     show(entry: {
@@ -97,8 +87,10 @@ export default class MissionFactory extends Factory<typeof mission> implements S
     async delete(id: number): Promise<void> {
         const [DBMission] = await db.select().from(mission).where(eq(mission.id, id));
 
-        await ImageHandler.getInstance().deleteImage('missions', DBMission.salt!, DBMission.name);
+        await ImageHandler.deleteImage('missions', DBMission.salt!, DBMission.name);
 
         await db.delete(mission).where(eq(mission.id, id));
     }
 }
+
+export default new MissionFactory();

@@ -21,30 +21,25 @@ export default class Objective extends StrategyCommand {
             'objective',
             {
                 create: new HasStrategyPermission(new CreateObjectiveStrategy(), PermissionFlagsBits.Administrator),
-                list: new ListStrategy(
-                    ObjectiveFactory.getInstance(),
-                    'Objetivos do servidor',
-                    Colors.Blurple,
-                    async (entry) => {
-                        const objectiveDifficulty = await ObjectiveDifficultyFactory.getInstance().getFromId(entry.type);
+                list: new ListStrategy(ObjectiveFactory, 'Objetivos do servidor', Colors.Blurple, async (entry) => {
+                    const objectiveDifficulty = await ObjectiveDifficultyFactory.getFromId(entry.type);
 
-                        return [
-                            {
-                                name: `${entry.name} - ${objectiveDifficulty.name}`,
-                                value: `XP: ${entry.xp} | Dinheiro: $${entry.gold}`,
-                                inline: false,
-                            },
-                            {
-                                name: ' ',
-                                value: ' ',
-                                inline: false,
-                            },
-                        ];
-                    },
-                ),
-                info: new InfoStrategy(ObjectiveFactory.getInstance()),
+                    return [
+                        {
+                            name: `${entry.name} - ${objectiveDifficulty.name}`,
+                            value: `XP: ${entry.xp} | Dinheiro: $${entry.gold}`,
+                            inline: false,
+                        },
+                        {
+                            name: ' ',
+                            value: ' ',
+                            inline: false,
+                        },
+                    ];
+                }),
+                info: new InfoStrategy(ObjectiveFactory),
                 delete: new HasStrategyPermission(
-                    new DeleteStrategy(ObjectiveFactory.getInstance(), 'objetivo'),
+                    new DeleteStrategy(ObjectiveFactory, 'objetivo'),
                     PermissionFlagsBits.Administrator,
                 ),
                 select: new SelectObjectiveStrategy(),
