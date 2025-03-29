@@ -30,7 +30,23 @@ import {
 import { HasCommandPermission } from './decorators';
 config();
 
-const client = new Client(';');
+const client = new Client({
+    prefix: ';',
+    requiredEnvironmentVars: [
+        'DISCORD_TOKEN',
+        'ENV',
+        'IMAGE_AWS_ACCESS_KEY_ID',
+        'IMAGE_AWS_SECRET_ACCESS_KEY',
+        'AWS_REGION',
+        'BUCKET_NAME',
+        'GOOGLE_API_KEY',
+        'SEARCH_ENGINE_ID',
+        'DATABASE_HOST',
+        'DATABASE_USER',
+        'DATABASE_PASSWORD',
+        'DATABASE',
+    ],
+});
 
 client.addCommand('add-exp', new HasCommandPermission(new AddExp(), PermissionFlagsBits.ManageGuild));
 client.addCommand('remove-exp', new HasCommandPermission(new RemoveExp(), PermissionFlagsBits.ManageGuild));

@@ -28,30 +28,14 @@ export default class ImageHandler {
     private env: string;
 
     private constructor() {
-        if (typeof process.env.IMAGE_AWS_ACCESS_KEY_ID === 'undefined') {
-            throw new Error(`'AWS_ACCESS_KEY_ID' not found in environment variables`);
-        }
-        if (typeof process.env.IMAGE_AWS_SECRET_ACCESS_KEY === 'undefined') {
-            throw new Error(`'AWS_SECRET_ACCESS_KEY' not found in environment variables`);
-        }
-        if (typeof process.env.AWS_REGION === 'undefined') {
-            throw new Error(`'AWS_REGION' not found in environment variables`);
-        }
-        if (typeof process.env.BUCKET_NAME === 'undefined') {
-            throw new Error(`'BUCKET_NAME' not found in environment variables`);
-        }
-        if (typeof process.env.ENV === 'undefined') {
-            throw new Error(`'ENV' not found in environment variables`);
-        }
-
-        this.env = process.env.ENV;
+        this.env = process.env.ENV!;
         this.s3Client = new S3Client({
-            region: process.env.AWS_REGION,
+            region: process.env.AWS_REGION!,
             maxAttempts: 3,
             requestHandler: new NodeHttpHandler({ connectionTimeout: 5000 }),
             credentials: {
-                accessKeyId: process.env.IMAGE_AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.IMAGE_AWS_SECRET_ACCESS_KEY,
+                accessKeyId: process.env.IMAGE_AWS_ACCESS_KEY_ID!,
+                secretAccessKey: process.env.IMAGE_AWS_SECRET_ACCESS_KEY!,
             },
         });
     }
@@ -77,7 +61,7 @@ export default class ImageHandler {
 
         //Uploads the image to a S3 Bucket
         const uploadParams = {
-            Bucket: process.env.BUCKET_NAME,
+            Bucket: process.env.BUCKET_NAME!,
             Key: imagePath,
             Body: pngBuffer,
             ContentType: 'image/png',
@@ -93,7 +77,7 @@ export default class ImageHandler {
 
         return {
             salt,
-            url: `https://${process.env.BUCKET_NAME}.s3.amazonaws.com/${imagePath}`,
+            url: `https://${process.env.BUCKET_NAME!}.s3.amazonaws.com/${imagePath}`,
         };
     }
 
@@ -101,7 +85,7 @@ export default class ImageHandler {
         const imagePath = `${directory}/${this.env}/${salt}-${toSlug(imageName)}.png`;
 
         const deleteParams = {
-            Bucket: process.env.BUCKET_NAME,
+            Bucket: process.env.BUCKET_NAME!,
             Key: imagePath,
         };
 

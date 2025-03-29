@@ -7,12 +7,15 @@ export default class Client {
     private prefix: string;
     private commands: { [k: string]: Command } = {};
 
-    constructor(prefix: string) {
-        this.token = process.env.DISCORD_TOKEN;
-        if (typeof this.token === 'undefined') {
-            throw new Error('DISCORD_TOKEN not found in environment variables.');
+    constructor({ prefix, requiredEnvironmentVars }: { prefix: string; requiredEnvironmentVars: Array<string> }) {
+        for (const requiredEnv of requiredEnvironmentVars) {
+            const envVar = process.env[requiredEnv];
+            if (envVar === undefined) {
+                throw new Error(`Required var "${requiredEnv}" not found in environment variables.`);
+            }
         }
 
+        this.token = process.env.DISCORD_TOKEN!;
         this.client = new DiscordClient({
             intents: [
                 GatewayIntentBits.MessageContent,
