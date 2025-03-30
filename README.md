@@ -13,9 +13,22 @@
 ## ✨ Table of Contents
 
 - Inviting to your server[WIP]
+- [Issues & Contributions](#issues--contributions-️)
 - [File organization](#file-organization-)
 - [Deploy on Your Own](#deploying-on-your-own-️)
 - [License](#license-️)
+
+## Issues & Contributions 🛠️
+
+We welcome contributions and bug reports!
+
+- **Found a bug or an issue?**
+
+If you encounter a bug or have a suggestion for improvement, feel free to open an [**Issue**](https://github.com/Matheus-Merlos/neon-bot/issues). Please provide as much detail as possible, including steps to reproduce the issue. You can also mention me, and I'll take a look as soon as possible.
+
+- **Want to contribute?**
+
+If you'd like to contribute, feel free to open a [**Pull Request**](https://github.com/Matheus-Merlos/neon-bot/pulls). Make sure to follow the existing code style and include a clear description of your changes. Contributions are always appreciated!
 
 ## File Organization 📁
 
