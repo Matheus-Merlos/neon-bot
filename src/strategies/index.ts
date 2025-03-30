@@ -23,6 +23,7 @@ import GiveItemStrategy from './item/give';
 import UseStrategy from './item/use';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
+import RemoveSelectedObjectiveStrategy from './objectives/remove-selected';
 
 export {
     BuyStrategy,
@@ -43,6 +44,7 @@ export {
     ListCompletedClassObjectivesStrategy,
     ListCompletedObjectivesStrategy,
     ListStrategy,
+    RemoveSelectedObjectiveStrategy,
     SelectedObjectivesStrategy,
     SelectObjectiveStrategy,
     SetClassStrategy,

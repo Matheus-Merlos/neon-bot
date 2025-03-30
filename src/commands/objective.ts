@@ -9,6 +9,7 @@ import {
     InfoStrategy,
     ListCompletedObjectivesStrategy,
     ListStrategy,
+    RemoveSelectedObjectiveStrategy,
     SelectObjectiveStrategy,
     SelectedObjectivesStrategy,
 } from '../strategies';
@@ -46,6 +47,7 @@ export default class Objective extends StrategyCommand {
                 selected: new SelectedObjectivesStrategy(),
                 completed: new HasStrategyPermission(new CompleteObjectiveStrategy(), PermissionFlagsBits.ManageGuild),
                 'list-completed': new ListCompletedObjectivesStrategy(),
+                unselect: new RemoveSelectedObjectiveStrategy(),
             },
             new DefaultStrategy('objective', {
                 create: 'Cria um novo objetivo no servidor. Use a sintaxe: `<nome_objetivo> <xp> <ouro> <dificuldade> <descrição>`.',
@@ -56,6 +58,7 @@ export default class Objective extends StrategyCommand {
                 selected: 'Lista os objetivos atualmente atribuídos a um personagem ou a si mesmo (menção opcional).',
                 completed: 'Marca um objetivo como concluído, concede as recompensas e remove-o da lista de objetivos ativos.',
                 'list-completed': 'Exibe todos os objetivos concluídos de um personagem ou de si mesmo.',
+                unselect: 'Remove um objetivo selecionado (caso você queira alterar)',
             }),
         );
     }
