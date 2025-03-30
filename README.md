@@ -13,9 +13,9 @@
 ## ✨ Table of Contents
 
 - Inviting to your server[WIP]
-- [File organization](#file-organization)
-- [Deploy on Your Own](#deploying-on-your-own)
-- [License](#️license)
+- [File organization](#file-organization-)
+- [Deploy on Your Own](#deploying-on-your-own-)
+- [License](#️license-)
 
 ## File Organization 📁
 
