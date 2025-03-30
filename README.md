@@ -14,10 +14,10 @@
 
 - Inviting to your server[WIP]
 - [File organization](#file-organization)
-- Deploy on your Own[WIP]
+- [Deploy on Your Own](#deploying-on-your-own)
 - [License](#️license)
 
-## 📁 File Organization
+## File Organization 📁
 
 This repository follows **GoF design patterns**, shaping its folder structure accordingly. The implemented patterns are **Decorator**, **Command**, **Strategy**, and **Singleton**. (Although there is a "factories" folder, it doesn’t strictly follow the Factory design pattern.)
 
@@ -34,7 +34,34 @@ src/              - Bot’s main source code
 docs/             - Documentation site (WIP)
 ```
 
-## ⚖️ License
+## Deploying on Your Own 🖥️
+
+Deploying the application on your own is very simple. You will need the following:
+
+- A **PostgreSQL database**
+- An **S3 bucket** (to store images):
+    - The bucket must have the public-read ACL and BucketOwnerPreferred as the Bucket Ownership Control.
+- An **IAM user** with an access key to access the S3 bucket. The user must have the following permissions:
+```JSON
+"s3:PutObject"
+"s3:GetObject"
+"s3:PutObjectAcl"
+"s3:DeleteObject"
+```
+- A **machine** to run the bot client on
+
+After configuring all these resources:
+1. Clone this repository.
+2. Run `npm ci` to install all dependencies.
+3. Compile the source code with `npx tsc`.
+4. Copy `package.json` and `package-lock.json` to the `dist/` folder.
+5. In the `dist/` folder, `npm ci --omit=dev`, to install only the required dependencies (excluding devDependencies).
+6. Create a .env file inside the `dist/` folder, and populate it with the variables found in `.env.example`
+7. Run `npm run prod:database:push` to create and apply the database migrations.
+8. Start the application by running `node main.js`
+9. You're all set! 🎉
+
+## License ⚖️
 
 This project is licensed under the [MIT License](LICENSE).
 You are free to use, modify, and distribute this software in accordance with the terms of the license.
