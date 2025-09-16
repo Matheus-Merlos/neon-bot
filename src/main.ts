@@ -31,7 +31,7 @@ import { HasCommandPermission } from './decorators';
 config();
 
 const client = new Client({
-    prefix: ';',
+    prefix: '!',
     requiredEnvironmentVars: [
         'DISCORD_TOKEN',
         'ENV',

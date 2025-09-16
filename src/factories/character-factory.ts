@@ -30,7 +30,7 @@ class CharacterFactory extends Factory<typeof character> {
         const guild = await client.getClient.guilds.fetch(guildId);
         const guildPlayer = await guild.members.fetch(playerId);
 
-        const playerName = guildPlayer.nickname;
+        const playerName = guildPlayer.nickname ?? guildPlayer.user.displayName ?? guildPlayer.user.username;
         const charName = playerName?.split(' ')[0].replace(',', '');
 
         const imgUrl = guildPlayer.displayAvatarURL({

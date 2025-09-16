@@ -22,6 +22,7 @@ export default class Client {
                 GatewayIntentBits.Guilds,
                 GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.GuildMembers,
+                GatewayIntentBits.GuildPresences,
             ],
         });
         this.prefix = prefix;
