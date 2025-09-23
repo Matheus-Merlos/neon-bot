@@ -8,7 +8,7 @@ export default class CreateItemStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const priceIndex = messageAsList.findIndex((element) => !isNaN(parseInt(element)) && element.trim() !== '');
 
-        if (priceIndex === 1) {
+        if (priceIndex === 0) {
             await message.reply('O nome do item não deve começar com um número');
             return;
         }
