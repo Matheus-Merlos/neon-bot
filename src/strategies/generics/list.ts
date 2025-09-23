@@ -17,6 +17,11 @@ export default class ListStrategy<T extends Table> implements Strategy {
     async execute(message: Message): Promise<void> {
         const entries = await this.factoryInstance.getAll(message.guildId!);
 
+        if (entries.length === 0) {
+            await message.reply('Nenhum registro encontrado no servidor.');
+            return;
+        }
+
         await embedList(entries, 5, message, async (matrix: Array<typeof entries>, currentIndex: number) => {
             const embed = new EmbedBuilder()
                 .setTitle(this.listName)
