@@ -1,4 +1,4 @@
-import { bigint, boolean, integer, pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
+import { bigint, boolean, integer, pgTable, serial, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 
 export const player = pgTable('player', {
     discordId: bigint('discord_id', { mode: 'bigint' }).primaryKey(),
@@ -23,17 +23,21 @@ export const reachedRank = pgTable('reached_rank', {
         .references(() => rank.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 });
 
-export const item = pgTable('item', {
-    id: serial('id').primaryKey(),
-    name: varchar('name', { length: 127 }).notNull(),
-    description: text('description'),
-    price: integer('price').notNull(),
-    durability: integer('durability').notNull(),
-    canBuy: boolean('can_buy').notNull(),
-    image: varchar('image', { length: 255 }),
-    salt: varchar('salt', { length: 5 }),
-    guildId: bigint('guild_id', { mode: 'bigint' }).notNull(),
-});
+export const item = pgTable(
+    'item',
+    {
+        id: serial('id').primaryKey(),
+        name: varchar('name', { length: 127 }).notNull(),
+        description: text('description'),
+        price: integer('price').notNull(),
+        durability: integer('durability').notNull(),
+        canBuy: boolean('can_buy').notNull(),
+        image: varchar('image', { length: 255 }),
+        salt: varchar('salt', { length: 5 }),
+        guildId: bigint('guild_id', { mode: 'bigint' }).notNull(),
+    },
+    (table) => [uniqueIndex('unique_guild_item_idx').on(table.name, table.guildId)],
+);
 
 export const inventory = pgTable('inventory', {
     id: serial('id').primaryKey(),

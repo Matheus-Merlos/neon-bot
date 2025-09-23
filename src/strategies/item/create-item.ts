@@ -62,7 +62,7 @@ export default class CreateItemStrategy implements Strategy {
         } catch (error) {
             if (error instanceof Error) {
                 if (error.message.toUpperCase().includes('UNIQUE'))
-                    message.reply(`Erro: Já existe um item com o nome **${itemName}**.`);
+                    message.reply(`Erro: Já existe um item com o nome **${itemName}** neste servidor.`);
                 return;
             }
         }
