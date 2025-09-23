@@ -18,20 +18,26 @@ import { StrategyCommand } from './base-command';
 
 export default class Item extends StrategyCommand {
     constructor() {
-        const listStrategy = new ListStrategy(ItemFactory, 'Loja', Colors.Gold, (entry) => {
-            return [
-                {
-                    name: `$${entry.price} - ${entry.name}`,
-                    value: `Durabilidade: ${entry.durability} usos.`,
-                    inline: false,
-                },
-                {
-                    name: ' ',
-                    value: ' ',
-                    inline: false,
-                },
-            ];
-        });
+        const listStrategy = new ListStrategy(
+            ItemFactory,
+            'Loja',
+            Colors.Gold,
+            (entry) => {
+                return [
+                    {
+                        name: `$${entry.price} - ${entry.name}`,
+                        value: `Durabilidade: ${entry.durability} usos.`,
+                        inline: false,
+                    },
+                    {
+                        name: ' ',
+                        value: ' ',
+                        inline: false,
+                    },
+                ];
+            },
+            7,
+        );
         super(
             'item',
             {

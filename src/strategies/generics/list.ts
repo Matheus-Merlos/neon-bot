@@ -12,6 +12,7 @@ export default class ListStrategy<T extends Table> implements Strategy {
         protected readonly fieldCallbackFn: (
             entry: InferSelectModel<T>,
         ) => EmbedField | Array<EmbedField> | Promise<EmbedField> | Promise<Array<EmbedField>>,
+        protected readonly itemsPerPage = 5,
     ) {}
 
     async execute(message: Message): Promise<void> {
@@ -22,7 +23,7 @@ export default class ListStrategy<T extends Table> implements Strategy {
             return;
         }
 
-        await embedList(entries, 5, message, async (matrix: Array<typeof entries>, currentIndex: number) => {
+        await embedList(entries, this.itemsPerPage, message, async (matrix: Array<typeof entries>, currentIndex: number) => {
             const embed = new EmbedBuilder()
                 .setTitle(this.listName)
                 .setColor(this.embedColor)

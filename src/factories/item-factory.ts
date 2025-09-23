@@ -44,7 +44,8 @@ class ItemFactory extends Factory<typeof item> implements ShowEmbed<typeof item>
         return await db
             .select()
             .from(item)
-            .where(eq(item.guildId, BigInt(guildId)));
+            .where(eq(item.guildId, BigInt(guildId)))
+            .orderBy(item.price, item.name);
     }
 
     async delete(id: number): Promise<void> {
