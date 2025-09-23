@@ -39,7 +39,7 @@ export default class Mission extends StrategyCommand {
                     ];
                 }),
                 delete: new HasStrategyPermission(
-                    new DeleteStrategy(MissionFactory, 'missão'),
+                    new DeleteStrategy(MissionFactory, 'Missão'),
                     PermissionFlagsBits.ManageChannels,
                 ),
                 complete: new HasStrategyPermission(new CompletedMissionStrategy(), PermissionFlagsBits.ManageChannels),

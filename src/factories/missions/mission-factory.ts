@@ -38,9 +38,9 @@ class MissionFactory extends Factory<typeof mission> implements ShowEmbed<typeof
                     value: `$${entry.gold}`,
                     inline: true,
                 },
-                { name: '\u200B', value: '\u200B' },
-            ])
-            .setImage(entry.imageUrl ? entry.imageUrl : '');
+            ]);
+
+        if (entry.imageUrl) missionEmbed.setImage(entry.imageUrl);
 
         return missionEmbed;
     }
