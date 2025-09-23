@@ -44,7 +44,7 @@ export default class CreateItemStrategy implements Strategy {
 
                 const imageStream = image.data;
 
-                const result = await ImageHandler.uploadImage(BucketDirectories.ITEMS_DIR, itemName, imageStream);
+                const result = await ImageHandler.uploadImage(BucketDirectories.ITEMS_DIR, itemName, imageStream, false);
 
                 url = result.url;
                 salt = result.salt;

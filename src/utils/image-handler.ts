@@ -44,12 +44,15 @@ class ImageHandler {
         directory: `${BucketDirectories}`,
         imageName: string,
         stream: IncomingMessage,
+        resizeImage: boolean = false,
     ): Promise<{ salt: string; url: string }> {
         //Generates salt to prevent duplicate image names (which would cause errors)
         const salt = randomBytes(5).toString('hex').substring(0, 5);
         const imagePath = `${directory}/${this.env}/${salt}-${toSlug(imageName)}.png`;
 
-        const pngBuffer = await stream.pipe(sharp()).resize(512, 512, { fit: 'cover' }).png().toBuffer();
+        const pngBuffer = resizeImage
+            ? await stream.pipe(sharp()).resize(512, 512, { fit: 'cover' }).png().toBuffer()
+            : await stream.pipe(sharp()).png().toBuffer();
 
         //Uploads the image to a S3 Bucket
         const uploadParams = {
