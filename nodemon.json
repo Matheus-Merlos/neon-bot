@@ -1,4 +1,4 @@
 {
-    "watch": ["src/", "tsconfig.json", ".env", "nodemon.json"],
+    "watch": ["src/*", "tsconfig.json", ".env", "nodemon.json"],
     "exec": "ts-node ./src/main.ts"
 }
