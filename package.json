@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "main.ts",
   "scripts": {
-    "start": "ts-node ./src/main.ts",
+    "start": "nodemon",
     "makemigrations": "npx drizzle-kit generate --config=./src/drizzle-dev.config.ts",
     "migrate": "npx drizzle-kit migrate --config=./src/drizzle-dev.config.ts",
     "database:push": "npx drizzle-kit push --config=./src/drizzle-dev.config.ts",
@@ -25,6 +25,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "globals": "^15.14.0",
+    "nodemon": "^3.1.10",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
@@ -33,6 +34,7 @@
     "@aws-sdk/client-s3": "^3.726.1",
     "@aws-sdk/lib-storage": "^3.726.1",
     "@aws-sdk/node-http-handler": "^3.370.0",
+    "@libsql/client": "^0.15.15",
     "axios": "^1.8.2",
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",
