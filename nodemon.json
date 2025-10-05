@@ -1,4 +1,6 @@
 {
-    "watch": ["src/*", "tsconfig.json", ".env", "nodemon.json"],
-    "exec": "ts-node ./src/main.ts"
+    "watch": ["src", "tsconfig.json", ".env", "nodemon.json"],
+    "exec": "ts-node ./src/main.ts",
+    "ext": "js,ts,json",
+    "legacyWatch": true
 }

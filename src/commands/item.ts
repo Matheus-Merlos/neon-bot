@@ -7,6 +7,7 @@ import {
     CreateItemStrategy,
     DefaultStrategy,
     DeleteStrategy,
+    EditFieldStrategy,
     EditImageStrategy,
     EditStrategy,
     GiveItemStrategy,
@@ -38,6 +39,7 @@ export default class Item extends StrategyCommand {
             },
             7,
         );
+        const editBuyableStrategy = new EditFieldStrategy(item, ItemFactory, 'canBuy');
         super(
             'item',
             {
@@ -54,6 +56,13 @@ export default class Item extends StrategyCommand {
                         new EditImageStrategy(ItemFactory, item),
                         PermissionFlagsBits.ManageChannels,
                     ),
+                    name: new EditFieldStrategy(item, ItemFactory, 'name'),
+                    buyable: editBuyableStrategy,
+                    canBuy: editBuyableStrategy,
+                    compravel: editBuyableStrategy,
+                    description: new EditFieldStrategy(item, ItemFactory, 'description'),
+                    price: new EditFieldStrategy(item, ItemFactory, 'price'),
+                    durability: new EditFieldStrategy(item, ItemFactory, 'durability'),
                 }),
             },
             new DefaultStrategy('item', {

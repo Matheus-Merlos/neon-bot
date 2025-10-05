@@ -10,12 +10,14 @@ import ListCompletedObjectivesStrategy from './objectives/list-completed-objecti
 import SelectObjectiveStrategy from './objectives/select-objective';
 import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
+import EditCharacterFieldStrategy from './character/edit-character-field';
 import CompletedClassObjectiveStrategy from './class-objectives/completed';
 import CreateClassObjectiveStrategy from './class-objectives/create';
 import ListCompletedClassObjectivesStrategy from './class-objectives/list-completed';
 import SetClassStrategy from './class-objectives/set-class';
 import CreateStrategy from './generics/create';
 import EditStrategy from './generics/edit';
+import EditFieldStrategy from './generics/edit-field';
 import EditImageStrategy from './generics/edit-img';
 import BuyStrategy from './item/buy';
 import CreateItemStrategy from './item/create-item';
@@ -37,6 +39,8 @@ export {
     CreateStrategy,
     DefaultStrategy,
     DeleteStrategy,
+    EditCharacterFieldStrategy,
+    EditFieldStrategy,
     EditImageStrategy,
     EditStrategy,
     GiveItemStrategy,
