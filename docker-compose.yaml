@@ -1,0 +1,30 @@
+services:
+  neon-bot:
+    container_name: neon-bot
+    image: ${DOCKER_USERNAME}/neon-bot:latest
+    env_file:
+      - .env
+    restart: unless-stopped
+  migrations:
+    container_name: neon-bot-migrations
+    image: ${DOCKER_USERNAME}/neon-bot:latest
+    env_file:
+      - .env
+    volumes:
+      - "./drizzle:./drizzle"
+    command:
+      - "sh"
+      - "-c"
+      - |
+        npx drizzle-kit generate
+        npx drizzle-kit migrate
+  debug:
+    container_name: neon-bot-debug
+    image: ${DOCKER_USERNAME}/neon-bot:latest
+    env_file:
+      - .env
+    restart: unless-stopped
+    command:
+      - "sleep"
+      - "infinity"
+

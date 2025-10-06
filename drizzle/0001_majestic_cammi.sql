@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "unique_guild_item_idx" ON "item" USING btree ("name","guild_id");

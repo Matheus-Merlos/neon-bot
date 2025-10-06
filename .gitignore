@@ -3,12 +3,9 @@ dist
 .env.production
 node_modules
 .vscode
-meta
 dist
 *.env
 *.sqlite3
-
-drizzle
 
 terraform.tfstate
 .terraform
