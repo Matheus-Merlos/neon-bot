@@ -32,4 +32,4 @@ WORKDIR /bot
 COPY --from=deps node_modules ./node_modules
 COPY --from=build dist .
 
-CMD [ "node", "src/main" ]
+CMD [ "node", "main" ]
