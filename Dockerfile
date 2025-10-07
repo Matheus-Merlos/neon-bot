@@ -31,5 +31,6 @@ WORKDIR /bot
 
 COPY --from=deps node_modules ./node_modules
 COPY --from=build dist .
+COPY drizzle ./drizzle
 
 CMD [ "node", "main" ]
