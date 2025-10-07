@@ -7,6 +7,7 @@ on:
     paths:
       - 'src/**'
       - 'docker-compose.yaml'
+      - 'Dockerfile'
   workflow_dispatch:
     inputs:
       build_image:
@@ -51,7 +52,7 @@ jobs:
   deploy:
     name: Deploy da aplicação
     runs-on: ubuntu-latest
-    if: always() && (github.event_name == 'push' || github.event.inputs.build_image == 'false')
+    if: always()
     needs: [build-and-push-image]
     steps:
       - name: Checkout code
@@ -64,6 +65,15 @@ jobs:
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "docker-compose.yaml"
+          target: "/home/root/neon-bot"
+
+      - name: Copy migrations files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_PUBLIC_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "drizzle"
           target: "/home/root/neon-bot"
 
       - name: Configure docker and start application
