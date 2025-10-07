@@ -8,11 +8,21 @@ on:
       - 'src/**'
       - 'docker-compose.yaml'
   workflow_dispatch:
+    inputs:
+      build_image:
+        description: 'Buildar imagem?'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 jobs:
   build-and-push-image:
     name: Build e Push da Imagem
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.inputs.build_image == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -41,7 +51,7 @@ jobs:
   deploy:
     name: Deploy da aplicação
     runs-on: ubuntu-latest
-    if: ${{ success() }}
+    if: needs.build-and-push-image.result != 'failure'
     needs: [build-and-push-image]
     steps:
       - name: Checkout code
