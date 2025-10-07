@@ -51,7 +51,7 @@ jobs:
   deploy:
     name: Deploy da aplicação
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || needs.build-and-push-image.result == 'success'
+    if: always() && (github.event_name == 'push' || github.event.inputs.build_image == 'false')
     needs: [build-and-push-image]
     steps:
       - name: Checkout code
