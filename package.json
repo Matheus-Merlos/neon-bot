@@ -7,12 +7,7 @@
   "type": "commonjs",
   "main": "main.ts",
   "scripts": {
-    "start": "nodemon",
-    "makemigrations": "npx drizzle-kit generate --config=./src/drizzle-dev.config.ts",
-    "migrate": "npx drizzle-kit migrate --config=./src/drizzle-dev.config.ts",
-    "database:push": "npx drizzle-kit push --config=./src/drizzle-dev.config.ts",
-    "database:push:prod": "npx drizzle-kit push --config=./drizzle-prod.config.js",
-    "studio": "npx drizzle-kit studio --config=./src/drizzle-dev.config.ts"
+    "start": "nodemon"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

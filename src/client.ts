@@ -1,5 +1,6 @@
-import { Client as DiscordClient, Events, GatewayIntentBits } from 'discord.js';
+import { Client as DiscordClient, Events, GatewayIntentBits, WebhookClient } from 'discord.js';
 import Command from './commands/base-command';
+import npcFactory from './factories/npc-factory';
 
 export default class Client {
     private token: string | undefined;
@@ -7,11 +8,19 @@ export default class Client {
     private prefix: string;
     private commands: { [k: string]: Command } = {};
 
-    constructor({ prefix, requiredEnvironmentVars }: { prefix: string; requiredEnvironmentVars: Array<string> }) {
+    constructor({
+        prefix,
+        requiredEnvironmentVars,
+    }: {
+        prefix: string;
+        requiredEnvironmentVars: Array<string>;
+    }) {
         for (const requiredEnv of requiredEnvironmentVars) {
             const envVar = process.env[requiredEnv];
             if (envVar === undefined) {
-                throw new Error(`Required var "${requiredEnv}" not found in environment variables.`);
+                throw new Error(
+                    `Required var "${requiredEnv}" not found in environment variables.`,
+                );
             }
         }
 
@@ -33,11 +42,48 @@ export default class Client {
 
         this.client.login(this.token);
         this.client.on(Events.MessageCreate, async (message) => {
-            if (!message.content.startsWith(this.prefix)) {
+            if (!message.guildId) {
                 return;
             }
 
-            if (!message.guildId) {
+            if (message.webhookId) {
+                return;
+            }
+
+            const activeNPCInGuild = await npcFactory.getActiveNpc(
+                message.author.id,
+                message.guildId,
+            );
+
+            if (activeNPCInGuild !== undefined) {
+                if (message.content === 'exit') {
+                    await npcFactory.edit(activeNPCInGuild.id, { isActive: false });
+                    await message.reply(`Você deixou de ser **${activeNPCInGuild.name}**`);
+                    return;
+                }
+
+                const webhookClient = new WebhookClient({
+                    id: `${activeNPCInGuild.webhookId}`,
+                    token: activeNPCInGuild.webhookToken,
+                });
+
+                const webhook = await this.client.fetchWebhook(`${activeNPCInGuild.webhookId}`);
+
+                if (webhook.channelId !== message.channelId) {
+                    await webhook.edit({
+                        channel: message.channelId,
+                    });
+                }
+
+                await message.delete();
+                await webhookClient.send({
+                    content: message.content,
+                });
+
+                return;
+            }
+
+            if (!message.content.startsWith(this.prefix)) {
                 return;
             }
 
@@ -45,7 +91,7 @@ export default class Client {
             let command = commandAsList[0].toLowerCase();
 
             command = command.replace(this.prefix, '');
-            if (!this.commands[command]) {
+            if (!this.commands[command] && message.content.length > 2) {
                 await message.reply(`O comando **${command}** não existe`);
                 return;
             }

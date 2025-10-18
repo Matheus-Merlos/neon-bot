@@ -15,9 +15,7 @@ services:
     command:
       - "sh"
       - "-c"
-      - |
-        npx drizzle-kit generate
-        npx drizzle-kit migrate
+      - npx drizzle-kit migrate
   debug:
     container_name: neon-bot-debug
     image: ${DOCKER_USERNAME}/neon-bot:latest

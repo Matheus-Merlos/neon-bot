@@ -25,6 +25,8 @@ import GiveItemStrategy from './item/give';
 import UseStrategy from './item/use';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
+import CreateNPCStrategy from './npc/create';
+import SwitchNPCStrategy from './npc/switch';
 import RemoveSelectedObjectiveStrategy from './objectives/remove-selected';
 
 export {
@@ -35,6 +37,7 @@ export {
     CreateClassObjectiveStrategy,
     CreateItemStrategy,
     CreateMissionStrategy,
+    CreateNPCStrategy,
     CreateObjectiveStrategy,
     CreateStrategy,
     DefaultStrategy,
@@ -53,6 +56,7 @@ export {
     SelectObjectiveStrategy,
     SetClassStrategy,
     Strategy,
+    SwitchNPCStrategy,
     UseStrategy
 };
 

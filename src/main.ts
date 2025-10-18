@@ -27,6 +27,7 @@ import {
     StackAddGold,
     TurnList,
 } from './commands';
+import { default as NPC } from './commands/npc';
 import { HasCommandPermission } from './decorators';
 config();
 
@@ -81,5 +82,7 @@ client.addCommand('class-objective', new ClassObjective());
 client.addCommand('character', new Character());
 
 client.addCommand('img', new Image());
+
+client.addCommand('npc', new NPC());
 
 export default client;

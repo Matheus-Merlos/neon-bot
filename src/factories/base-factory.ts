@@ -11,7 +11,7 @@ export default abstract class Factory<T extends Table> {
         return createdIndex;
     }
 
-    abstract getByName(name: string, guildId: string): Promise<InferSelectModel<T>>;
+    abstract getByName(name: string, guildId: string, ...args: Array<unknown>): Promise<InferSelectModel<T>>;
 
     protected searchEntry(
         entries: Array<InferSelectModel<T>>,

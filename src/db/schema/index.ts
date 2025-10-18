@@ -8,6 +8,7 @@ import { Item, item, NewItem } from './item';
 import { mission, Mission, NewMission } from './mission';
 import { MissionComplete, missionComplete, NewMissionComplete } from './mission-complete';
 import { missionDifficulty, MissionDifficulty, NewMissionDifficulty } from './mission-difficulty';
+import { NewNPC, npc, NPC } from './npc';
 import { NewObjective, Objective, objective } from './objective';
 import { NewObjectiveDifficulty, objectiveDifficulty, ObjectiveDifficulty } from './objective-difficulty';
 import { NewPlayer, player, Player } from './player';
@@ -46,12 +47,15 @@ export {
     NewMission,
     NewMissionComplete,
     NewMissionDifficulty,
+    NewNPC,
     NewObjective,
     NewObjectiveDifficulty,
     NewPlayer,
     NewRank,
     NewReachedRank,
     NewSelectedObjective,
+    npc,
+    NPC,
     Objective,
     objective,
     objectiveDifficulty,
