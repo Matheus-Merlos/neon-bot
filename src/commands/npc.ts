@@ -1,4 +1,9 @@
-import { CreateNPCStrategy, DefaultStrategy, SwitchNPCStrategy } from '../strategies';
+import {
+    CreateNPCStrategy,
+    DefaultStrategy,
+    DeleteNPCStrategy,
+    SwitchNPCStrategy,
+} from '../strategies';
 import { StrategyCommand } from './base-command';
 
 export default class NPC extends StrategyCommand {
@@ -8,10 +13,12 @@ export default class NPC extends StrategyCommand {
             {
                 create: new CreateNPCStrategy(),
                 switch: new SwitchNPCStrategy(),
+                delete: new DeleteNPCStrategy(),
             },
             new DefaultStrategy('npc', {
-                create: 'Comando para criar um NPC: `;npc create <nome> <anexo_imagem(opcional)>',
+                create: 'Comando para criar um NPC: `;npc create <nome> <anexo_imagem(opcional)>`',
                 switch: 'Comando para assumir um NPC, todas as mensagens que você enviar serão "sobreescrevidas" por ele. `;npc switch <nome_npc>`',
+                delete: 'Serve para deletar um NPC. `;npc delete <nome>`',
             }),
         );
     }

@@ -26,6 +26,7 @@ import UseStrategy from './item/use';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
 import CreateNPCStrategy from './npc/create';
+import DeleteNPCStrategy from './npc/delete';
 import SwitchNPCStrategy from './npc/switch';
 import RemoveSelectedObjectiveStrategy from './objectives/remove-selected';
 
@@ -41,6 +42,7 @@ export {
     CreateObjectiveStrategy,
     CreateStrategy,
     DefaultStrategy,
+    DeleteNPCStrategy,
     DeleteStrategy,
     EditCharacterFieldStrategy,
     EditFieldStrategy,

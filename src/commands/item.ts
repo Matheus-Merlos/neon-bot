@@ -43,13 +43,22 @@ export default class Item extends StrategyCommand {
         super(
             'item',
             {
-                create: new HasStrategyPermission(new CreateItemStrategy(), PermissionFlagsBits.ManageChannels),
+                create: new HasStrategyPermission(
+                    new CreateItemStrategy(),
+                    PermissionFlagsBits.ManageChannels,
+                ),
                 info: new InfoStrategy(ItemFactory),
                 list: listStrategy,
                 shop: listStrategy,
-                delete: new HasStrategyPermission(new DeleteStrategy(ItemFactory, 'item'), PermissionFlagsBits.ManageChannels),
+                delete: new HasStrategyPermission(
+                    new DeleteStrategy(ItemFactory, 'item'),
+                    PermissionFlagsBits.ManageChannels,
+                ),
                 buy: new BuyStrategy(),
-                give: new HasStrategyPermission(new GiveItemStrategy(), PermissionFlagsBits.ManageGuild),
+                give: new HasStrategyPermission(
+                    new GiveItemStrategy(),
+                    PermissionFlagsBits.ManageGuild,
+                ),
                 use: new UseStrategy(),
                 edit: new EditStrategy({
                     image: new HasStrategyPermission(

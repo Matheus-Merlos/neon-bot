@@ -23,21 +23,26 @@ export default class ListStrategy<T extends Table> implements Strategy {
             return;
         }
 
-        await embedList(entries, this.itemsPerPage, message, async (matrix: Array<typeof entries>, currentIndex: number) => {
-            const embed = new EmbedBuilder()
-                .setTitle(this.listName)
-                .setColor(this.embedColor)
-                .setFooter({ text: `Página ${currentIndex + 1}/${matrix.length}` });
+        await embedList(
+            entries,
+            this.itemsPerPage,
+            message,
+            async (matrix: Array<typeof entries>, currentIndex: number) => {
+                const embed = new EmbedBuilder()
+                    .setTitle(this.listName)
+                    .setColor(this.embedColor)
+                    .setFooter({ text: `Página ${currentIndex + 1}/${matrix.length}` });
 
-            const entries = matrix[currentIndex];
+                const entries = matrix[currentIndex];
 
-            for (const entry of entries) {
-                const fields = await this.fieldCallbackFn(entry);
-                const fieldsArray = Array.isArray(fields) ? fields : [fields];
-                embed.addFields(...fieldsArray);
-            }
+                for (const entry of entries) {
+                    const fields = await this.fieldCallbackFn(entry);
+                    const fieldsArray = Array.isArray(fields) ? fields : [fields];
+                    embed.addFields(...fieldsArray);
+                }
 
-            return embed;
-        });
+                return embed;
+            },
+        );
     }
 }

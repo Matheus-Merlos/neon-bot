@@ -32,10 +32,16 @@ export default class DeleteStrategy<T extends Table, U extends Factory<T>> imple
                     //Deletes the image from the bucket (if existis a image)
                     if (Object.keys(entry).includes('salt') && entry.salt! !== null) {
                         let directory;
-                        if (this.factoryInstance instanceof Object.getPrototypeOf(ItemFactory).constructor) {
+                        if (
+                            this.factoryInstance instanceof
+                            Object.getPrototypeOf(ItemFactory).constructor
+                        ) {
                             directory = BucketDirectories.ITEMS_DIR;
                         }
-                        if (this.factoryInstance instanceof Object.getPrototypeOf(MissionFactory).constructor) {
+                        if (
+                            this.factoryInstance instanceof
+                            Object.getPrototypeOf(MissionFactory).constructor
+                        ) {
                             directory = BucketDirectories.MISSIONS_DIR;
                         }
 
