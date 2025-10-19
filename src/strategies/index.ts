@@ -22,11 +22,12 @@ import EditImageStrategy from './generics/edit-img';
 import BuyStrategy from './item/buy';
 import CreateItemStrategy from './item/create-item';
 import GiveItemStrategy from './item/give';
-import UseStrategy from './item/use';
+import { default as UseStrategy } from './item/use';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
 import CreateNPCStrategy from './npc/create';
 import DeleteNPCStrategy from './npc/delete';
+import ListNPCStrategy from './npc/list';
 import SwitchNPCStrategy from './npc/switch';
 import RemoveSelectedObjectiveStrategy from './objectives/remove-selected';
 
@@ -52,6 +53,7 @@ export {
     InfoStrategy,
     ListCompletedClassObjectivesStrategy,
     ListCompletedObjectivesStrategy,
+    ListNPCStrategy,
     ListStrategy,
     RemoveSelectedObjectiveStrategy,
     SelectedObjectivesStrategy,

@@ -14,7 +14,10 @@ export default class Inventory implements Command {
         let playerId;
         if (messageAsList[0]) {
             playerId = getIdFromMention(messageAsList[0]);
-            char = await CharacterFactory.getFromPlayerId(getIdFromMention(messageAsList[0]), message.guild!.id);
+            char = await CharacterFactory.getFromPlayerId(
+                getIdFromMention(messageAsList[0]),
+                message.guild!.id,
+            );
             messageAsList.splice(0, 1);
         } else {
             char = await CharacterFactory.getFromPlayerId(message.author.id, message.guild!.id);
@@ -57,71 +60,83 @@ export default class Inventory implements Command {
             .innerJoin(item, eq(inventory.itemId, item.id))
             .groupBy(inventory.itemId, item.name);
 
-        await embedList(inventoryItems, 3, message, async (matrix: Array<typeof inventoryItems>, currentIndex) => {
-            const embed = new EmbedBuilder()
-                .setColor(Colors.Blue)
-                .setTitle(`Inventário de ${char.name}`)
-                .addFields(
-                    { name: 'EXP', value: `${char.xp}`, inline: true },
-                    {
-                        name: 'Gold',
-                        value: `${char.gold}`,
-                        inline: true,
-                    },
-                    {
-                        name: 'Rank',
-                        value: actualRank.name,
-                        inline: true,
-                    },
-                    {
-                        name: 'Próximo Rank',
-                        value: nextReacheableRank.name,
-                        inline: true,
-                    },
-                    {
-                        name: 'XP Faltando',
-                        value: `${nextRankDiff}`,
-                        inline: true,
-                    },
-                    { name: ' ', value: ' ' },
-                    {
-                        name: 'Ranking de Dinheiro',
-                        value: `#${await getLeaderboardPlacement(message.guildId!, playerId, 'gold')}`,
-                        inline: true,
-                    },
-                    {
-                        name: 'Ranking de XP',
-                        value: `#${await getLeaderboardPlacement(message.guildId!, playerId, 'xp')}`,
-                        inline: true,
-                    },
-                    { name: '\u200B', value: '\u200B' },
-                );
+        await embedList(
+            inventoryItems,
+            3,
+            message,
+            async (matrix: Array<typeof inventoryItems>, currentIndex) => {
+                const embed = new EmbedBuilder()
+                    .setColor(Colors.Blue)
+                    .setTitle(`Inventário de ${char.name}`)
+                    .addFields(
+                        { name: 'EXP', value: `${char.xp}`, inline: true },
+                        {
+                            name: 'Gold',
+                            value: `${char.gold}`,
+                            inline: true,
+                        },
+                        {
+                            name: 'Rank',
+                            value: actualRank.name,
+                            inline: true,
+                        },
+                        {
+                            name: 'Próximo Rank',
+                            value: nextReacheableRank.name,
+                            inline: true,
+                        },
+                        {
+                            name: 'XP Faltando',
+                            value: `${nextRankDiff}`,
+                            inline: true,
+                        },
+                        { name: ' ', value: ' ' },
+                        {
+                            name: 'Ranking de Dinheiro',
+                            value: `#${await getLeaderboardPlacement(message.guildId!, playerId, 'gold')}`,
+                            inline: true,
+                        },
+                        {
+                            name: 'Ranking de XP',
+                            value: `#${await getLeaderboardPlacement(message.guildId!, playerId, 'xp')}`,
+                            inline: true,
+                        },
+                        { name: '\u200B', value: '\u200B' },
+                    );
 
-            if (matrix[currentIndex] && matrix[currentIndex].length > 0) {
-                for (const item of matrix[currentIndex]) {
-                    const itemDurabilities = (
-                        await db
-                            .select({ durability: inventory.durability })
-                            .from(inventory)
-                            .where(and(eq(inventory.itemId, item.itemId), eq(inventory.characterId, char.id)))
-                            .orderBy(asc(inventory.durability))
-                    ).map((i) => i.durability);
+                if (matrix[currentIndex] && matrix[currentIndex].length > 0) {
+                    for (const item of matrix[currentIndex]) {
+                        const itemDurabilities = (
+                            await db
+                                .select({ durability: inventory.durability })
+                                .from(inventory)
+                                .where(
+                                    and(
+                                        eq(inventory.itemId, item.itemId),
+                                        eq(inventory.characterId, char.id),
+                                    ),
+                                )
+                                .orderBy(asc(inventory.durability))
+                        ).map((i) => i.durability);
 
-                    embed.addFields({
-                        name: `${item.quantity} - ${item.name}`,
-                        value: `Durabilidades: ${itemDurabilities}`,
-                        inline: false,
-                    });
+                        embed.addFields({
+                            name: `${item.quantity} - ${item.name}`,
+                            value: `Durabilidades: ${itemDurabilities}`,
+                            inline: false,
+                        });
+                    }
                 }
-            }
 
-            if (char.imageUrl) {
-                embed.setThumbnail(char.imageUrl);
-            }
+                if (char.imageUrl) {
+                    embed.setThumbnail(char.imageUrl);
+                }
 
-            embed.setFooter({ text: `Página ${currentIndex + 1}/${matrix.length === 0 ? 1 : matrix.length}` });
+                embed.setFooter({
+                    text: `Página ${currentIndex + 1}/${matrix.length === 0 ? 1 : matrix.length}`,
+                });
 
-            return embed;
-        });
+                return embed;
+            },
+        );
     }
 }
