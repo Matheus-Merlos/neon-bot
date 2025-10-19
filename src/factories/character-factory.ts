@@ -2,7 +2,7 @@ import { LibsqlError } from '@libsql/client';
 import axios from 'axios';
 import { and, eq, InferSelectModel } from 'drizzle-orm';
 import db from '../db/db';
-import { character, player } from '../db/schema';
+import { Character, character, player } from '../db/schema';
 import client from '../main';
 import { ImageHandler } from '../utils';
 import getMostSimilarString from '../utils/levenshtein';
@@ -13,24 +13,12 @@ class CharacterFactory extends Factory<typeof character> {
         super(character);
     }
 
-    async createCharacter(
-        playerId: string,
-        guildId: string,
-    ): Promise<{
-        id: number;
-        name: string;
-        guildId: bigint;
-        xp: number;
-        gold: number;
-        player: bigint;
-        imageUrl: string | null;
-        salt: string | null;
-        characterClass: number | null;
-    }> {
+    async createCharacter(playerId: string, guildId: string): Promise<Character> {
         const guild = await client.getClient.guilds.fetch(guildId);
         const guildPlayer = await guild.members.fetch(playerId);
 
-        const playerName = guildPlayer.nickname ?? guildPlayer.user.displayName ?? guildPlayer.user.username;
+        const playerName =
+            guildPlayer.nickname ?? guildPlayer.user.displayName ?? guildPlayer.user.username;
         const charName = playerName?.split(' ')[0].replace(',', '');
 
         const imgUrl = guildPlayer.displayAvatarURL({
@@ -66,24 +54,13 @@ class CharacterFactory extends Factory<typeof character> {
         return char;
     }
 
-    async getFromPlayerId(
-        playerId: string,
-        guildId: string,
-    ): Promise<{
-        id: number;
-        name: string;
-        guildId: bigint;
-        xp: number;
-        gold: number;
-        player: bigint;
-        imageUrl: string | null;
-        salt: string | null;
-        characterClass: number | null;
-    }> {
+    async getFromPlayerId(playerId: string, guildId: string): Promise<Character> {
         let [char] = await db
             .select()
             .from(character)
-            .where(and(eq(character.player, BigInt(playerId)), eq(character.guildId, BigInt(guildId))));
+            .where(
+                and(eq(character.player, BigInt(playerId)), eq(character.guildId, BigInt(guildId))),
+            );
 
         if (!char) {
             char = await this.createCharacter(playerId, guildId);
@@ -118,36 +95,21 @@ class CharacterFactory extends Factory<typeof character> {
         return entry!;
     }
 
-    async getByName(
-        name: string,
-        guildId: string,
-    ): Promise<{
-        id: number;
-        name: string;
-        guildId: bigint;
-        xp: number;
-        gold: number;
-        player: bigint;
-        imageUrl: string | null;
-        salt: string | null;
-        characterClass: number | null;
-    }> {
+    async getByName(name: string, guildId: string): Promise<Character> {
         return this.searchEntry(await this.getAll(guildId), 'name', name);
     }
 
-    async getAll(guildId: string): Promise<
-        {
-            id: number;
-            name: string;
-            guildId: bigint;
-            xp: number;
-            gold: number;
-            player: bigint;
-            imageUrl: string | null;
-            salt: string | null;
-            characterClass: number | null;
-        }[]
-    > {
+    async edit(id: number, values: Partial<Character>): Promise<Character> {
+        const [editedCharacter] = await db
+            .update(character)
+            .set(values)
+            .where(eq(character.id, id))
+            .returning();
+
+        return editedCharacter;
+    }
+
+    async getAll(guildId: string): Promise<Array<Character>> {
         return await db
             .select()
             .from(character)

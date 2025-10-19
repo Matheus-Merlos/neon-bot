@@ -19,6 +19,8 @@ import CreateStrategy from './generics/create';
 import EditStrategy from './generics/edit';
 import EditFieldStrategy from './generics/edit-field';
 import EditImageStrategy from './generics/edit-img';
+import PayStrategy from './gold-exp/pay';
+import RewardStrategy from './gold-exp/reward';
 import BuyStrategy from './item/buy';
 import CreateItemStrategy from './item/create-item';
 import GiveItemStrategy from './item/give';
@@ -55,7 +57,9 @@ export {
     ListCompletedObjectivesStrategy,
     ListNPCStrategy,
     ListStrategy,
+    PayStrategy,
     RemoveSelectedObjectiveStrategy,
+    RewardStrategy,
     SelectedObjectivesStrategy,
     SelectObjectiveStrategy,
     SetClassStrategy,

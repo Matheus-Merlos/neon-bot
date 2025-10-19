@@ -16,25 +16,23 @@ import Command from './base-command';
 import Character from './character';
 import Class from './class';
 import ClassObjective from './class-objective';
-import AddExp from './inventory/exp-gold/add-exp';
-import { AddGold, RemoveExp, RemoveGold } from './inventory/exp-gold/exp-gold';
-import Pay from './inventory/exp-gold/pay';
-import StackAddExp from './inventory/exp-gold/stack-add-exp';
-import { default as StackAddGold } from './inventory/exp-gold/stack-add-gold';
+import Gold from './gold';
 import Inventory from './inventory/inventory';
 import Leaderboard from './inventory/leaderboard';
 import Item from './item';
+import NPC from './npc';
 import Image from './search/img';
+import Exp from './xp';
 
 export {
-    AddExp,
-    AddGold,
     Calculate,
     Character,
     Class,
     ClassObjective,
     ClearChat,
     Command,
+    Exp,
+    Gold,
     Image,
     Inventory,
     Item,
@@ -42,15 +40,11 @@ export {
     Mission,
     MissionDifficulty,
     NewGen,
+    NPC,
     Objective,
     ObjectiveDifficulty,
-    Pay,
-    RemoveExp,
-    RemoveGold,
     Reset,
     Roll,
-    StackAddExp,
-    StackAddGold,
     TurnList
 };
 

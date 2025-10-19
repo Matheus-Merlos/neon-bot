@@ -2,7 +2,13 @@ import { ColorResolvable, Message, PermissionFlagsBits } from 'discord.js';
 import { Table } from 'drizzle-orm';
 import { HasStrategyPermission } from '../decorators';
 import Factory from '../factories/base-factory';
-import { CreateStrategy, DefaultStrategy, DeleteStrategy, ListStrategy, Strategy } from '../strategies';
+import {
+    CreateStrategy,
+    DefaultStrategy,
+    DeleteStrategy,
+    ListStrategy,
+    Strategy,
+} from '../strategies';
 
 export default interface Command {
     execute(message: Message, messageAsList: Array<string>): Promise<void>;
@@ -30,7 +36,10 @@ export abstract class StrategyCommand implements Command {
     }
 }
 
-export abstract class SimpleTableCommand<T extends Table, U extends Factory<T>> extends StrategyCommand {
+export abstract class SimpleTableCommand<
+    T extends Table,
+    U extends Factory<T>,
+> extends StrategyCommand {
     constructor(
         commandName: string,
         factoryInstance: U,
