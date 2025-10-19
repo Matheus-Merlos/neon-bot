@@ -46,6 +46,9 @@ export default class Client {
             if (!message.guildId) {
                 return;
             }
+            if (message.content.length <= 2) {
+                return;
+            }
 
             if (message.webhookId) {
                 return;

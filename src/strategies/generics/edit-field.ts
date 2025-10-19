@@ -10,7 +10,12 @@ type TableIdField = {
     id: Column<any>;
 };
 
-export default class EditFieldStrategy<T extends Table, U extends Factory<T>, V extends T & TableIdField> implements Strategy {
+export default class EditFieldStrategy<
+    T extends Table,
+    U extends Factory<T>,
+    V extends T & TableIdField,
+> implements Strategy
+{
     constructor(
         private readonly table: V,
         private readonly factory: U,
@@ -68,9 +73,13 @@ export default class EditFieldStrategy<T extends Table, U extends Factory<T>, V 
         let parsedValue;
         try {
             const tableConfig = getTableConfig(this.table);
-            const columnDefinition = tableConfig.columns.find((c) => c.name === this.camelToSnakeCase(this.field));
+            const columnDefinition = tableConfig.columns.find(
+                (c) => c.name === this.camelToSnakeCase(this.field),
+            );
             if (!columnDefinition) {
-                throw new Error(`A coluna '${this.field}' não foi encontrada na tabela. Verifique o nome do campo.`);
+                throw new Error(
+                    `A coluna '${this.field}' não foi encontrada na tabela. Verifique o nome do campo.`,
+                );
             }
             parsedValue = this.parseValue(columnDefinition, newValue);
         } catch (error: unknown) {
