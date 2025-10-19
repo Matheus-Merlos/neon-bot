@@ -10,7 +10,11 @@ export default class Gold extends StrategyCommand {
                 remove: new RewardStrategy('remove', 'gold'),
                 pay: new PayStrategy(),
             },
-            new DefaultStrategy('gold', {}),
+            new DefaultStrategy('gold', {
+                add: 'Adiciona gold a players. Sintaxe: `gold add <quantidade> <@Menções(pode ser várias)>`',
+                remove: 'Remove gold de players. Sintaxe: `gold remove <quantidade> <@Menções(pode ser várias)>`',
+                pay: 'Dá dinheiro seu a alguma pessoa. Sintaxe: `gold pay <recebedor> <quantidade>`',
+            }),
         );
     }
 }
