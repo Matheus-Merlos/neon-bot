@@ -49,11 +49,13 @@ export default class RewardStrategy implements Strategy {
             }
 
             await characterFactory.edit(char.id, {
-                [this.attribute]: char[this.attribute] + quantity,
+                [this.attribute]: eval(
+                    `${char[this.attribute]}${operationSymbols[this.operation]}${quantity}`,
+                ),
             });
 
             await message.reply(
-                `**${quantity}** de ${this.operation} adicionado com sucesso para **${char.name}**`,
+                `**${quantity}** de ${this.attribute} ${this.operation === 'add' ? 'adicionado' : 'removido'} com sucesso para **${char.name}**`,
             );
         }
     }
