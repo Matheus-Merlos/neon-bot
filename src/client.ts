@@ -32,6 +32,7 @@ export default class Client {
                 GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.GuildMembers,
                 GatewayIntentBits.GuildPresences,
+                GatewayIntentBits.GuildWebhooks,
             ],
         });
         this.prefix = prefix;
@@ -81,6 +82,35 @@ export default class Client {
                 });
 
                 return;
+            }
+
+            const playerNpcs = await npcFactory.getAll(message.guildId, message.author.id);
+            const npcPrefixes = Object.fromEntries(playerNpcs.map((npc) => [npc.prefix, npc]));
+
+            for (const prefix of Object.keys(npcPrefixes)) {
+                if (message.content.startsWith(prefix)) {
+                    const webhookClient = new WebhookClient({
+                        id: `${npcPrefixes[prefix].webhookId}`,
+                        token: npcPrefixes[prefix].webhookToken,
+                    });
+
+                    const webhook = await this.client.fetchWebhook(
+                        `${npcPrefixes[prefix].webhookId}`,
+                    );
+
+                    if (webhook.channelId !== message.channelId) {
+                        await webhook.edit({
+                            channel: message.channelId,
+                        });
+                    }
+
+                    await message.delete();
+                    await webhookClient.send({
+                        content: message.content.replace(prefix, ''),
+                    });
+
+                    return;
+                }
             }
 
             if (!message.content.startsWith(this.prefix)) {

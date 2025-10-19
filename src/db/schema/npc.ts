@@ -9,6 +9,7 @@ export const npc = pgTable('npc', {
     webhookId: bigint('webhook_id', { mode: 'bigint' }).notNull(),
     webhookToken: varchar('webhook_token', { length: 512 }).notNull(),
     isActive: boolean('is_active').default(false).notNull(),
+    prefix: varchar('prefix', { length: 16 }).default('npc.').notNull(),
 });
 
 export type NPC = InferSelectModel<typeof npc>;

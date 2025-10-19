@@ -29,6 +29,13 @@
       "when": 1760827604827,
       "tag": "0003_yummy_fixer",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1760869585015,
+      "tag": "0004_bitter_korvac",
+      "breakpoints": true
     }
   ]
 }

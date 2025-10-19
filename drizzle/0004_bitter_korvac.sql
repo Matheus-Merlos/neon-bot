@@ -1,0 +1,1 @@
+ALTER TABLE "npc" ADD COLUMN "prefix" varchar(16) DEFAULT 'npc.' NOT NULL;
