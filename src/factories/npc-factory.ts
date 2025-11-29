@@ -47,3 +47,5 @@ class NpcFactory extends Factory<typeof npc> {
 }
 
 export default new NpcFactory();
+
+export { NpcFactory };

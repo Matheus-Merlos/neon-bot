@@ -4,6 +4,7 @@ import { getTableConfig, PgBoolean, PgInteger } from 'drizzle-orm/pg-core';
 import db from '../../db/db';
 import Factory from '../../factories/base-factory';
 import Strategy from '../base-strategy';
+import { NpcFactory } from '../../factories/npc-factory';
 
 type TableIdField = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,7 +65,9 @@ export default class EditFieldStrategy<
 
         let entry;
         try {
-            entry = await this.factory.getByName(name, message.guildId);
+            if (this.factory instanceof NpcFactory)
+                entry = await this.factory.getByName(name, message.guildId, message.author.id);
+            else entry = await this.factory.getByName(name, message.guildId);
         } catch {
             await message.reply('Não foi encontrado uma entrada válida com este nome.');
             return;

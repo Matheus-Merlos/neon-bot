@@ -79,10 +79,20 @@ export default class Client {
                     });
                 }
 
-                await message.delete();
+                let npcMessageContent = message.content;
+                if (message.reference) {
+                    const referingMessage = await message.channel.messages.fetch(
+                        message.reference.messageId!,
+                    );
+                    npcMessageContent =
+                        `> [Respondendo à:](${referingMessage.url}) <@${message.author.id}>\n> ${referingMessage.content.slice(0, 100)}\n` +
+                        npcMessageContent;
+                }
+
                 await webhookClient.send({
-                    content: message.content,
+                    content: npcMessageContent,
                 });
+                await message.delete();
 
                 return;
             }
@@ -107,10 +117,20 @@ export default class Client {
                         });
                     }
 
-                    await message.delete();
+                    let npcMessageContent = message.content.replace(prefix, '');
+                    if (message.reference) {
+                        const referingMessage = await message.channel.messages.fetch(
+                            message.reference.messageId!,
+                        );
+                        npcMessageContent =
+                            `> [Respondendo à:](${referingMessage.url}) <@${message.author.id}>\n> ${referingMessage.content.slice(0, 100)}\n` +
+                            npcMessageContent;
+                    }
+
                     await webhookClient.send({
-                        content: message.content.replace(prefix, ''),
+                        content: npcMessageContent,
                     });
+                    await message.delete();
 
                     return;
                 }
