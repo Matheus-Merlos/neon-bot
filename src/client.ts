@@ -85,7 +85,7 @@ export default class Client {
                         message.reference.messageId!,
                     );
                     npcMessageContent =
-                        `> [Respondendo à:](${referingMessage.url}) <@${message.author.id}>\n> ${referingMessage.content.slice(0, 100)}\n` +
+                        `> [Respondendo à:](${referingMessage.url}) <@${referingMessage.author.id}>\n> ${referingMessage.content.slice(0, 100)}\n` +
                         npcMessageContent;
                 }
 
@@ -123,7 +123,7 @@ export default class Client {
                             message.reference.messageId!,
                         );
                         npcMessageContent =
-                            `> [Respondendo à:](${referingMessage.url}) <@${message.author.id}>\n> ${referingMessage.content.slice(0, 100)}\n` +
+                            `> [Respondendo à:](${referingMessage.url}) <@${referingMessage.author.id}>\n> ${referingMessage.content.slice(0, 100)}\n` +
                             npcMessageContent;
                     }
 
