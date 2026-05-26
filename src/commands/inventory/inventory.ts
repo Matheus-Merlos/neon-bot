@@ -121,7 +121,7 @@ export default class Inventory implements Command {
 
                         embed.addFields({
                             name: `${item.quantity} - ${item.name}`,
-                            value: `Durabilidades: ${itemDurabilities}`,
+                            value: `Durabilidade do item atual: ${itemDurabilities[0]}`,
                             inline: false,
                         });
                     }
