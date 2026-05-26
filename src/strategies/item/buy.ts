@@ -37,17 +37,19 @@ Você não tem dinheiro o suficiente para fazer essa compra.
             return;
         }
 
+        const itemsToInsert = Array.from({ length: quantity }, () => ({
+            itemId: item.id,
+            characterId: char.id,
+            durability: item.durability,
+        }));
+
         await db.transaction(async (trx) => {
             await trx
                 .update(character)
                 .set({ gold: char.gold - totalPrice })
                 .where(eq(character.id, char.id));
 
-            for (let i = 0; i < quantity; i++) {
-                await trx
-                    .insert(inventory)
-                    .values({ itemId: item.id, characterId: char.id, durability: item.durability });
-            }
+            await trx.insert(inventory).values(itemsToInsert);
         });
 
         message.reply(`Você comprou com sucesso **${quantity}**x **${item.name}**`);
