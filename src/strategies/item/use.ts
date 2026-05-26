@@ -1,12 +1,17 @@
 import { Message } from 'discord.js';
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { inventory, item as itemTable } from '../../db/schema';
 import ItemFactory from '../../factories/item-factory';
 import Strategy from '../base-strategy';
+import { CharacterFactory } from '../../factories';
 
 export default class UseStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
+        const character = await CharacterFactory.getFromPlayerId(
+            message.author.id,
+            message.guildId,
+        );
         const hasQuantity = !isNaN(parseInt(messageAsList[0]));
 
         let quantity = 1;
@@ -19,7 +24,7 @@ export default class UseStrategy implements Strategy {
         const itemName = messageAsList.join(' ');
         let item;
         try {
-            item = await ItemFactory.getByName(itemName, message.guildId!);
+            item = await ItemFactory.getByName(itemName, message.guildId);
         } catch {
             await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;
@@ -33,24 +38,31 @@ export default class UseStrategy implements Strategy {
                 durability: inventory.durability,
             })
             .from(inventory)
-            .where(eq(inventory.itemId, item.id))
+            .where(and(eq(inventory.itemId, item.id), eq(inventory.characterId, character.id)))
             .innerJoin(itemTable, eq(inventory.itemId, itemTable.id))
-            .orderBy(asc(itemTable.durability));
+            .orderBy(asc(inventory.durability));
 
         if (inventoryItems.length === 0) {
             await message.reply(`Você não possui **${item.name}** em seu inventário.`);
             return;
         }
 
-        const totalDurability = inventoryItems.map((invItem) => invItem.durability).reduce((acc, val) => acc + val, 0);
+        let totalDurability = 0;
+        inventoryItems
+            .map((invItem) => invItem.durability)
+            .forEach((invItem) => {
+                totalDurability += invItem;
+            });
 
-        if (totalDurability < quantity) {
-            await message.reply(`Você não possui **${item.name}** o suficiente para utilizar **${quantity}** vezes.`);
+        if (quantity > totalDurability) {
+            await message.reply(
+                `Você não possui **${item.name}** o suficiente para utilizar **${quantity}** vezes.`,
+            );
             return;
         }
 
         for (const invItem of inventoryItems) {
-            if (invItem.durability <= quantity) {
+            if (quantity >= invItem.durability) {
                 quantity -= invItem.durability;
 
                 await db.delete(inventory).where(eq(inventory.id, invItem.inventoryEntryId));
@@ -62,6 +74,7 @@ export default class UseStrategy implements Strategy {
                     .update(inventory)
                     .set({ durability: remainingDurability })
                     .where(eq(inventory.id, invItem.inventoryEntryId));
+                break;
             }
         }
         message.reply(`Você usou **${item.name}** com sucesso.`);

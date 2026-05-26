@@ -11,7 +11,10 @@ export default class GiveItemStrategy implements Strategy {
         let quantity = 1;
         let char;
         if (messageAsList[0].includes('@')) {
-            char = await CharacterFactory.getFromPlayerId(getIdFromMention(messageAsList[0]), message.guildId!);
+            char = await CharacterFactory.getFromPlayerId(
+                getIdFromMention(messageAsList[0]),
+                message.guildId!,
+            );
         } else {
             char = await CharacterFactory.getFromPlayerId(message.author.id, message.guildId!);
         }
@@ -33,9 +36,11 @@ export default class GiveItemStrategy implements Strategy {
         }
 
         for (let i = 0; i < quantity; i++) {
-            await db.insert(inventory).values({ itemId: item.id, characterId: char.id, durability: item.durability });
+            await db
+                .insert(inventory)
+                .values({ itemId: item.id, characterId: char.id, durability: item.durability });
         }
 
-        message.reply(`Você deu com sucesso **${quantity}** **${itemName}** para ${char.name}`);
+        message.reply(`Você deu com sucesso **${quantity}**x **${item.name}** para ${char.name}`);
     }
 }
