@@ -14,6 +14,12 @@ export default class BuyStrategy implements Strategy {
             quantity = parseInt(messageAsList[0]);
             messageAsList.splice(0, 1);
         }
+
+        if (quantity > 10000) {
+            await message.reply('O máximo de itens que você pode comprar por comando é 10000.');
+            return;
+        }
+
         const itemName = messageAsList.join(' ');
 
         let item;
