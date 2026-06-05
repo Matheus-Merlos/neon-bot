@@ -13,6 +13,7 @@ import {
     Inventory,
     Item,
     Leaderboard,
+    Mana,
     Mission,
     MissionDifficulty,
     NewGen,
@@ -87,5 +88,7 @@ client.addCommand('npc', new NPC());
 
 client.addCommand('gold', new Gold());
 client.addCommand(['exp', 'xp'], new Exp());
+
+client.addCommand('mana', new Mana());
 
 export default client;

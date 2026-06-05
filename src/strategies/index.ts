@@ -25,6 +25,11 @@ import BuyStrategy from './item/buy';
 import CreateItemStrategy from './item/create-item';
 import GiveItemStrategy from './item/give';
 import { default as UseStrategy } from './item/use';
+import CreateManaAliasStrategy from './mana/alias/create';
+import DisableCharacterManaStrategy from './mana/disable';
+import ManaRegenStrategy from './mana/regen';
+import SetBaseManaStrategy from './mana/set-base';
+import UseManaStrategy from './mana/use';
 import CompletedMissionStrategy from './missions/completed-mission';
 import CreateMissionStrategy from './missions/create-mission';
 import CreateNPCStrategy from './npc/create';
@@ -40,6 +45,7 @@ export {
     CompleteObjectiveStrategy,
     CreateClassObjectiveStrategy,
     CreateItemStrategy,
+    CreateManaAliasStrategy,
     CreateMissionStrategy,
     CreateNPCStrategy,
     CreateObjectiveStrategy,
@@ -47,6 +53,7 @@ export {
     DefaultStrategy,
     DeleteNPCStrategy,
     DeleteStrategy,
+    DisableCharacterManaStrategy,
     EditCharacterFieldStrategy,
     EditFieldStrategy,
     EditImageStrategy,
@@ -57,14 +64,17 @@ export {
     ListCompletedObjectivesStrategy,
     ListNPCStrategy,
     ListStrategy,
+    ManaRegenStrategy,
     PayStrategy,
     RemoveSelectedObjectiveStrategy,
     RewardStrategy,
     SelectedObjectivesStrategy,
     SelectObjectiveStrategy,
+    SetBaseManaStrategy,
     SetClassStrategy,
     Strategy,
     SwitchNPCStrategy,
+    UseManaStrategy,
     UseStrategy
 };
 

@@ -15,8 +15,13 @@ export const character = pgTable('character', {
         .notNull(),
     imageUrl: varchar('image_url', { length: 255 }),
     salt: varchar('salt', { length: 5 }),
-    characterClass: integer('class').references(() => characterClass.id, { onDelete: 'set null', onUpdate: 'no action' }),
+    characterClass: integer('class').references(() => characterClass.id, {
+        onDelete: 'set null',
+        onUpdate: 'no action',
+    }),
     guildId: bigint('guild_id', { mode: 'bigint' }).notNull(),
+    baseMana: integer('base_mana'),
+    currentMana: integer('current_mana'),
 });
 
 export type Character = InferSelectModel<typeof character>;

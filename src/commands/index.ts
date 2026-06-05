@@ -20,6 +20,7 @@ import Gold from './gold';
 import Inventory from './inventory/inventory';
 import Leaderboard from './inventory/leaderboard';
 import Item from './item';
+import Mana from './mana';
 import NPC from './npc';
 import Image from './search/img';
 import Exp from './xp';
@@ -37,6 +38,7 @@ export {
     Inventory,
     Item,
     Leaderboard,
+    Mana,
     Mission,
     MissionDifficulty,
     NewGen,

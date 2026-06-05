@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
-import { classObjective } from '../../db/schema';
+import { ClassObjective, classObjective } from '../../db/schema';
 import Factory from '../base-factory';
 
 class ClassObjectiveFactory extends Factory<typeof classObjective> {
@@ -8,18 +8,11 @@ class ClassObjectiveFactory extends Factory<typeof classObjective> {
         super(classObjective);
     }
 
-    async getByName(
-        name: string,
-        guildId: string,
-    ): Promise<{ id: number; name: string; xp: number; gold: number; description: string; classId: number; guildId: bigint }> {
+    async getByName(name: string, guildId: string): Promise<ClassObjective> {
         return await this.searchEntry(await this.getAll(guildId), 'name', name);
     }
 
-    async getAll(
-        guildId: string,
-    ): Promise<
-        { id: number; name: string; xp: number; gold: number; description: string; classId: number; guildId: bigint }[]
-    > {
+    async getAll(guildId: string): Promise<Array<ClassObjective>> {
         return await db
             .select()
             .from(classObjective)
