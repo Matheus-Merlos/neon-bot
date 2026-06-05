@@ -1,16 +1,29 @@
 import { Character, character, NewCharacter } from './character';
 import { characterClass, CharacterClass, NewCharacterClass } from './character-class';
 import { classObjective, ClassObjective, NewClassObjective } from './class-objective';
-import { completedClassObjective, CompletedClassObjective, NewCompletedClassObjective } from './completed-class-objective';
-import { CompletedObjective, completedObjective, NewCompletedObjective } from './completed-objective';
+import {
+    completedClassObjective,
+    CompletedClassObjective,
+    NewCompletedClassObjective,
+} from './completed-class-objective';
+import {
+    CompletedObjective,
+    completedObjective,
+    NewCompletedObjective,
+} from './completed-objective';
 import { Inventory, inventory, NewInventory } from './inventory';
 import { Item, item, NewItem } from './item';
+import { manaAlias, ManaAlias, NewManaAlias } from './mana-alias';
 import { mission, Mission, NewMission } from './mission';
 import { MissionComplete, missionComplete, NewMissionComplete } from './mission-complete';
 import { missionDifficulty, MissionDifficulty, NewMissionDifficulty } from './mission-difficulty';
 import { NewNPC, npc, NPC } from './npc';
 import { NewObjective, Objective, objective } from './objective';
-import { NewObjectiveDifficulty, objectiveDifficulty, ObjectiveDifficulty } from './objective-difficulty';
+import {
+    NewObjectiveDifficulty,
+    objectiveDifficulty,
+    ObjectiveDifficulty,
+} from './objective-difficulty';
 import { NewPlayer, player, Player } from './player';
 import { NewRank, rank, Rank } from './rank';
 import { NewReachedRank, ReachedRank, reachedRank } from './reached-rank';
@@ -31,6 +44,8 @@ export {
     inventory,
     Item,
     item,
+    manaAlias,
+    ManaAlias,
     mission,
     Mission,
     MissionComplete,
@@ -44,6 +59,7 @@ export {
     NewCompletedObjective,
     NewInventory,
     NewItem,
+    NewManaAlias,
     NewMission,
     NewMissionComplete,
     NewMissionDifficulty,
