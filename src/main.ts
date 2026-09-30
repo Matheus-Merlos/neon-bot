@@ -92,5 +92,3 @@ client.addCommand(['exp', 'xp'], new Exp());
 client.addCommand('mana', new Mana());
 
 export default client;
-
-const awsKey = 'AKIAIOSFODNN7EXAMPLE';
