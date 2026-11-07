@@ -1,11 +1,19 @@
+import { Colors, EmbedBuilder } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../db/db';
 import { System, system } from '../db/schema';
 import Factory from './base-factory';
+import ShowEmbed from './show-embed';
 
-class SystemFactory extends Factory<typeof system> {
+class SystemFactory extends Factory<typeof system> implements ShowEmbed<typeof system> {
     constructor() {
         super(system);
+    }
+    show(entry: System): EmbedBuilder {
+        return new EmbedBuilder()
+            .setColor(Colors.DarkBlue)
+            .setTitle(`Sistema ${entry.id} - ${entry.name}`)
+            .setDescription(`${entry.description}`);
     }
 
     async getByName(systemName: string, guildId: string): Promise<System> {

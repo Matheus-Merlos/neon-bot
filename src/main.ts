@@ -22,9 +22,10 @@ import {
     ObjectiveDifficulty,
     Reset,
     Roll,
+    Rule,
+    System,
     TurnList,
 } from './commands';
-import Rule from './commands/rule';
 import { HasCommandPermission } from './decorators';
 config();
 
@@ -93,5 +94,6 @@ client.addCommand(['exp', 'xp'], new Exp());
 client.addCommand('mana', new Mana());
 
 client.addCommand('rule', new Rule());
+client.addCommand('system', new System());
 
 export default client;

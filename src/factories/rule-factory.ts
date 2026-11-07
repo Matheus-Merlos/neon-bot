@@ -10,12 +10,10 @@ class RuleFactory extends Factory<typeof rule> implements ShowEmbed<typeof rule>
         super(rule);
     }
     show(entry: Rule): EmbedBuilder {
-        const objectiveEmbed = new EmbedBuilder()
+        return new EmbedBuilder()
             .setColor(Colors.DarkRed)
             .setTitle(`Regra ${entry.id} - ${entry.name}`)
             .setDescription(`${entry.description}`);
-
-        return objectiveEmbed;
     }
 
     async getByName(ruleName: string, guildId: string): Promise<Rule> {
