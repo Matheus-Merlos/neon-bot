@@ -12,7 +12,7 @@ class MissionDifficultyFactory extends Factory<typeof missionDifficulty> {
         difficultyName: string,
         guildId: string,
     ): Promise<{ id: number; name: string; guildId: bigint }> {
-        return await this.searchEntry(await this.getAll(guildId), 'name', difficultyName);
+        return this.searchEntry(await this.getAll(guildId), 'name', difficultyName);
     }
 
     async getAll(guildId: string): Promise<{ id: number; name: string; guildId: bigint }[]> {

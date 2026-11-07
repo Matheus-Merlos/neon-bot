@@ -5,7 +5,6 @@ import NewGen from './inventory/character/newgen';
 import Reset from './inventory/character/reset';
 import Calculate from './rpg/calculate';
 import ClearChat from './rpg/clear-chat';
-import Roll from './rpg/roll';
 import TurnList from './rpg/turn-list';
 
 import MissionDifficulty from './mission-difficulty';
@@ -22,7 +21,10 @@ import Leaderboard from './inventory/leaderboard';
 import Item from './item';
 import Mana from './mana';
 import NPC from './npc';
+import Roll from './rpg/roll';
+import Rule from './rule';
 import Image from './search/img';
+import System from './system';
 import Exp from './xp';
 
 export {
@@ -47,5 +49,7 @@ export {
     ObjectiveDifficulty,
     Reset,
     Roll,
+    Rule,
+    System,
     TurnList,
 };
