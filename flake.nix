@@ -12,11 +12,11 @@
 
     nodejsSpecific = pkgs.stdenv.mkDerivation rec {
       pname = "nodejs";
-      version = "24.22.1";
+      version = "26.12.1";
 
       src = pkgs.fetchurl {
         url = "https://nodejs.org/dist/v${version}/node-v${version}-linux-x64.tar.xz";
-        hash = "sha256-bBcqmrZxj3uAH7WnvUhq8u5eMnWAhqBLhPzOKqdwleY=";
+        hash = "sha256-YXCy1HThxib0PP863BGN+f47VzJYpPw9hQyNvGsHm70=";
       };
 
       nativeBuildInputs = [ pkgs.autoPatchelfHook ];
