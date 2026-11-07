@@ -49,7 +49,9 @@ export default class SelectObjectiveStrategy implements Strategy {
             return;
         }
 
-        await db.insert(selectedObjective).values({ characterId: char.id, objectiveId: objectiveToSelect.id });
+        await db
+            .insert(selectedObjective)
+            .values({ characterId: char.id, objectiveId: objectiveToSelect.id });
         message.reply(`Objetivo **${objectiveToSelect.name}** selecionado com sucesso.`);
     }
 }

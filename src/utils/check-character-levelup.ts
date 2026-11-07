@@ -12,7 +12,10 @@ export default async function checkCaracterLevelUp(
 ) {
     const ranks = await db.select().from(rank);
     const achievedRanks = (
-        await db.select({ id: reachedRank.rankId }).from(reachedRank).where(eq(reachedRank.characterId, char.id))
+        await db
+            .select({ id: reachedRank.rankId })
+            .from(reachedRank)
+            .where(eq(reachedRank.characterId, char.id))
     ).map((obj) => obj.id);
 
     for (const rank of ranks) {
@@ -32,18 +35,27 @@ export async function checkCaracterLevelUpTransaction(
     message: Message,
     char: InferSelectModel<typeof character>,
     quantityAdded: number,
-    transaction: PgTransaction<NodePgQueryResultHKT, Record<string, never>, ExtractTablesWithRelations<Record<string, never>>>,
+    transaction: PgTransaction<
+        NodePgQueryResultHKT,
+        Record<string, never>,
+        ExtractTablesWithRelations<Record<string, never>>
+    >,
 ) {
     const ranks = await transaction.select().from(rank);
     const achievedRanks = (
-        await transaction.select({ id: reachedRank.rankId }).from(reachedRank).where(eq(reachedRank.characterId, char.id))
+        await transaction
+            .select({ id: reachedRank.rankId })
+            .from(reachedRank)
+            .where(eq(reachedRank.characterId, char.id))
     ).map((obj) => obj.id);
 
     for (const rank of ranks) {
         const xp = char.xp + quantityAdded;
         if (xp >= rank.necessaryXp) {
             if (!achievedRanks.includes(rank.id)) {
-                await transaction.insert(reachedRank).values({ characterId: char.id, rankId: rank.id });
+                await transaction
+                    .insert(reachedRank)
+                    .values({ characterId: char.id, rankId: rank.id });
                 await message.reply(
                     `Parabéns <@${char.player}>, você evoluiu para o rank **${rank.name}**. Seu personagem ganhou **+${rank.extraHabs}** slots de habilidade, e **+${rank.extraAttributes}** pontos de atributo.`,
                 );

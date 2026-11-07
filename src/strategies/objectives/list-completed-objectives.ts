@@ -19,7 +19,9 @@ export default class ListCompletedObjectivesStrategy implements Strategy {
             .innerJoin(objective, eq(completedObjective.objectiveId, objective.id))
             .innerJoin(objectiveDifficulty, eq(objective.type, objectiveDifficulty.id));
 
-        const objectiveEmbed = new EmbedBuilder().setColor(Colors.DarkRed).setTitle(`Objetivos concluídos de ${char.name}`);
+        const objectiveEmbed = new EmbedBuilder()
+            .setColor(Colors.DarkRed)
+            .setTitle(`Objetivos concluídos de ${char.name}`);
 
         completedObjectives.forEach((completed) => {
             objectiveEmbed.addFields({

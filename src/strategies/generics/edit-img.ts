@@ -28,8 +28,11 @@ type characterSelectModel = {
     characterClass: number | null;
 };
 
-export default class EditImageStrategy<T extends Table, U extends Factory<T>, V extends T & TableImageFields>
-    implements Strategy
+export default class EditImageStrategy<
+    T extends Table,
+    U extends Factory<T>,
+    V extends T & TableImageFields,
+> implements Strategy
 {
     constructor(
         private readonly factoryInstance: U,
@@ -60,11 +63,16 @@ export default class EditImageStrategy<T extends Table, U extends Factory<T>, V 
         if (this.factoryInstance instanceof Object.getPrototypeOf(MissionFactory).constructor)
             bucketDirectory = BucketDirectories.MISSIONS_DIR;
 
-        if (entry.salt !== null && entry.name !== null) await ImageHandler.deleteImage(bucketDirectory, entry.salt, entry.name);
+        if (entry.salt !== null && entry.name !== null)
+            await ImageHandler.deleteImage(bucketDirectory, entry.salt, entry.name);
 
         const imageDownload = await axios.get(img.url, { responseType: 'stream' });
 
-        const { url, salt } = await ImageHandler.uploadImage(bucketDirectory, entry.name!, imageDownload.data);
+        const { url, salt } = await ImageHandler.uploadImage(
+            bucketDirectory,
+            entry.name!,
+            imageDownload.data,
+        );
 
         await db.update(this.table).set({ imageUrl: url, salt }).where(eq(this.table.id, entry.id));
 

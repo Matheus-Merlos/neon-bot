@@ -6,12 +6,19 @@ export default abstract class Factory<T extends Table> {
     constructor(protected readonly table: T) {}
 
     async create(args: InferInsertModel<T>): Promise<InferSelectModel<T>> {
-        const [createdIndex] = (await db.insert(this.table).values(args).returning()) as InferSelectModel<T>[];
+        const [createdIndex] = (await db
+            .insert(this.table)
+            .values(args)
+            .returning()) as InferSelectModel<T>[];
 
         return createdIndex;
     }
 
-    abstract getByName(name: string, guildId: string, ...args: Array<unknown>): Promise<InferSelectModel<T>>;
+    abstract getByName(
+        name: string,
+        guildId: string,
+        ...args: Array<unknown>
+    ): Promise<InferSelectModel<T>>;
 
     protected searchEntry(
         entries: Array<InferSelectModel<T>>,

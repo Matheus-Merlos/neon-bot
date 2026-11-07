@@ -14,28 +14,38 @@ export default class ListCompletedClassObjectivesStrategy implements Strategy {
             .select()
             .from(completedClassObjective)
             .where(eq(completedClassObjective.characterId, char.id))
-            .innerJoin(classObjective, eq(completedClassObjective.classObjectiveId, classObjective.id))
+            .innerJoin(
+                classObjective,
+                eq(completedClassObjective.classObjectiveId, classObjective.id),
+            )
             .orderBy(asc(classObjective.xp));
 
         if (!classObjectives[0]) {
-            message.reply(`Você não possui uma classe selecionada, adicione com o comando \`;set-class\``);
+            message.reply(
+                `Você não possui uma classe selecionada, adicione com o comando \`;set-class\``,
+            );
             return;
         }
 
-        await embedList(classObjectives, 5, message, (matrix: Array<typeof classObjectives>, currentIndex: number) => {
-            const embed = new EmbedBuilder()
-                .setTitle(`Objetivos de classe de ${char.name}`)
-                .setColor(Colors.DarkAqua)
-                .setFooter({ text: `Página ${currentIndex + 1}/${matrix.length}` });
+        await embedList(
+            classObjectives,
+            5,
+            message,
+            (matrix: Array<typeof classObjectives>, currentIndex: number) => {
+                const embed = new EmbedBuilder()
+                    .setTitle(`Objetivos de classe de ${char.name}`)
+                    .setColor(Colors.DarkAqua)
+                    .setFooter({ text: `Página ${currentIndex + 1}/${matrix.length}` });
 
-            matrix[currentIndex].forEach((clsObj) => {
-                embed.addFields({
-                    name: `${clsObj.completed_class_objective.completed ? ':white_check_mark:' : ':x:'} - ${clsObj.class_objective.name}`,
-                    value: `XP: ${clsObj.class_objective.xp}; Dinheiro: ${clsObj.class_objective.gold}`,
+                matrix[currentIndex].forEach((clsObj) => {
+                    embed.addFields({
+                        name: `${clsObj.completed_class_objective.completed ? ':white_check_mark:' : ':x:'} - ${clsObj.class_objective.name}`,
+                        value: `XP: ${clsObj.class_objective.xp}; Dinheiro: ${clsObj.class_objective.gold}`,
+                    });
                 });
-            });
 
-            return embed;
-        });
+                return embed;
+            },
+        );
     }
 }

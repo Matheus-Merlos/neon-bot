@@ -15,7 +15,9 @@ abstract class CommandDecorator implements Command {
 }
 
 function getPermissionName(permission: bigint): string {
-    for (const [perm, value] of Object.entries(PermissionsBitField.Flags as Record<string, bigint>)) {
+    for (const [perm, value] of Object.entries(
+        PermissionsBitField.Flags as Record<string, bigint>,
+    )) {
         if (value === permission) {
             return perm;
         }

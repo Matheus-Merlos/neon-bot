@@ -14,21 +14,26 @@ export default class Leaderboard implements Command {
 
         characters.sort((a, b) => b[option] - a[option]);
 
-        await embedList(characters, 10, message, (matrix: Array<typeof characters>, currentIndex: number) => {
-            const rankEmbed = new EmbedBuilder()
-                .setTitle(`Ranking de ${option.toUpperCase()}`)
-                .setColor(Colors.Gold)
-                .setFooter({ text: `Página ${currentIndex + 1}/${matrix.length}` });
+        await embedList(
+            characters,
+            10,
+            message,
+            (matrix: Array<typeof characters>, currentIndex: number) => {
+                const rankEmbed = new EmbedBuilder()
+                    .setTitle(`Ranking de ${option.toUpperCase()}`)
+                    .setColor(Colors.Gold)
+                    .setFooter({ text: `Página ${currentIndex + 1}/${matrix.length}` });
 
-            matrix[currentIndex].forEach((rank, idx) => {
-                rankEmbed.addFields({
-                    name: ' ',
-                    value: `**${idx + 1}.${rank.name}**- ${option === 'gold' ? '$' : ''}${rank[option]}`,
-                    inline: false,
+                matrix[currentIndex].forEach((rank, idx) => {
+                    rankEmbed.addFields({
+                        name: ' ',
+                        value: `**${idx + 1}.${rank.name}**- ${option === 'gold' ? '$' : ''}${rank[option]}`,
+                        inline: false,
+                    });
                 });
-            });
 
-            return rankEmbed;
-        });
+                return rankEmbed;
+            },
+        );
     }
 }

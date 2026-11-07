@@ -17,7 +17,9 @@ export default class CreateClassObjectiveStrategy implements Strategy {
 
         messageAsList.splice(0, 1);
 
-        const expIndex = messageAsList.findIndex((element) => !isNaN(parseInt(element)) && element.trim() !== '');
+        const expIndex = messageAsList.findIndex(
+            (element) => !isNaN(parseInt(element)) && element.trim() !== '',
+        );
 
         const objectiveName = messageAsList.slice(0, expIndex).join(' ').replaceAll('"', '');
         const xp = parseInt(messageAsList[expIndex]);
@@ -36,6 +38,8 @@ export default class CreateClassObjectiveStrategy implements Strategy {
             guildId: BigInt(message.guildId!),
         });
 
-        message.reply(`Objetivo de classe **${created.name}** criado com sucesso para a classe **${cls.name}**`);
+        message.reply(
+            `Objetivo de classe **${created.name}** criado com sucesso para a classe **${cls.name}**`,
+        );
     }
 }

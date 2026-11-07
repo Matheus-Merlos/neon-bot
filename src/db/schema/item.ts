@@ -1,5 +1,14 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { bigint, boolean, integer, pgTable, serial, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import {
+    bigint,
+    boolean,
+    integer,
+    pgTable,
+    serial,
+    text,
+    uniqueIndex,
+    varchar,
+} from 'drizzle-orm/pg-core';
 
 export const item = pgTable(
     'item',

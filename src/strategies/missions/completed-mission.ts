@@ -27,11 +27,16 @@ export default class CompletedMissionStrategy implements Strategy {
         const mentions = messageAsList.slice(firstMentionIndex, messageAsList.length);
         const chars: Array<InferSelectModel<typeof character>> = [];
         for (const mention of mentions) {
-            chars.push(await CharacterFactory.getFromPlayerId(getIdFromMention(mention), message.guildId!));
+            chars.push(
+                await CharacterFactory.getFromPlayerId(getIdFromMention(mention), message.guildId!),
+            );
         }
 
         await db.transaction(async (trx) => {
-            await trx.update(missionTable).set({ completed: false }).where(eq(missionTable.id, mission.id));
+            await trx
+                .update(missionTable)
+                .set({ completed: false })
+                .where(eq(missionTable.id, mission.id));
 
             for (const char of chars) {
                 await checkCaracterLevelUpTransaction(message, char, mission.xp, trx);
@@ -41,10 +46,14 @@ export default class CompletedMissionStrategy implements Strategy {
                     .set({ xp: char.xp + mission.xp, gold: char.gold + mission.gold })
                     .where(eq(character.id, char.id));
 
-                await trx.insert(missionComplete).values({ characterId: char.id, missionId: mission.id });
+                await trx
+                    .insert(missionComplete)
+                    .values({ characterId: char.id, missionId: mission.id });
             }
         });
 
-        message.reply(`Missão **${mission.name}** completada com sucesso por **${chars.map((char) => char.name).join(', ')}**`);
+        message.reply(
+            `Missão **${mission.name}** completada com sucesso por **${chars.map((char) => char.name).join(', ')}**`,
+        );
     }
 }

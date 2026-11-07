@@ -47,6 +47,5 @@ export {
     ObjectiveDifficulty,
     Reset,
     Roll,
-    TurnList
+    TurnList,
 };
-

@@ -8,6 +8,11 @@ export default class ObjectiveDifficulty extends SimpleTableCommand<
     typeof ObjectiveDifficultyFactory
 > {
     constructor() {
-        super('objective-difficulty', ObjectiveDifficultyFactory, Colors.DarkRed, 'dificuldade de objetivo');
+        super(
+            'objective-difficulty',
+            ObjectiveDifficultyFactory,
+            Colors.DarkRed,
+            'dificuldade de objetivo',
+        );
     }
 }

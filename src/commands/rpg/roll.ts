@@ -10,7 +10,9 @@ export default class Roll implements Command {
         if (messageAsList.length === 1) {
             const results = this.roll(messageAsList[0]);
 
-            message.reply(`Você rolou um \`${results.results.length}d${results.dice}\` e conseguiu ${results.results}.`);
+            message.reply(
+                `Você rolou um \`${results.results.length}d${results.dice}\` e conseguiu ${results.results}.`,
+            );
         }
     }
 

@@ -12,17 +12,24 @@ export default class CreateMissionStrategy implements Strategy {
 
         let missionDifficulty;
         try {
-            missionDifficulty = await MissionDifficultyFactory.getByName(difficultyName, message.guildId!);
+            missionDifficulty = await MissionDifficultyFactory.getByName(
+                difficultyName,
+                message.guildId!,
+            );
         } catch (error) {
             if (error instanceof EntryNotFoundError) {
-                message.reply(`Não foi encontrado uma dificuldade de missão com o nome **${difficultyName}**`);
+                message.reply(
+                    `Não foi encontrado uma dificuldade de missão com o nome **${difficultyName}**`,
+                );
             }
             return;
         }
 
         messageAsList.splice(0, 1);
 
-        const expIndex = messageAsList.findIndex((element) => !isNaN(parseInt(element)) && element.trim() !== '');
+        const expIndex = messageAsList.findIndex(
+            (element) => !isNaN(parseInt(element)) && element.trim() !== '',
+        );
 
         const missionName = messageAsList.slice(0, expIndex).join(' ').replaceAll('"', '');
         const xp = parseInt(messageAsList[expIndex]);
@@ -44,14 +51,20 @@ export default class CreateMissionStrategy implements Strategy {
                 image = await axios.get(img.url, { responseType: 'stream' });
             } catch (error: unknown) {
                 if (error instanceof Error) {
-                    message.reply(`Erro ao fazer o download da imagem: ${error.name}:${error.message}`);
+                    message.reply(
+                        `Erro ao fazer o download da imagem: ${error.name}:${error.message}`,
+                    );
                 }
                 return;
             }
 
             const imageStream = image.data;
 
-            const result = await ImageHandler.uploadImage(BucketDirectories.MISSIONS_DIR, missionName, imageStream);
+            const result = await ImageHandler.uploadImage(
+                BucketDirectories.MISSIONS_DIR,
+                missionName,
+                imageStream,
+            );
 
             imgUrl = result.url;
             salt = result.salt;

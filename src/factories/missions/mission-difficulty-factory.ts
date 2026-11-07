@@ -8,7 +8,10 @@ class MissionDifficultyFactory extends Factory<typeof missionDifficulty> {
         super(missionDifficulty);
     }
 
-    async getByName(difficultyName: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
+    async getByName(
+        difficultyName: string,
+        guildId: string,
+    ): Promise<{ id: number; name: string; guildId: bigint }> {
         return await this.searchEntry(await this.getAll(guildId), 'name', difficultyName);
     }
 
@@ -24,7 +27,10 @@ class MissionDifficultyFactory extends Factory<typeof missionDifficulty> {
     }
 
     async getFromId(id: number): Promise<{ id: number; name: string; guildId: bigint }> {
-        const [entry] = await db.select().from(missionDifficulty).where(eq(missionDifficulty.id, id));
+        const [entry] = await db
+            .select()
+            .from(missionDifficulty)
+            .where(eq(missionDifficulty.id, id));
         return entry;
     }
 }

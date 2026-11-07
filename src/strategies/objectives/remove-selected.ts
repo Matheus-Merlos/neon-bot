@@ -30,14 +30,21 @@ export default class RemoveSelectedObjectiveStrategy implements Strategy {
         ).map((obj) => obj.id);
 
         if (alreadyCompletedObjectives.includes(objectiveToRemove.id)) {
-            message.reply(`Você já concluiu esse objetivo anteriormente. Tá querendo remover por que?`);
+            message.reply(
+                `Você já concluiu esse objetivo anteriormente. Tá querendo remover por que?`,
+            );
             return;
         }
 
         const alreadySelectedObjectives = await db
             .select()
             .from(selectedObjective)
-            .where(and(eq(selectedObjective.characterId, char.id), eq(selectedObjective.objectiveId, objectiveToRemove.id)));
+            .where(
+                and(
+                    eq(selectedObjective.characterId, char.id),
+                    eq(selectedObjective.objectiveId, objectiveToRemove.id),
+                ),
+            );
 
         if (!alreadySelectedObjectives[0]) {
             message.reply(`Você não possui esse objetivo selecionado.`);
@@ -46,7 +53,12 @@ export default class RemoveSelectedObjectiveStrategy implements Strategy {
 
         await db
             .delete(selectedObjective)
-            .where(and(eq(selectedObjective.characterId, char.id), eq(selectedObjective.objectiveId, objectiveToRemove.id)));
+            .where(
+                and(
+                    eq(selectedObjective.characterId, char.id),
+                    eq(selectedObjective.objectiveId, objectiveToRemove.id),
+                ),
+            );
         message.reply(`Objetivo **${objectiveToRemove.name}** de-selecionado com sucesso.`);
     }
 }

@@ -19,28 +19,42 @@ export default class ClassObjective extends StrategyCommand {
         super(
             'class-objective',
             {
-                create: new HasStrategyPermission(new CreateClassObjectiveStrategy(), PermissionFlagsBits.Administrator),
+                create: new HasStrategyPermission(
+                    new CreateClassObjectiveStrategy(),
+                    PermissionFlagsBits.Administrator,
+                ),
                 delete: new HasStrategyPermission(
                     new DeleteStrategy(ClassObjectiveFactory, 'objetivo de classe'),
                     PermissionFlagsBits.Administrator,
                 ),
-                'list-all': new ListStrategy(ClassObjectiveFactory, 'Objetivos de classe', Colors.DarkAqua, async (entry) => {
-                    const [cls] = await db.select().from(characterClass).where(eq(characterClass.id, entry.classId));
-                    return [
-                        {
-                            name: `${cls.name} - ${entry.name}`,
-                            value: `XP: ${entry.xp}; Dinheiro: ${entry.gold}`,
-                            inline: false,
-                        },
-                        {
-                            name: '',
-                            value: '',
-                            inline: false,
-                        },
-                    ];
-                }),
+                'list-all': new ListStrategy(
+                    ClassObjectiveFactory,
+                    'Objetivos de classe',
+                    Colors.DarkAqua,
+                    async (entry) => {
+                        const [cls] = await db
+                            .select()
+                            .from(characterClass)
+                            .where(eq(characterClass.id, entry.classId));
+                        return [
+                            {
+                                name: `${cls.name} - ${entry.name}`,
+                                value: `XP: ${entry.xp}; Dinheiro: ${entry.gold}`,
+                                inline: false,
+                            },
+                            {
+                                name: '',
+                                value: '',
+                                inline: false,
+                            },
+                        ];
+                    },
+                ),
                 'list-completed': new ListCompletedClassObjectivesStrategy(),
-                completed: new HasStrategyPermission(new CompletedClassObjectiveStrategy(), PermissionFlagsBits.ManageGuild),
+                completed: new HasStrategyPermission(
+                    new CompletedClassObjectiveStrategy(),
+                    PermissionFlagsBits.ManageGuild,
+                ),
             },
             new DefaultStrategy('class-objective', {
                 create: 'Cria um novo objetivo de classe.\n`;class-objective create <classe(uma palavra só)> <nome> <xp> <ouro> <descricao>`.',
