@@ -5,8 +5,6 @@ import {
     buildQuestionSystemPrompt,
     buildSkillApprovalRequest,
     buildSkillApprovalSystemPrompt,
-    parseSkillVerdict,
-    SkillVerdict,
 } from '../config/prompts';
 import { CHANNEL_SEARCH_TOOL, searchChannelMessages } from '../config/tools';
 import { RuleFactory, SystemFactory } from '../factories';
@@ -15,16 +13,11 @@ import { sanitize } from '../utils/sanitize';
 // Máximo de rodadas em que o modelo pode chamar ferramentas antes de ser obrigado a responder.
 const MAX_TOOL_ROUNDS = 4;
 
-interface DocEntry {
+type DocEntry = {
     id: number | string;
     name: string;
     description: string;
-}
-
-export interface SkillApprovalResult {
-    verdict: SkillVerdict;
-    body: string;
-}
+};
 
 type ToolRunner = (name: string, input: unknown) => Promise<string>;
 
@@ -79,7 +72,7 @@ Responda à pergunta em <question> seguindo suas instruções. Antes de escrever
         return text || 'Não consegui gerar uma resposta agora. Tente reformular a pergunta.';
     }
 
-    async skillApproval(skill: string, message: Message<true>): Promise<SkillApprovalResult> {
+    async skillApproval(skill: string, message: Message<true>): Promise<string> {
         const { text, truncated } = await this.ask({
             model: this.model,
             systemPrompt: buildSkillApprovalSystemPrompt(message.guild.name),
@@ -92,20 +85,20 @@ Responda à pergunta em <question> seguindo suas instruções. Antes de escrever
             },
         });
 
-        const { verdict, body } = parseSkillVerdict(text);
+        const match = text.match(
+            /^\s*VEREDITO:\s*(APROVADA|AJUSTES|REPROVADA|STAFF|INVALIDA)\s*\n/,
+        );
+        const body = text.slice(match![0].length).trim();
 
         // Resposta cortada ou sem a linha de veredito: nunca conta como aprovação.
-        if (truncated || !verdict) {
+        if (truncated) {
             console.warn(
                 '[AnthropicAgent] Avaliação sem veredito válido ou cortada; encaminhando para a staff.',
             );
-            return {
-                verdict: 'STAFF',
-                body: '### 🛑 Encaminhada para a staff\nNão consegui concluir a avaliação desta habilidade. A staff vai analisá-la.',
-            };
+            return '### 🛑 Encaminhada para a staff\nNão consegui concluir a avaliação desta habilidade. A staff vai analisá-la.';
         }
 
-        return { verdict, body };
+        return body;
     }
 
     private async buildDocuments(guildId: string): Promise<string> {

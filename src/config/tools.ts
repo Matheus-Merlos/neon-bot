@@ -94,7 +94,6 @@ export async function searchChannelMessages(
     let body = '';
     let cut = false;
     for (const m of chronological) {
-        const author = m.member?.displayName ?? m.author.username;
         const date = m.createdAt.toISOString().slice(0, 16).replace('T', ' ');
         const attachments = m.attachments.size
             ? `\n[anexos: ${[...m.attachments.values()].map((a) => a.name).join(', ')}]`

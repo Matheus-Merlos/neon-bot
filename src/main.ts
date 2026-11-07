@@ -98,6 +98,6 @@ client.addCommand('mana', new Mana());
 client.addCommand('rule', new Rule());
 client.addCommand('system', new System());
 client.addCommand('question', new Question());
-client.addCommand('approve-skill', new Approval());
+client.addCommand(['approve-skill', 'approve'], new Approval());
 
 export default client;
