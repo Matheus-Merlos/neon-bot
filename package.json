@@ -8,7 +8,9 @@
     "main": "main.ts",
     "scripts": {
         "dev": "nodemon",
-        "build": "tsc"
+        "build": "tsc",
+        "migrations:generate": "drizzle-kit generate --config=src/drizzle.config.ts",
+        "migrations:apply": "drizzle-kit migrate --config=src/drizzle.config.ts"
     },
     "engines": {
         "node": ">= 26.12.1 < 27"
@@ -31,6 +33,7 @@
         "typescript": "^5.7.3"
     },
     "dependencies": {
+        "@anthropic-ai/sdk": "^1.6.0",
         "@aws-sdk/client-s3": "^3.726.1",
         "@aws-sdk/lib-storage": "^3.726.1",
         "@aws-sdk/node-http-handler": "^3.370.0",
@@ -41,6 +44,7 @@
         "drizzle-kit": "^0.30.1",
         "drizzle-orm": "^0.38.3",
         "pg": "^8.14.1",
-        "sharp": "^0.33.5"
+        "sharp": "^0.33.5",
+        "zod": "^4.6.7"
     }
 }

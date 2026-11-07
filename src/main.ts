@@ -24,6 +24,7 @@ import {
     Roll,
     TurnList,
 } from './commands';
+import Rule from './commands/rule';
 import { HasCommandPermission } from './decorators';
 config();
 
@@ -90,5 +91,7 @@ client.addCommand('gold', new Gold());
 client.addCommand(['exp', 'xp'], new Exp());
 
 client.addCommand('mana', new Mana());
+
+client.addCommand('rule', new Rule());
 
 export default client;

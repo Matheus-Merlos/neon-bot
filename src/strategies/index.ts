@@ -37,6 +37,7 @@ import DeleteNPCStrategy from './npc/delete';
 import ListNPCStrategy from './npc/list';
 import SwitchNPCStrategy from './npc/switch';
 import RemoveSelectedObjectiveStrategy from './objectives/remove-selected';
+import CreateRuleStrategy from './rules/create-rule';
 
 export {
     BuyStrategy,
@@ -49,6 +50,7 @@ export {
     CreateMissionStrategy,
     CreateNPCStrategy,
     CreateObjectiveStrategy,
+    CreateRuleStrategy,
     CreateStrategy,
     DefaultStrategy,
     DeleteNPCStrategy,
