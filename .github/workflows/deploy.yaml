@@ -83,6 +83,7 @@ jobs:
                   username: root
                   key: ${{ secrets.SERVER_SSH_KEY }}
                   script: |
+                      cd /home/root/neon-bot
                       echo "${{ secrets.DOTENV_CONTENT }}" > .env
                       echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
                       sudo docker compose up --pull always -d
