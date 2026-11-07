@@ -6,7 +6,9 @@ import Strategy from '../base-strategy';
 
 export default class CreateItemStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        const priceIndex = messageAsList.findIndex((element) => !isNaN(parseInt(element)) && element.trim() !== '');
+        const priceIndex = messageAsList.findIndex(
+            (element) => !isNaN(parseInt(element)) && element.trim() !== '',
+        );
 
         if (priceIndex === 0) {
             await message.reply('O nome do item não deve começar com um número');
@@ -37,14 +39,21 @@ export default class CreateItemStrategy implements Strategy {
                     image = await axios.get(img.url, { responseType: 'stream' });
                 } catch (error: unknown) {
                     if (error instanceof Error) {
-                        message.reply(`Erro ao fazer o download da imagem: ${error.name}:${error.message}`);
+                        message.reply(
+                            `Erro ao fazer o download da imagem: ${error.name}:${error.message}`,
+                        );
                     }
                     return;
                 }
 
                 const imageStream = image.data;
 
-                const result = await ImageHandler.uploadImage(BucketDirectories.ITEMS_DIR, itemName, imageStream, false);
+                const result = await ImageHandler.uploadImage(
+                    BucketDirectories.ITEMS_DIR,
+                    itemName,
+                    imageStream,
+                    false,
+                );
 
                 url = result.url;
                 salt = result.salt;
@@ -62,7 +71,9 @@ export default class CreateItemStrategy implements Strategy {
         } catch (error) {
             if (error instanceof Error) {
                 if (error.message.toUpperCase().includes('UNIQUE'))
-                    message.reply(`Erro: Já existe um item com o nome **${itemName}** neste servidor.`);
+                    message.reply(
+                        `Erro: Já existe um item com o nome **${itemName}** neste servidor.`,
+                    );
                 return;
             }
         }

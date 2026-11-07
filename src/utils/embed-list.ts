@@ -4,7 +4,10 @@ export default async function embedList<T extends object>(
     list: Array<T>,
     itemsPerPage: number,
     message: Message,
-    embedBuilderFn: (matrix: Array<Array<T>>, currentIndex: number) => EmbedBuilder | Promise<EmbedBuilder>,
+    embedBuilderFn: (
+        matrix: Array<Array<T>>,
+        currentIndex: number,
+    ) => EmbedBuilder | Promise<EmbedBuilder>,
 ) {
     const matrix: Array<Array<T>> = [];
 
@@ -16,7 +19,10 @@ export default async function embedList<T extends object>(
 
     let currentIndex = 0;
 
-    const forwardButton = new ButtonBuilder().setCustomId('forward').setLabel('Próximo').setStyle(ButtonStyle.Primary);
+    const forwardButton = new ButtonBuilder()
+        .setCustomId('forward')
+        .setLabel('Próximo')
+        .setStyle(ButtonStyle.Primary);
 
     const backwardsButton = new ButtonBuilder()
         .setCustomId('backward')
@@ -28,7 +34,10 @@ export default async function embedList<T extends object>(
         forwardButton.setDisabled(true);
     }
 
-    let optionsRow = new ActionRowBuilder<ButtonBuilder>().addComponents(backwardsButton, forwardButton);
+    let optionsRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        backwardsButton,
+        forwardButton,
+    );
 
     let embed: EmbedBuilder = await embedBuilderFn(matrix, currentIndex);
 
@@ -44,7 +53,10 @@ export default async function embedList<T extends object>(
             forwardButton.setDisabled(currentIndex === matrix.length - 1);
             backwardsButton.setDisabled(currentIndex === 0);
 
-            optionsRow = new ActionRowBuilder<ButtonBuilder>().addComponents(backwardsButton, forwardButton);
+            optionsRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+                backwardsButton,
+                forwardButton,
+            );
 
             embed = await embedBuilderFn(matrix, currentIndex);
 

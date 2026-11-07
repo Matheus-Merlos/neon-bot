@@ -41,13 +41,29 @@ class ObjectiveFactory extends Factory<typeof objective> implements ShowEmbed<ty
     async getByName(
         objectiveName: string,
         guildId: string,
-    ): Promise<{ id: number; name: string; xp: number; gold: number; type: number; description: string; guildId: bigint }> {
+    ): Promise<{
+        id: number;
+        name: string;
+        xp: number;
+        gold: number;
+        type: number;
+        description: string;
+        guildId: bigint;
+    }> {
         return await this.searchEntry(await this.getAll(guildId), 'name', objectiveName);
     }
 
-    async getAll(
-        guildId: string,
-    ): Promise<{ id: number; name: string; xp: number; gold: number; type: number; description: string; guildId: bigint }[]> {
+    async getAll(guildId: string): Promise<
+        {
+            id: number;
+            name: string;
+            xp: number;
+            gold: number;
+            type: number;
+            description: string;
+            guildId: bigint;
+        }[]
+    > {
         return await db
             .select()
             .from(objective)

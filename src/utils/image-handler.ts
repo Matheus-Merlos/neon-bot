@@ -76,7 +76,11 @@ class ImageHandler {
         };
     }
 
-    public async deleteImage(directory: `${BucketDirectories}`, salt: string, imageName: string): Promise<void> {
+    public async deleteImage(
+        directory: `${BucketDirectories}`,
+        salt: string,
+        imageName: string,
+    ): Promise<void> {
         const imagePath = `${directory}/${this.env}/${salt}-${toSlug(imageName)}.png`;
 
         const deleteParams = {

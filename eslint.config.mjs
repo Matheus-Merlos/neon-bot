@@ -2,6 +2,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
+import n from 'eslint-plugin-n';
 import globals from 'globals';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -40,5 +41,13 @@ export default [
         },
 
         rules: {},
+    },
+    {
+        files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
+        plugins: { n },
+        rules: {
+            'n/no-deprecated-api': 'error',
+            'n/no-unsupported-features/node-builtins': ['error', { version: '>=24.0.0' }],
+        },
     },
 ];

@@ -5,7 +5,9 @@ import Strategy from '../base-strategy';
 
 export default class CreateObjectiveStrategy implements Strategy {
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        const expIndex = messageAsList.findIndex((element) => !isNaN(parseInt(element)) && element.trim() !== '');
+        const expIndex = messageAsList.findIndex(
+            (element) => !isNaN(parseInt(element)) && element.trim() !== '',
+        );
 
         const objectiveName = messageAsList.slice(0, expIndex).join(' ').replaceAll('"', '');
         const xp = parseInt(messageAsList[expIndex]);
@@ -17,9 +19,14 @@ export default class CreateObjectiveStrategy implements Strategy {
 
         let difficulty;
         try {
-            difficulty = await ObjectiveDifficultyFactory.getByName(messageAsList[expIndex + 2], message.guildId!);
+            difficulty = await ObjectiveDifficultyFactory.getByName(
+                messageAsList[expIndex + 2],
+                message.guildId!,
+            );
         } catch {
-            message.reply(`Não existe uma dificuldade de objetivo com o nome **${messageAsList[expIndex + 2]}**.`);
+            message.reply(
+                `Não existe uma dificuldade de objetivo com o nome **${messageAsList[expIndex + 2]}**.`,
+            );
             return;
         }
 

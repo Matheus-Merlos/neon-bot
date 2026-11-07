@@ -83,6 +83,5 @@ export {
     ReachedRank,
     reachedRank,
     SelectedObjective,
-    selectedObjective
+    selectedObjective,
 };
-

@@ -8,7 +8,10 @@ class ClassFactory extends Factory<typeof characterClass> {
         super(characterClass);
     }
 
-    async getByName(name: string, guildId: string): Promise<{ id: number; name: string; guildId: bigint }> {
+    async getByName(
+        name: string,
+        guildId: string,
+    ): Promise<{ id: number; name: string; guildId: bigint }> {
         return await this.searchEntry(await this.getAll(guildId), 'name', name);
     }
 

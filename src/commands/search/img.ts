@@ -1,5 +1,12 @@
 import axios, { AxiosError } from 'axios';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, Message } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    Colors,
+    EmbedBuilder,
+    Message,
+} from 'discord.js';
 import Command from '../base-command';
 
 enum Actions {
@@ -55,11 +62,24 @@ export default class Image implements Command {
             forwardButton.setDisabled(true);
         }
 
-        const deleteButton = new ButtonBuilder().setCustomId(Actions.DELETE).setLabel('Deletar').setStyle(ButtonStyle.Danger);
+        const deleteButton = new ButtonBuilder()
+            .setCustomId(Actions.DELETE)
+            .setLabel('Deletar')
+            .setStyle(ButtonStyle.Danger);
 
-        let actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(backwardsButton, forwardButton, deleteButton);
+        let actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            backwardsButton,
+            forwardButton,
+            deleteButton,
+        );
 
-        let embed = this.getEmbed(items[currentPage].link, items[currentPage].title, message, currentPage, numResults);
+        let embed = this.getEmbed(
+            items[currentPage].link,
+            items[currentPage].title,
+            message,
+            currentPage,
+            numResults,
+        );
         const msg = await message.reply({ components: [actionRow], embeds: [embed] });
 
         try {
@@ -77,10 +97,20 @@ export default class Image implements Command {
                 forwardButton.setDisabled(currentPage === numResults - 1);
                 backwardsButton.setDisabled(currentPage === 0);
 
-                actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(backwardsButton, forwardButton, deleteButton);
+                actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    backwardsButton,
+                    forwardButton,
+                    deleteButton,
+                );
 
                 await interaction.deferUpdate();
-                embed = this.getEmbed(items[currentPage].link, items[currentPage].title, message, currentPage, numResults);
+                embed = this.getEmbed(
+                    items[currentPage].link,
+                    items[currentPage].title,
+                    message,
+                    currentPage,
+                    numResults,
+                );
                 await msg.edit({ embeds: [embed], components: [actionRow] });
             });
         } catch {
@@ -88,7 +118,13 @@ export default class Image implements Command {
         }
     }
 
-    private getEmbed(imgUrl: string, title: string, message: Message, currentPage: number, totalPages: number): EmbedBuilder {
+    private getEmbed(
+        imgUrl: string,
+        title: string,
+        message: Message,
+        currentPage: number,
+        totalPages: number,
+    ): EmbedBuilder {
         const embed = new EmbedBuilder()
             .setColor(Colors.Blue)
             .setAuthor({

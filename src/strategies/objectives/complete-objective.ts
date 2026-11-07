@@ -44,9 +44,16 @@ export default class CompleteObjectiveStrategy implements Strategy {
 
             await trx
                 .delete(selectedObjective)
-                .where(and(eq(selectedObjective.objectiveId, objective.id), eq(selectedObjective.characterId, char.id)));
+                .where(
+                    and(
+                        eq(selectedObjective.objectiveId, objective.id),
+                        eq(selectedObjective.characterId, char.id),
+                    ),
+                );
 
-            await trx.insert(completedObjective).values({ characterId: char.id, objectiveId: objective.id });
+            await trx
+                .insert(completedObjective)
+                .values({ characterId: char.id, objectiveId: objective.id });
         });
 
         await message.reply(

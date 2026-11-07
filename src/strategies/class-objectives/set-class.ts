@@ -14,22 +14,36 @@ export default class SetClassStrategy implements Strategy {
         try {
             cls = await ClassFactory.getByName(messageAsList.join(' '), message.guildId!);
         } catch {
-            message.reply(`Não foi encontrada nenhuma classe com o nome **${messageAsList.join(' ')}**.`);
+            message.reply(
+                `Não foi encontrada nenhuma classe com o nome **${messageAsList.join(' ')}**.`,
+            );
             return;
         }
 
         await db.transaction(async (trx) => {
-            await trx.update(character).set({ characterClass: cls.id }).where(eq(character.id, char.id));
+            await trx
+                .update(character)
+                .set({ characterClass: cls.id })
+                .where(eq(character.id, char.id));
 
-            await trx.delete(completedClassObjective).where(eq(completedClassObjective.characterId, char.id));
+            await trx
+                .delete(completedClassObjective)
+                .where(eq(completedClassObjective.characterId, char.id));
 
-            const classObjectives = await trx.select().from(classObjective).where(eq(classObjective.classId, cls.id));
+            const classObjectives = await trx
+                .select()
+                .from(classObjective)
+                .where(eq(classObjective.classId, cls.id));
 
             for (const clsObj of classObjectives) {
-                await trx.insert(completedClassObjective).values({ characterId: char.id, classObjectiveId: clsObj.id });
+                await trx
+                    .insert(completedClassObjective)
+                    .values({ characterId: char.id, classObjectiveId: clsObj.id });
             }
         });
 
-        await message.reply(`Classe **${cls.name}** adicionada ao personagem **${char.name}** com sucesso.`);
+        await message.reply(
+            `Classe **${cls.name}** adicionada ao personagem **${char.name}** com sucesso.`,
+        );
     }
 }

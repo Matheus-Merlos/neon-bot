@@ -15,7 +15,10 @@ export default class CompletedClassObjectiveStrategy implements Strategy {
 
         let classObjective;
         try {
-            classObjective = await ClassObjectiveFactory.getByName(classObjectiveName, message.guildId!);
+            classObjective = await ClassObjectiveFactory.getByName(
+                classObjectiveName,
+                message.guildId!,
+            );
         } catch {
             message.reply(`Não existe um objetivo de classe com o nome **${classObjectiveName}**`);
             return;
