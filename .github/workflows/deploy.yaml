@@ -1,104 +1,88 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'src/**'
-      - 'docker-compose.yaml'
-      - 'Dockerfile'
-  workflow_dispatch:
-    inputs:
-      build_image:
-        description: 'Buildar imagem?'
-        required: true
-        default: 'false'
-        type: choice
-        options:
-          - 'true'
-          - 'false'
+    push:
+        branches:
+            - master
+        paths:
+            - 'src/**'
+            - 'docker-compose.yaml'
+            - 'Dockerfile'
+    workflow_dispatch:
+        inputs:
+            build_image:
+                description: 'Buildar imagem?'
+                required: true
+                default: 'false'
+                type: choice
+                options:
+                    - 'true'
+                    - 'false'
 
 jobs:
-  build-and-push-image:
-    name: Build e Push da Imagem
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event.inputs.build_image == 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    build-and-push-image:
+        name: Build e Push da Imagem
+        runs-on: ubuntu-latest
+        if: github.event_name == 'push' || github.event.inputs.build_image == 'true'
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v7
 
-      - name: Setup docker buildx
-        uses: docker/setup-buildx-action@v3
+            - name: Setup docker buildx
+              uses: docker/setup-buildx-action@v4
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+            - name: Login to Docker Hub
+              uses: docker/login-action@v4
+              with:
+                  username: ${{ secrets.DOCKER_USERNAME }}
+                  password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          platforms: linux/amd64
-          tags: |
-            ${{ secrets.DOCKER_USERNAME }}/neon-bot:v${{ github.run_number }}
-            ${{ secrets.DOCKER_USERNAME }}/neon-bot:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            - name: Build and push image
+              uses: docker/build-push-action@v7
+              with:
+                  context: .
+                  push: true
+                  platforms: linux/amd64
+                  tags: |
+                      ${{ secrets.DOCKER_USERNAME }}/neon-bot:v${{ github.run_number }}
+                      ${{ secrets.DOCKER_USERNAME }}/neon-bot:latest
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
 
-  deploy:
-    name: Deploy da aplicação
-    runs-on: ubuntu-latest
-    if: always()
-    needs: [build-and-push-image]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    deploy:
+        name: Deploy da aplicação
+        runs-on: ubuntu-latest
+        if: always()
+        needs: [build-and-push-image]
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v7
 
-      - name: Copy docker-compose file
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_PUBLIC_IP }}
-          username: root
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "docker-compose.yaml"
-          target: "/home/root/neon-bot"
+            - name: Copy docker-compose file
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                  host: ${{ secrets.SERVER_PUBLIC_IP }}
+                  username: root
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  source: 'docker-compose.yaml'
+                  target: '/home/root/neon-bot'
 
-      - name: Copy migrations files
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_PUBLIC_IP }}
-          username: root
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "drizzle"
-          target: "/home/root/neon-bot"
+            - name: Copy migrations files
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                  host: ${{ secrets.SERVER_PUBLIC_IP }}
+                  username: root
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  source: 'drizzle'
+                  target: '/home/root/neon-bot'
 
-      - name: Configure docker and start application
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SERVER_PUBLIC_IP }}
-          username: root
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            sudo apt-get install ca-certificates curl -y
-            sudo install -m 0755 -d /etc/apt/keyrings
-            sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-            sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-            echo \
-              "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-              $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-              sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-            sudo apt-get update
-
-            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-            mkdir -p /home/root/neon-bot
-            cd /home/root/neon-bot
-            echo "${{ secrets.DOTENV_CONTENT }}" > .env
-            echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-            sudo docker compose up --pull always -d
-
+            - name: Configure docker and start application
+              uses: appleboy/ssh-action@v1.2.0
+              with:
+                  host: ${{ secrets.SERVER_PUBLIC_IP }}
+                  username: root
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  script: |
+                      echo "${{ secrets.DOTENV_CONTENT }}" > .env
+                      echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+                      sudo docker compose up --pull always -d

@@ -1,43 +1,46 @@
 {
-  "name": "neon-bot",
-  "version": "1.0.0",
-  "description": "",
-  "license": "MIT",
-  "author": "",
-  "type": "commonjs",
-  "main": "main.ts",
-  "scripts": {
-    "start": "nodemon",
-    "prepare": "husky"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.18.0",
-    "@types/dotenv": "^6.1.1",
-    "@types/node": "^22.10.5",
-    "@types/pg": "^8.11.11",
-    "@typescript-eslint/eslint-plugin": "^8.19.1",
-    "@typescript-eslint/parser": "^8.19.1",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "globals": "^15.14.0",
-    "husky": "^9.1.7",
-    "nodemon": "^3.1.10",
-    "prettier": "^3.4.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
-  },
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.726.1",
-    "@aws-sdk/lib-storage": "^3.726.1",
-    "@aws-sdk/node-http-handler": "^3.370.0",
-    "@libsql/client": "^0.15.15",
-    "axios": "^1.8.2",
-    "discord.js": "^14.17.3",
-    "dotenv": "^16.4.7",
-    "drizzle-kit": "^0.30.1",
-    "drizzle-orm": "^0.38.3",
-    "pg": "^8.14.1",
-    "sharp": "^0.33.5"
-  }
+    "name": "neon-bot",
+    "version": "1.0.0",
+    "description": "",
+    "license": "MIT",
+    "author": "",
+    "type": "commonjs",
+    "main": "main.ts",
+    "scripts": {
+        "start": "nodemon",
+        "prepare": "husky"
+    },
+    "engines": {
+        "node": ">= 22.23.4 < 23"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "^3.2.0",
+        "@eslint/js": "^9.18.0",
+        "@types/dotenv": "^6.1.1",
+        "@types/node": "^22.10.5",
+        "@types/pg": "^8.11.11",
+        "@typescript-eslint/eslint-plugin": "^8.19.1",
+        "@typescript-eslint/parser": "^8.19.1",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "globals": "^15.14.0",
+        "husky": "^9.1.7",
+        "nodemon": "^3.1.10",
+        "prettier": "^3.4.2",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.7.3"
+    },
+    "dependencies": {
+        "@aws-sdk/client-s3": "^3.726.1",
+        "@aws-sdk/lib-storage": "^3.726.1",
+        "@aws-sdk/node-http-handler": "^3.370.0",
+        "@libsql/client": "^0.15.15",
+        "axios": "^1.8.2",
+        "discord.js": "^14.17.3",
+        "dotenv": "^16.4.7",
+        "drizzle-kit": "^0.30.1",
+        "drizzle-orm": "^0.38.3",
+        "pg": "^8.14.1",
+        "sharp": "^0.33.5"
+    }
 }
