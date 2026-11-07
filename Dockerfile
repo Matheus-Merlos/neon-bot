@@ -1,36 +1,34 @@
+# syntax=docker/dockerfile:1
 ARG image=node:24.22.1-alpine3.23
 
-FROM ${image} AS buildDeps
+FROM ${image} AS base
+ENV PNPM_HOME=/pnpm \
+    PATH=/pnpm:$PATH \
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable
+WORKDIR /app
 
-COPY package*.json ./
+FROM base AS deps
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
 
-RUN npm ci
-
-
-
-FROM ${image} AS build
-
+FROM deps AS build
 COPY . .
-COPY --from=buildDeps node_modules ./node_modules
+RUN pnpm exec tsc
 
-RUN npx tsc
-
-
-
-FROM ${image} AS deps
-
-COPY package*.json ./
-
-RUN npm ci --omit=dev
-
-
+FROM base AS prod-deps
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --prod
 
 FROM ${image} AS bot
-
+ENV NODE_ENV=production
 WORKDIR /bot
 
-COPY --from=deps node_modules ./node_modules
-COPY --from=build dist .
-COPY drizzle ./drizzle
+COPY --from=prod-deps --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/dist .
+COPY --chown=node:node drizzle ./drizzle
 
-CMD [ "node", "main" ]
+USER node
+CMD ["node", "main"]
