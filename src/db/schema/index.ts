@@ -27,7 +27,9 @@ import {
 import { NewPlayer, player, Player } from './player';
 import { NewRank, rank, Rank } from './rank';
 import { NewReachedRank, ReachedRank, reachedRank } from './reached-rank';
+import { NewRule, rule, Rule } from './rule';
 import { NewSelectedObjective, SelectedObjective, selectedObjective } from './selected-objective';
+import { NewSystem, system, System } from './system';
 
 export {
     Character,
@@ -69,7 +71,9 @@ export {
     NewPlayer,
     NewRank,
     NewReachedRank,
+    NewRule,
     NewSelectedObjective,
+    NewSystem,
     npc,
     NPC,
     Objective,
@@ -82,6 +86,10 @@ export {
     Rank,
     ReachedRank,
     reachedRank,
+    rule,
+    Rule,
     SelectedObjective,
     selectedObjective,
+    system,
+    System,
 };
