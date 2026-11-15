@@ -16,6 +16,9 @@ const compat = new FlatCompat({
 });
 
 export default [
+    {
+        ignores: ['.github/workflows/**', '**/*.{yaml,yml}'],
+    },
     ...compat.extends(
         'eslint:recommended',
         'plugin:@typescript-eslint/eslint-recommended',
