@@ -1,32 +1,34 @@
-import { Message } from 'discord.js';
+import { ChatInputCommandInteraction, Message } from 'discord.js';
 import { and, asc, eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { inventory, item as itemTable } from '../../db/schema';
 import ItemFactory from '../../factories/item-factory';
-import Strategy from '../base-strategy';
+import Strategy, { IStrategy } from '../base-strategy';
 import { CharacterFactory } from '../../factories';
 
-export default class UseStrategy implements Strategy {
-    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        const character = await CharacterFactory.getFromPlayerId(
-            message.author.id,
-            message.guildId,
-        );
-        const hasQuantity = !isNaN(parseInt(messageAsList[0]));
+type Input = {
+    name: string;
+    quantity: number;
+};
 
-        let quantity = 1;
+export default class UseStrategy implements IStrategy<Input> {
+    async handleInput(
+        input: Input,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void> {
+        const userId =
+            'author' in replyInstance ? replyInstance.author.id : replyInstance.user.id;
 
-        if (hasQuantity) {
-            quantity = parseInt(messageAsList[0]);
-            messageAsList.splice(0, 1);
-        }
+        const character = await CharacterFactory.getFromPlayerId(userId, replyInstance.guildId!);
 
-        const itemName = messageAsList.join(' ');
+        let { quantity } = input;
+        const itemName = input.name;
+
         let item;
         try {
-            item = await ItemFactory.getByName(itemName, message.guildId);
+            item = await ItemFactory.getByName(itemName, replyInstance.guildId!);
         } catch {
-            await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
+            await replyInstance.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;
         }
 
@@ -43,7 +45,7 @@ export default class UseStrategy implements Strategy {
             .orderBy(asc(inventory.durability));
 
         if (inventoryItems.length === 0) {
-            await message.reply(`Você não possui **${item.name}** em seu inventário.`);
+            await replyInstance.reply(`Você não possui **${item.name}** em seu inventário.`);
             return;
         }
 
@@ -55,7 +57,7 @@ export default class UseStrategy implements Strategy {
             });
 
         if (quantity > totalDurability) {
-            await message.reply(
+            await replyInstance.reply(
                 `Você não possui **${item.name}** o suficiente para utilizar **${quantity}** vezes.`,
             );
             return;
@@ -77,6 +79,30 @@ export default class UseStrategy implements Strategy {
                 break;
             }
         }
-        message.reply(`Você usou **${item.name}** com sucesso.`);
+        replyInstance.reply(`Você usou **${item.name}** com sucesso.`);
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        const o = interaction.options;
+
+        const input = {
+            name: o.getString('name', true),
+            quantity: o.getNumber('quantity') ?? 1,
+        };
+
+        await this.handleInput(input, interaction);
+    }
+
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
+        let quantity = 1;
+
+        if (!isNaN(parseInt(messageAsList[0]))) {
+            quantity = parseInt(messageAsList[0]);
+            messageAsList.splice(0, 1);
+        }
+
+        const itemName = messageAsList.join(' ');
+
+        await this.handleInput({ name: itemName, quantity }, message);
     }
 }

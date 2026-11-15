@@ -1,5 +1,13 @@
 import { ChatInputCommandInteraction, Colors, SlashCommandBuilder } from 'discord.js';
-import { CreateItemStrategy, DeleteStrategy, ListStrategy } from '../../strategies';
+import {
+    BuyStrategy,
+    CreateItemStrategy,
+    DeleteStrategy,
+    GiveItemStrategy,
+    InfoStrategy,
+    ListStrategy,
+    UseStrategy,
+} from '../../strategies';
 import { ItemFactory } from '../../factories';
 
 const createItemStrategy = new CreateItemStrategy();
@@ -24,6 +32,10 @@ const listStrategy = new ListStrategy(
     7,
 );
 const deleteStrategy = new DeleteStrategy(ItemFactory, 'item');
+const infoStrategy = new InfoStrategy(ItemFactory);
+const buyStrategy = new BuyStrategy();
+const giveStrategy = new GiveItemStrategy();
+const useStrategy = new UseStrategy();
 
 export default {
     data: new SlashCommandBuilder()
@@ -78,6 +90,79 @@ export default {
                         .setRequired(true)
                         .setMaxLength(127),
                 ),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName('info')
+                .setDescription('Informações sobre um item específico')
+                .addStringOption((option) =>
+                    option
+                        .setName('name')
+                        .setDescription('O nome do item a ser pesquisado.')
+                        .setRequired(true)
+                        .setMaxLength(127),
+                ),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName('buy')
+                .setDescription('Comprar um item específico')
+                .addStringOption((option) =>
+                    option
+                        .setName('name')
+                        .setDescription('O nome do item a ser comprado.')
+                        .setRequired(true)
+                        .setMaxLength(127),
+                )
+                .addNumberOption((option) =>
+                    option
+                        .setName('quantity')
+                        .setDescription('Quantidade do item a ser comprada (default: 1, max: 100).')
+                        .setMaxValue(100),
+                ),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName('give')
+                .setDescription('Dar um item a algum player')
+                .addStringOption((option) =>
+                    option
+                        .setName('name')
+                        .setDescription('O nome do item a ser dado.')
+                        .setRequired(true)
+                        .setMaxLength(127),
+                )
+                .addUserOption((option) =>
+                    option
+                        .setName('player')
+                        .setDescription('Jogador que receberá o item (default: você mesmo)'),
+                )
+                .addNumberOption((option) =>
+                    option
+                        .setName('quantity')
+                        .setDescription('Quantidade do item a ser dada (default: 1, max: 100).')
+                        .setMaxValue(100),
+                ),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName('use')
+                .setDescription('Usar um item do seu inventário')
+                .addStringOption((option) =>
+                    option
+                        .setName('name')
+                        .setDescription('O nome do item a ser usado.')
+                        .setRequired(true)
+                        .setMaxLength(127),
+                )
+                .addNumberOption((option) =>
+                    option
+                        .setName('quantity')
+                        .setDescription(
+                            'Quantidade de vezes que o item será utilizado (default: 1, max: 100).',
+                        )
+                        .setMaxValue(100),
+                ),
         ),
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const subcommand = interaction.options.getSubcommand();
@@ -91,6 +176,18 @@ export default {
             }
             case 'delete': {
                 return deleteStrategy.executeSlashCommand(interaction);
+            }
+            case 'info': {
+                return infoStrategy.executeSlashCommand(interaction);
+            }
+            case 'buy': {
+                return buyStrategy.executeSlashCommand(interaction);
+            }
+            case 'give': {
+                return giveStrategy.executeSlashCommand(interaction);
+            }
+            case 'use': {
+                return useStrategy.executeSlashCommand(interaction);
             }
         }
     },
