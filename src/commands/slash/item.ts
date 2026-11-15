@@ -1,6 +1,8 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { CreateItemStrategy } from '../../strategies';
 
+const createItemStrategy = new CreateItemStrategy();
+
 export default {
     data: new SlashCommandBuilder()
         .setName('item')
@@ -41,7 +43,7 @@ export default {
         const subcommand = interaction.options.getSubcommand();
         switch (subcommand) {
             case 'create': {
-                return CreateItemStrategy.executeSlashCommand(interaction);
+                return createItemStrategy.executeSlashCommand(interaction);
             }
         }
     },

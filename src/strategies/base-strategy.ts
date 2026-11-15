@@ -5,6 +5,18 @@ export default interface Strategy {
     execute(message: Message<true>, messageAsList: Array<string>): Promise<void>;
 }
 
+// Temporary interface for slash command implementation
+export interface IStrategy<T> {
+    execute(message: Message<true>, messageAsList: Array<string>): Promise<void>;
+
+    createFromInput(
+        input: T,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void>;
+
+    executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void>;
+}
+
 export class SuperStrategy implements Strategy {
     constructor(
         private readonly commandName: string,
