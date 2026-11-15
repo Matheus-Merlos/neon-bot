@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { ChatInputCommandInteraction, Message } from 'discord.js';
 import DefaultStrategy from './generics/default';
 
 export default interface Strategy {

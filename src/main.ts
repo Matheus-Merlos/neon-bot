@@ -29,6 +29,7 @@ import {
 import Approval from './commands/approve';
 import Question from './commands/question';
 import { HasCommandPermission } from './decorators';
+import item from './commands/slash/item';
 config();
 
 const client = new Client({
@@ -99,5 +100,7 @@ client.addCommand('rule', new Rule());
 client.addCommand('system', new System());
 client.addCommand('question', new Question());
 client.addCommand(['approve-skill', 'approve'], new Approval());
+
+client.registerSlashCommands([item]);
 
 export default client;
