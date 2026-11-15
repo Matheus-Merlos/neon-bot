@@ -4,9 +4,8 @@ import {
     Events,
     GatewayIntentBits,
     REST,
+    RESTPostAPIChatInputApplicationCommandsJSONBody,
     Routes,
-    SlashCommandBuilder,
-    SlashCommandSubcommandsOnlyBuilder,
     WebhookClient,
 } from 'discord.js';
 import Command from './commands/base-command';
@@ -196,7 +195,7 @@ export default class Client {
 
     async registerSlashCommands(
         slashCommands: Array<{
-            data: SlashCommandSubcommandsOnlyBuilder;
+            data: { toJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody; name: string };
             execute: (interaction: ChatInputCommandInteraction) => Promise<void> | void;
         }>,
     ): Promise<void> {
