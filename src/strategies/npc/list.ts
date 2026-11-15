@@ -1,45 +1,67 @@
-import { Colors, EmbedBuilder, Message } from 'discord.js';
+import { ChatInputCommandInteraction, Colors, EmbedBuilder, Message } from 'discord.js';
 import npcFactory from '../../factories/npc-factory';
 import embedList from '../../utils/embed-list';
-import Strategy from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
-export default class ListNPCStrategy implements Strategy {
-    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        const entries = await npcFactory.getAll(message.guildId, message.author.id);
+type Input = {
+    userId: string;
+    username: string;
+};
+
+export default class ListNPCStrategy implements IStrategy<Input> {
+    async handleInput(
+        input: Input,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void> {
+        const entries = await npcFactory.getAll(replyInstance.guildId!, input.userId);
 
         if (entries.length === 0) {
-            await message.reply('Nenhum registro encontrado em seu usuário.');
+            await replyInstance.reply('Nenhum registro encontrado em seu usuário.');
             return;
         }
 
         await embedList(
             entries,
             10,
-            message,
+            replyInstance,
             async (matrix: Array<typeof entries>, currentIndex: number) => {
                 const embed = new EmbedBuilder()
-                    .setTitle(
-                        `NPCs de ${message.author.username ?? message.author.displayName ?? message.author.globalName}`,
-                    )
+                    .setTitle(`NPCs de ${input.username}`)
                     .setColor(Colors.LuminousVividPink)
                     .setFooter({ text: `Página ${currentIndex + 1}/${matrix.length}` });
 
-                const entries = matrix[currentIndex];
+                const items = matrix[currentIndex];
 
-                for (const entry of entries) {
-                    const fields = [
-                        {
-                            name: `${entry.name}`,
-                            value: ``,
-                            inline: false,
-                        },
-                    ];
-                    const fieldsArray = Array.isArray(fields) ? fields : [fields];
-                    embed.addFields(...fieldsArray);
+                for (const entry of items) {
+                    embed.addFields({
+                        name: `${entry.name}`,
+                        value: `Prefixo: ${entry.prefix}`,
+                        inline: false,
+                    });
                 }
 
                 return embed;
             },
         );
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        const input = {
+            userId: interaction.user.id,
+            username: interaction.user.username,
+        };
+
+        await this.handleInput(input, interaction);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async execute(message: Message<true>, _messageAsList: Array<string>): Promise<void> {
+        const input = {
+            userId: message.author.id,
+            username:
+                message.author.username ?? message.author.displayName ?? message.author.globalName!,
+        };
+
+        await this.handleInput(input, message);
     }
 }

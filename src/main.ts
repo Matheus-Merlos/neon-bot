@@ -29,6 +29,29 @@ import {
 import Approval from './commands/approve';
 import Question from './commands/question';
 import { HasCommandPermission } from './decorators';
+import item from './commands/slash/item';
+import approve from './commands/slash/approve';
+import calculate from './commands/slash/calculate';
+import character from './commands/slash/character';
+import classObjective from './commands/slash/class-objective';
+import classCmd from './commands/slash/class';
+import clearChat from './commands/slash/clear-chat';
+import gold from './commands/slash/gold';
+import img from './commands/slash/img';
+import inventory from './commands/slash/inventory';
+import leaderboard from './commands/slash/leaderboard';
+import mana from './commands/slash/mana';
+import missionDifficulty from './commands/slash/mission-difficulty';
+import mission from './commands/slash/mission';
+import npc from './commands/slash/npc';
+import objectiveDifficulty from './commands/slash/objective-difficulty';
+import objective from './commands/slash/objective';
+import question from './commands/slash/question';
+import roll from './commands/slash/roll';
+import rule from './commands/slash/rule';
+import system from './commands/slash/system';
+import turnList from './commands/slash/turn-list';
+import xp from './commands/slash/xp';
 config();
 
 const client = new Client({
@@ -99,5 +122,31 @@ client.addCommand('rule', new Rule());
 client.addCommand('system', new System());
 client.addCommand('question', new Question());
 client.addCommand(['approve-skill', 'approve'], new Approval());
+
+client.registerSlashCommands([
+    item,
+    approve,
+    calculate,
+    character,
+    classObjective,
+    classCmd,
+    clearChat,
+    gold,
+    img,
+    inventory,
+    leaderboard,
+    mana,
+    missionDifficulty,
+    mission,
+    npc,
+    objectiveDifficulty,
+    objective,
+    question,
+    roll,
+    rule,
+    system,
+    turnList,
+    xp,
+]);
 
 export default client;

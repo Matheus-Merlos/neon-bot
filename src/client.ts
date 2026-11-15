@@ -1,6 +1,16 @@
-import { Client as DiscordClient, Events, GatewayIntentBits, WebhookClient } from 'discord.js';
+import {
+    ChatInputCommandInteraction,
+    Client as DiscordClient,
+    Events,
+    GatewayIntentBits,
+    REST,
+    RESTPostAPIChatInputApplicationCommandsJSONBody,
+    Routes,
+    WebhookClient,
+} from 'discord.js';
 import Command from './commands/base-command';
 import npcFactory from './factories/npc-factory';
+import { once } from 'node:events';
 
 export default class Client {
     private token: string | undefined;
@@ -181,5 +191,69 @@ export default class Client {
 
     get getClient() {
         return this.client;
+    }
+
+    async registerSlashCommands(
+        slashCommands: Array<{
+            data: { toJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody; name: string };
+            execute: (interaction: ChatInputCommandInteraction) => Promise<void> | void;
+        }>,
+    ): Promise<void> {
+        const commands = slashCommands.map((c) => c.data.toJSON());
+        const commandMap = new Map(slashCommands.map((c) => [c.data.name, c]));
+
+        this.client.on(Events.InteractionCreate, async (interaction) => {
+            if (!interaction.isChatInputCommand()) return;
+
+            const command = commandMap.get(interaction.commandName);
+            if (!command) return console.error(`Comando ${interaction.commandName} não existe.`);
+
+            try {
+                await command.execute(interaction);
+            } catch (err) {
+                console.error(err);
+                const msg = {
+                    content: 'Deu erro ao executar o comando!',
+                };
+                if (interaction.replied || interaction.deferred) await interaction.followUp(msg);
+                else await interaction.reply(msg);
+            }
+        });
+
+        if (!this.client.isReady()) {
+            await once(this.client, Events.ClientReady);
+        }
+
+        const rest = new REST().setToken(this.token!);
+
+        const registered: string[] = [];
+        const failed: { name: string; error: string }[] = [];
+
+        for (const command of commands) {
+            try {
+                await rest.post(Routes.applicationCommands(this.client.application!.id), {
+                    body: command,
+                });
+                registered.push(command.name);
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+                failed.push({ name: command.name, error: errorMessage });
+            }
+        }
+
+        if (registered.length > 0) {
+            console.log(`Successfully registered slash commands: ${registered.join(', ')}`);
+        }
+
+        if (failed.length > 0) {
+            console.error('Failed to register slash commands:');
+            for (const { name, error } of failed) {
+                console.error(`  - ${name}: ${error}`);
+            }
+        }
+
+        if (registered.length === 0 && failed.length === 0) {
+            console.log('No slash commands to register.');
+        }
     }
 }

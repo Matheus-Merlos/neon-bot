@@ -1,9 +1,9 @@
-import { Message } from 'discord.js';
+import { ChatInputCommandInteraction, Message } from 'discord.js';
 import { Column, eq, Table } from 'drizzle-orm';
 import { getTableConfig, PgBoolean, PgInteger } from 'drizzle-orm/pg-core';
 import db from '../../db/db';
 import Factory from '../../factories/base-factory';
-import Strategy from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 import { NpcFactory } from '../../factories/npc-factory';
 
 type TableIdField = {
@@ -11,11 +11,16 @@ type TableIdField = {
     id: Column<any>;
 };
 
+type Input = {
+    entryName: string;
+    newValue: string;
+};
+
 export default class EditFieldStrategy<
     T extends Table,
     U extends Factory<T>,
     V extends T & TableIdField,
-> implements Strategy
+> implements IStrategy<Input>
 {
     constructor(
         private readonly table: V,
@@ -43,33 +48,25 @@ export default class EditFieldStrategy<
         return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        //Pega a mensagem tirando apenas o comando base ";item" (servirá para o regex)
-        const messageContent = message.content.split(' ');
-        messageContent.splice(0, 1);
-        const messageContentWithoutCommand = messageContent.join(' ');
-
-        const regex = /^edit\s+(\S+)\s+(.+?)\s+("([^"]+)"|(\S+))$/;
-
-        const match = messageContentWithoutCommand.match(regex);
-        if (!match) {
-            await message.reply(
-                'Formato inválido! A mensagem deve ser sempre: `edit <campo> <Nome(SEM ASPAS)> <Valor Novo(COM ASPAS)`',
-            );
-            return;
-        }
-
-        const name = match[2].trim();
-        const newValue = match[4] || match[5];
+    async handleInput(
+        input: Input,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+        userId?: string,
+    ): Promise<void> {
+        const { entryName, newValue } = input;
 
         let entry;
         try {
-            if (this.factory instanceof NpcFactory)
-                entry = await this.factory.getByName(name, message.guildId, message.author.id);
-            else entry = await this.factory.getByName(name, message.guildId);
+            if (this.factory instanceof NpcFactory) {
+                const uid =
+                    userId ??
+                    ('author' in replyInstance ? replyInstance.author.id : replyInstance.user.id);
+                entry = await this.factory.getByName(entryName, replyInstance.guildId!, uid);
+            } else {
+                entry = await this.factory.getByName(entryName, replyInstance.guildId!);
+            }
         } catch {
-            await message.reply('Não foi encontrado uma entrada válida com este nome.');
+            await replyInstance.reply('Não foi encontrado uma entrada válida com este nome.');
             return;
         }
 
@@ -89,7 +86,7 @@ export default class EditFieldStrategy<
             if (!(error instanceof Error)) {
                 return;
             }
-            await message.reply(`Erro de validação: ${error.message}`);
+            await replyInstance.reply(`Erro de validação: ${error.message}`);
             return;
         }
 
@@ -101,6 +98,39 @@ export default class EditFieldStrategy<
             } as any)
             .where(eq(this.table.id, entry.id));
 
-        message.reply(`${getTableConfig(this.table).name} editado com sucesso!`);
+        replyInstance.reply(`${getTableConfig(this.table).name} editado com sucesso!`);
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        const o = interaction.options;
+
+        const input = {
+            entryName: o.getString('item', true),
+            newValue: o.getString('value', true),
+        };
+
+        await this.handleInput(input, interaction);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
+        const messageContent = message.content.split(' ');
+        messageContent.splice(0, 1);
+        const messageContentWithoutCommand = messageContent.join(' ');
+
+        const regex = /^edit\s+(\S+)\s+(.+?)\s+("([^"]+)"|(\S+))$/;
+
+        const match = messageContentWithoutCommand.match(regex);
+        if (!match) {
+            await message.reply(
+                'Formato inválido! A mensagem deve ser sempre: `edit <campo> <Nome(SEM ASPAS)> <Valor Novo(COM ASPAS)`',
+            );
+            return;
+        }
+
+        const entryName = match[2].trim();
+        const newValue = match[4] || match[5];
+
+        await this.handleInput({ entryName, newValue }, message);
     }
 }

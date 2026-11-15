@@ -1,19 +1,41 @@
-import { Message } from 'discord.js';
+import { ChatInputCommandInteraction, Message } from 'discord.js';
 import { default as npcFactory } from '../../factories/npc-factory';
-import Strategy from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
-export default class SwitchNPCStrategy implements Strategy {
-    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        const npcName = messageAsList.join(' ');
+type Input = {
+    npcName: string;
+    userId: string;
+};
 
-        const npc = await npcFactory.getByName(npcName, message.guildId, message.author.id);
+export default class SwitchNPCStrategy implements IStrategy<Input> {
+    async handleInput(
+        input: Input,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void> {
+        const npc = await npcFactory.getByName(input.npcName, replyInstance.guildId!, input.userId);
         if (!npc || npc === undefined) {
-            await message.reply(`Você não possui um NPC com o nome **${npcName}**.`);
+            await replyInstance.reply(`Você não possui um NPC com o nome **${input.npcName}**.`);
             return;
         }
 
         await npcFactory.edit(npc.id, { isActive: true });
 
-        await message.reply(`Você assumiu **${npc.name}**`);
+        await replyInstance.reply(`Você assumiu **${npc.name}**`);
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        const input = {
+            npcName: interaction.options.getString('name', true),
+            userId: interaction.user.id,
+        };
+
+        await this.handleInput(input, interaction);
+    }
+
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
+        await this.handleInput(
+            { npcName: messageAsList.join(' '), userId: message.author.id },
+            message,
+        );
     }
 }

@@ -4,7 +4,7 @@ import embedList from '../../utils/embed-list';
 import Command from '../base-command';
 
 export default class Leaderboard implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const characters = await CharacterFactory.getAll(message.guildId!);
 
         let option: 'xp' | 'gold' = messageAsList[0] as 'xp' | 'gold';

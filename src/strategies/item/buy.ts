@@ -1,41 +1,39 @@
-import { Message } from 'discord.js';
+import { ChatInputCommandInteraction, Message } from 'discord.js';
 import { eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { character, inventory } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
 import ItemFactory from '../../factories/item-factory';
-import Strategy from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
-export default class BuyStrategy implements Strategy {
-    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        let quantity = 1;
+type Input = {
+    name: string;
+    quantity: number;
+};
 
-        if (!isNaN(parseInt(messageAsList[0]))) {
-            quantity = parseInt(messageAsList[0]);
-            messageAsList.splice(0, 1);
-        }
-
-        if (quantity > 10000) {
-            await message.reply('O máximo de itens que você pode comprar por comando é 10000.');
-            return;
-        }
-
-        const itemName = messageAsList.join(' ');
-
+export default class BuyStrategy implements IStrategy<Input> {
+    async handleInput(
+        input: Input,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void> {
+        const itemName = input.name;
+        const { quantity } = input;
         let item;
 
         try {
-            item = await ItemFactory.getByName(itemName, message.guildId!);
+            item = await ItemFactory.getByName(itemName, replyInstance.guildId!);
         } catch {
-            await message.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
+            await replyInstance.reply(`Não foi encontrado um item com o nome **${itemName}**.`);
             return;
         }
-        const char = await CharacterFactory.getFromPlayerId(message.author.id, message.guild!.id);
+
+        const userId = 'author' in replyInstance ? replyInstance.author.id : replyInstance.user.id;
+        const char = await CharacterFactory.getFromPlayerId(userId, replyInstance.guild!.id);
 
         const totalPrice = item.price * quantity;
 
         if (char.gold < totalPrice) {
-            message.reply(`
+            replyInstance.reply(`
 Você não tem dinheiro o suficiente para fazer essa compra.
 > - Dinheiro necessário: **${totalPrice}**
 > - Seu dinheiro: **${char.gold}**
@@ -58,6 +56,35 @@ Você não tem dinheiro o suficiente para fazer essa compra.
             await trx.insert(inventory).values(itemsToInsert);
         });
 
-        message.reply(`Você comprou com sucesso **${quantity}**x **${item.name}**`);
+        replyInstance.reply(`Você comprou com sucesso **${quantity}**x **${item.name}**`);
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        const o = interaction.options;
+
+        const item = {
+            name: o.getString('name', true),
+            quantity: o.getNumber('quantity') ?? 1,
+        };
+
+        await this.handleInput(item, interaction);
+    }
+
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
+        let quantity = 1;
+
+        if (!isNaN(parseInt(messageAsList[0]))) {
+            quantity = parseInt(messageAsList[0]);
+            messageAsList.splice(0, 1);
+        }
+
+        if (quantity > 100) {
+            await message.reply('O máximo de itens que você pode comprar por comando é 100.');
+            return;
+        }
+
+        const itemName = messageAsList.join(' ');
+
+        await this.handleInput({ name: itemName, quantity }, message);
     }
 }

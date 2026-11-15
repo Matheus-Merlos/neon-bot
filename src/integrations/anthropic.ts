@@ -45,27 +45,41 @@ class AnthropicAgent {
     }
 
     async systemQuestion(question: string, message: Message<true>): Promise<string> {
-        // Ajuste para a sua regra de staff (ex.: checar um ID de cargo específico).
-        const isStaff = message.member?.permissions.has(PermissionFlagsBits.ManageGuild) ?? false;
-        const responseLimit = isStaff ? 3800 : 1800;
+        return this.systemQuestionFromData({
+            question,
+            isStaff: message.member?.permissions.has(PermissionFlagsBits.ManageGuild) ?? false,
+            displayName: displayName(message),
+            guildName: message.guild.name,
+            guildId: message.guildId,
+        });
+    }
+
+    async systemQuestionFromData(data: {
+        question: string;
+        isStaff: boolean;
+        displayName: string;
+        guildName: string;
+        guildId: string;
+    }): Promise<string> {
+        const responseLimit = data.isStaff ? 3800 : 1800;
 
         const request = `<asker>
-nome: ${displayName(message)}
-cargo: ${isStaff ? 'Staff' : 'Jogador'}
+nome: ${sanitize(data.displayName)}
+cargo: ${data.isStaff ? 'Staff' : 'Jogador'}
 </asker>
 
 <response_limit>${responseLimit}</response_limit>
 
 <question>
-${sanitize(question)}
+${sanitize(data.question)}
 </question>
 
 Responda à pergunta em <question> seguindo suas instruções. Antes de escrever, identifique o tipo de pergunta e localize em <system> e <rules> os trechos que realmente se aplicam; se nenhum se aplicar, diga que o assunto não está coberto em vez de deduzir uma regra. Entregue apenas a mensagem final que será postada no Discord.`;
 
         const { text } = await this.ask({
             model: this.model,
-            systemPrompt: buildQuestionSystemPrompt(message.guild.name),
-            documents: await this.buildDocuments(message.guildId),
+            systemPrompt: buildQuestionSystemPrompt(data.guildName),
+            documents: await this.buildDocuments(data.guildId),
             request,
         });
 
