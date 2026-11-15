@@ -8,7 +8,7 @@ export const manaAlias = pgTable('mana_alias', {
     value: integer('value').notNull(),
     character: integer('character')
         .notNull()
-        .references(() => character.id),
+        .references(() => character.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
     guildId: bigint('guild_id', { mode: 'bigint' }).notNull(),
 });
 

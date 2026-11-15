@@ -71,6 +71,13 @@
       "when": 1794076205025,
       "tag": "0009_wise_firestar",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794762203841,
+      "tag": "0010_superb_alex_wilder",
+      "breakpoints": true
     }
   ]
 }
