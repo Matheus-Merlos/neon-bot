@@ -10,7 +10,11 @@ import ListCompletedObjectivesStrategy from './objectives/list-completed-objecti
 import SelectObjectiveStrategy from './objectives/select-objective';
 import SelectedObjectivesStrategy from './objectives/selected-objectives';
 
+import ApproveStrategy from './ai/approve';
+import QuestionStrategy from './ai/question';
 import EditCharacterFieldStrategy from './character/edit-character-field';
+import NewGenStrategy from './character/newgen';
+import ResetCharacterStrategy from './character/reset';
 import CompletedClassObjectiveStrategy from './class-objectives/completed';
 import CreateClassObjectiveStrategy from './class-objectives/create';
 import ListCompletedClassObjectivesStrategy from './class-objectives/list-completed';
@@ -21,6 +25,7 @@ import EditFieldStrategy from './generics/edit-field';
 import EditImageStrategy from './generics/edit-img';
 import PayStrategy from './gold-exp/pay';
 import RewardStrategy from './gold-exp/reward';
+import InventoryStrategy from './inventory/inventory';
 import BuyStrategy from './item/buy';
 import CreateItemStrategy from './item/create-item';
 import GiveItemStrategy from './item/give';
@@ -37,10 +42,13 @@ import DeleteNPCStrategy from './npc/delete';
 import ListNPCStrategy from './npc/list';
 import SwitchNPCStrategy from './npc/switch';
 import RemoveSelectedObjectiveStrategy from './objectives/remove-selected';
+import TurnListStrategy from './rpg/turn-list';
 import CreateRuleStrategy from './rules/create-rule';
+import ImageSearchStrategy from './search/image';
 import CreateSystemStrategy from './systems/create-system';
 
 export {
+    ApproveStrategy,
     BuyStrategy,
     CompletedClassObjectiveStrategy,
     CompletedMissionStrategy,
@@ -63,14 +71,19 @@ export {
     EditImageStrategy,
     EditStrategy,
     GiveItemStrategy,
+    ImageSearchStrategy,
     InfoStrategy,
+    InventoryStrategy,
     ListCompletedClassObjectivesStrategy,
     ListCompletedObjectivesStrategy,
     ListNPCStrategy,
     ListStrategy,
     ManaRegenStrategy,
+    NewGenStrategy,
     PayStrategy,
+    QuestionStrategy,
     RemoveSelectedObjectiveStrategy,
+    ResetCharacterStrategy,
     RewardStrategy,
     SelectedObjectivesStrategy,
     SelectObjectiveStrategy,
@@ -78,6 +91,7 @@ export {
     SetClassStrategy,
     Strategy,
     SwitchNPCStrategy,
+    TurnListStrategy,
     UseManaStrategy,
     UseStrategy,
 };

@@ -22,7 +22,9 @@ export default class SetBaseManaStrategy implements IStrategy<Input> {
             baseMana: input.baseMana,
             currentMana: input.baseMana,
         });
-        replyInstance.reply(`Mana base de **${character.name}** atualizada: \`${input.baseMana}\`.`);
+        replyInstance.reply(
+            `Mana base de **${character.name}** atualizada: \`${input.baseMana}\`.`,
+        );
     }
 
     async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {

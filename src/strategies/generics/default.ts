@@ -6,6 +6,7 @@ export default class DefaultStrategy implements Strategy {
         private readonly commandName: string,
         private readonly infoObj: Record<string, string>,
     ) {}
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const embed = new EmbedBuilder()
             .setTitle(`Comando \`${this.commandName}\``)
