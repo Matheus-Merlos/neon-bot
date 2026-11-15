@@ -19,6 +19,10 @@ on:
           - 'true'
           - 'false'
 
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
 jobs:
   build-and-push-image:
     name: Build e Push da Imagem
