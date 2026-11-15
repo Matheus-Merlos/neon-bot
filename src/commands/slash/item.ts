@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, SlashCommandBuilder } from 'discord.js';
-import { CreateItemStrategy, ListStrategy } from '../../strategies';
+import { CreateItemStrategy, DeleteStrategy, ListStrategy } from '../../strategies';
 import { ItemFactory } from '../../factories';
 
 const createItemStrategy = new CreateItemStrategy();
@@ -23,6 +23,7 @@ const listStrategy = new ListStrategy(
     },
     7,
 );
+const deleteStrategy = new DeleteStrategy(ItemFactory, 'item');
 
 export default {
     data: new SlashCommandBuilder()
@@ -65,6 +66,18 @@ export default {
         )
         .addSubcommand((subcommand) =>
             subcommand.setName('shop').setDescription('Listar todos os itens.'),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName('delete')
+                .setDescription('Deleta um item específico.')
+                .addStringOption((option) =>
+                    option
+                        .setName('name')
+                        .setDescription('O nome do item a ser deletado.')
+                        .setRequired(true)
+                        .setMaxLength(127),
+                ),
         ),
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const subcommand = interaction.options.getSubcommand();
@@ -75,6 +88,9 @@ export default {
             case 'list':
             case 'shop': {
                 return listStrategy.executeSlashCommand(interaction);
+            }
+            case 'delete': {
+                return deleteStrategy.executeSlashCommand(interaction);
             }
         }
     },

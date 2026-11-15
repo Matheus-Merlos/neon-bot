@@ -226,8 +226,35 @@ export default class Client {
         }
 
         const rest = new REST().setToken(this.token!);
-        await rest.put(Routes.applicationCommands(this.client.application!.id), {
-            body: commands,
-        });
+
+        const registered: string[] = [];
+        const failed: { name: string; error: string }[] = [];
+
+        for (const command of commands) {
+            try {
+                await rest.post(Routes.applicationCommands(this.client.application!.id), {
+                    body: command,
+                });
+                registered.push(command.name);
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+                failed.push({ name: command.name, error: errorMessage });
+            }
+        }
+
+        if (registered.length > 0) {
+            console.log(`Successfully registered slash commands: ${registered.join(', ')}`);
+        }
+
+        if (failed.length > 0) {
+            console.error('Failed to register slash commands:');
+            for (const { name, error } of failed) {
+                console.error(`  - ${name}: ${error}`);
+            }
+        }
+
+        if (registered.length === 0 && failed.length === 0) {
+            console.log('No slash commands to register.');
+        }
     }
 }

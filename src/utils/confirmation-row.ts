@@ -1,4 +1,11 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, Message } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    Interaction,
+    Message,
+} from 'discord.js';
 
 enum Actions {
     ACCEPT = 'accept',
@@ -6,19 +13,19 @@ enum Actions {
 }
 
 export default async function addConfirmation({
-    message,
+    replyInstance,
     confirmationMsgContent,
     timeToInteract,
     interactionFilter,
     actions,
 }: {
-    message: Message;
+    replyInstance: ChatInputCommandInteraction | Message<true>;
     confirmationMsgContent: string;
     timeToInteract: number;
     interactionFilter: (interaction: Interaction) => boolean;
     actions: {
-        callbackFnAccept: (confirmationMessage: Message) => void | Promise<void>;
-        callbackFnDecline: (confirmationMessage: Message) => void | Promise<void>;
+        callbackFnAccept: (confirmationReply: Message) => void | Promise<void>;
+        callbackFnDecline: (confirmationReply: Message) => void | Promise<void>;
     };
 }) {
     const cancelButton = new ButtonBuilder()
@@ -36,10 +43,20 @@ export default async function addConfirmation({
         acceptButton,
     );
 
-    const confirmationMessage = await message.reply({
-        content: confirmationMsgContent,
-        components: [buttonRow],
-    });
+    let confirmationMessage: Message;
+
+    if ('commandName' in replyInstance) {
+        await replyInstance.reply({
+            content: confirmationMsgContent,
+            components: [buttonRow],
+        });
+        confirmationMessage = await replyInstance.fetchReply();
+    } else {
+        confirmationMessage = await replyInstance.reply({
+            content: confirmationMsgContent,
+            components: [buttonRow],
+        });
+    }
 
     try {
         const confirmation = await confirmationMessage.awaitMessageComponent({
