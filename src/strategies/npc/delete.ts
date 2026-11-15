@@ -18,7 +18,7 @@ export default class DeleteNPCStrategy implements Strategy {
         }
 
         addConfirmation({
-            message,
+            replyInstance: message,
             timeToInteract: 30_000,
             confirmationMsgContent: `Atenção: Isso irá deletar completamente o npc **${entry.name}**, você tem certeza que quer fazer isso?`,
             interactionFilter: (i) => i.user.id === message.author.id,

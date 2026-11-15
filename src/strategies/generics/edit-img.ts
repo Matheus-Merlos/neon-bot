@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { Message } from 'discord.js';
+import { Attachment, ChatInputCommandInteraction, Message } from 'discord.js';
 import { Column, eq, InferSelectModel, Table } from 'drizzle-orm';
 import db from '../../db/db';
 import { CharacterFactory, ItemFactory, MissionFactory } from '../../factories';
 import Factory from '../../factories/base-factory';
 import { getCharacter } from '../../utils';
 import ImageHandler, { BucketDirectories } from '../../utils/image-handler';
-import Strategy from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
 type TableImageFields = {
     id: Column<any>;
@@ -28,31 +28,46 @@ type characterSelectModel = {
     characterClass: number | null;
 };
 
+type Input = {
+    entryName: string;
+    image: Attachment;
+};
+
 export default class EditImageStrategy<
     T extends Table,
     U extends Factory<T>,
     V extends T & TableImageFields,
-> implements Strategy
+> implements IStrategy<Input>
 {
     constructor(
         private readonly factoryInstance: U,
         private readonly table: V,
     ) {}
 
-    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        const img = message.attachments.first();
-        const isValidImage = img && img.contentType && img.contentType.includes('image');
+    async handleInput(
+        input: Input,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void> {
+        const { entryName, image } = input;
+
+        const isValidImage = image.contentType && image.contentType.includes('image');
 
         if (!isValidImage) {
-            message.reply('Erro: Você não anexou uma imagem válida.');
+            replyInstance.reply('Erro: Você não anexou uma imagem válida.');
             return;
         }
 
         let entry: InferSelectModel<V> | characterSelectModel;
         if (this.factoryInstance instanceof Object.getPrototypeOf(CharacterFactory).constructor) {
-            entry = await getCharacter(message, messageAsList);
+            if (!('author' in replyInstance)) {
+                replyInstance.reply(
+                    'Erro: Este comando não suporta slash commands para characters.',
+                );
+                return;
+            }
+            entry = await getCharacter(replyInstance, entryName.split(' '));
         } else {
-            entry = await this.factoryInstance.getByName(messageAsList.join(' '), message.guildId);
+            entry = await this.factoryInstance.getByName(entryName, replyInstance.guildId!);
         }
 
         let bucketDirectory = BucketDirectories.MISC_DIR;
@@ -66,7 +81,7 @@ export default class EditImageStrategy<
         if (entry.salt !== null && entry.name !== null)
             await ImageHandler.deleteImage(bucketDirectory, entry.salt, entry.name);
 
-        const imageDownload = await axios.get(img.url, { responseType: 'stream' });
+        const imageDownload = await axios.get(image.url, { responseType: 'stream' });
 
         const { url, salt } = await ImageHandler.uploadImage(
             bucketDirectory,
@@ -76,6 +91,30 @@ export default class EditImageStrategy<
 
         await db.update(this.table).set({ imageUrl: url, salt }).where(eq(this.table.id, entry.id));
 
-        message.reply('Imagem editada com sucesso!');
+        replyInstance.reply('Imagem editada com sucesso!');
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        const o = interaction.options;
+
+        const image = o.getAttachment('image', true);
+
+        const input = {
+            entryName: o.getString('item', true),
+            image,
+        };
+
+        await this.handleInput(input, interaction);
+    }
+
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
+        const img = message.attachments.first();
+
+        if (!img) {
+            message.reply('Erro: Você não anexou uma imagem.');
+            return;
+        }
+
+        await this.handleInput({ entryName: messageAsList.join(' '), image: img }, message);
     }
 }

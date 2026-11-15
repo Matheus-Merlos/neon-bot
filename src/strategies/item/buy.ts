@@ -4,7 +4,7 @@ import db from '../../db/db';
 import { character, inventory } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
 import ItemFactory from '../../factories/item-factory';
-import Strategy, { IStrategy } from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
 type Input = {
     name: string;

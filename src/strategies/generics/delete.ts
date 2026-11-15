@@ -4,7 +4,7 @@ import { ItemFactory, MissionFactory } from '../../factories';
 import Factory from '../../factories/base-factory';
 import { BucketDirectories, ImageHandler } from '../../utils';
 import addConfirmation from '../../utils/confirmation-row';
-import Strategy, { IStrategy } from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
 type Input = {
     name: string;
@@ -32,8 +32,7 @@ export default class DeleteStrategy<T extends Table, U extends Factory<T>>
             return;
         }
 
-        const userId =
-            'author' in replyInstance ? replyInstance.author.id : replyInstance.user.id;
+        const userId = 'author' in replyInstance ? replyInstance.author.id : replyInstance.user.id;
 
         addConfirmation({
             replyInstance,

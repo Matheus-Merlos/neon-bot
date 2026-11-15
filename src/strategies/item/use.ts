@@ -3,7 +3,7 @@ import { and, asc, eq } from 'drizzle-orm';
 import db from '../../db/db';
 import { inventory, item as itemTable } from '../../db/schema';
 import ItemFactory from '../../factories/item-factory';
-import Strategy, { IStrategy } from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 import { CharacterFactory } from '../../factories';
 
 type Input = {
@@ -16,8 +16,7 @@ export default class UseStrategy implements IStrategy<Input> {
         input: Input,
         replyInstance: ChatInputCommandInteraction | Message<true>,
     ): Promise<void> {
-        const userId =
-            'author' in replyInstance ? replyInstance.author.id : replyInstance.user.id;
+        const userId = 'author' in replyInstance ? replyInstance.author.id : replyInstance.user.id;
 
         const character = await CharacterFactory.getFromPlayerId(userId, replyInstance.guildId!);
 

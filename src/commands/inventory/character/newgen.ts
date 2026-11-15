@@ -7,9 +7,9 @@ import addConfirmation from '../../../utils/confirmation-row';
 import Command from '../../base-command';
 
 export default class NewGen implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         await addConfirmation({
-            message: message,
+            replyInstance: message,
             confirmationMsgContent: `Atenção: Isso irá deletar **TODOS** os personagens de **TODOS** os jogadores, você tem certeza que quer fazer isso?`,
             timeToInteract: 30_000,
             interactionFilter: (i) => i.user.id === message.author.id,

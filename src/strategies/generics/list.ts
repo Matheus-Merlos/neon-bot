@@ -8,9 +8,9 @@ import {
 import { InferSelectModel, Table } from 'drizzle-orm';
 import Factory from '../../factories/base-factory';
 import embedList from '../../utils/embed-list';
-import Strategy, { IStrategy } from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
-export default class ListStrategy<T extends Table> implements IStrategy<{}> {
+export default class ListStrategy<T extends Table> implements IStrategy<Record<string, never>> {
     constructor(
         protected readonly factoryInstance: Factory<T>,
         protected readonly listName: string,
@@ -21,7 +21,7 @@ export default class ListStrategy<T extends Table> implements IStrategy<{}> {
         protected readonly itemsPerPage = 5,
     ) {}
     async handleInput(
-        input: {},
+        _input: Record<string, never>,
         replyInstance: ChatInputCommandInteraction | Message<true>,
     ): Promise<void> {
         const entries = await this.factoryInstance.getAll(replyInstance.guildId!);

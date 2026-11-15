@@ -9,7 +9,7 @@ import getLeaderboardPlacement from '../../utils/leaderboard';
 import Command from '../base-command';
 
 export default class Inventory implements Command {
-    async execute(message: Message, messageAsList: Array<string>): Promise<void> {
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         let char;
         let playerId;
         if (messageAsList[0]) {

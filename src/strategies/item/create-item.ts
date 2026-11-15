@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { Attachment, ChatInputCommandInteraction, EmbedBuilder, Message } from 'discord.js';
+import { Attachment, ChatInputCommandInteraction, Message } from 'discord.js';
 import ItemFactory from '../../factories/item-factory';
 import { BucketDirectories, ImageHandler } from '../../utils';
-import Strategy, { IStrategy } from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
 type CreateItemInput = {
     name: string;

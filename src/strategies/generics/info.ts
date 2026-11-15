@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, Message } from 'discord.js';
 import { Table } from 'drizzle-orm';
 import Factory from '../../factories/base-factory';
 import ShowEmbed from '../../factories/show-embed';
-import Strategy, { IStrategy } from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
 type Input = {
     name: string;
