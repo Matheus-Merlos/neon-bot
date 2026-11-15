@@ -54,7 +54,7 @@ jobs:
         run: pipx install semgrep
 
       - name: Validade Dependencies
-        run: pnpm audit --audit-level critical -ignore-registry-errors
+        run: pnpm audit --audit-level critical --ignore-registry-errors
 
       - name: Validate Code
         run: |
