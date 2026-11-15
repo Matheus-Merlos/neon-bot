@@ -5,7 +5,6 @@ import { Column, eq, InferSelectModel, Table } from 'drizzle-orm';
 import db from '../../db/db';
 import { CharacterFactory, ItemFactory, MissionFactory } from '../../factories';
 import Factory from '../../factories/base-factory';
-import { getCharacter } from '../../utils';
 import ImageHandler, { BucketDirectories } from '../../utils/image-handler';
 import { IStrategy } from '../base-strategy';
 
@@ -59,13 +58,9 @@ export default class EditImageStrategy<
 
         let entry: InferSelectModel<V> | characterSelectModel;
         if (this.factoryInstance instanceof Object.getPrototypeOf(CharacterFactory).constructor) {
-            if (!('author' in replyInstance)) {
-                replyInstance.reply(
-                    'Erro: Este comando não suporta slash commands para characters.',
-                );
-                return;
-            }
-            entry = await getCharacter(replyInstance, entryName.split(' '));
+            const playerId =
+                'author' in replyInstance ? replyInstance.author.id : replyInstance.user.id;
+            entry = await CharacterFactory.getFromPlayerId(playerId, replyInstance.guildId!);
         } else {
             entry = await this.factoryInstance.getByName(entryName, replyInstance.guildId!);
         }

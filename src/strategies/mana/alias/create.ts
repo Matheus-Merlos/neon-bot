@@ -1,9 +1,48 @@
-import { Message } from 'discord.js';
-import { ManaAliasFactory } from '../../../factories';
+import { ChatInputCommandInteraction, Message } from 'discord.js';
+import { CharacterFactory, ManaAliasFactory } from '../../../factories';
 import { getCharacter } from '../../../utils';
-import Strategy from '../../base-strategy';
+import { IStrategy } from '../../base-strategy';
 
-export default class CreateManaAliasStrategy implements Strategy {
+type Input = {
+    playerId: string;
+    value: number;
+    aliasName: string;
+};
+
+export default class CreateManaAliasStrategy implements IStrategy<Input> {
+    async handleInput(
+        input: Input,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void> {
+        const character = await CharacterFactory.getFromPlayerId(
+            input.playerId,
+            replyInstance.guildId!,
+        );
+
+        const createdAlias = await ManaAliasFactory.create({
+            name: input.aliasName,
+            value: input.value,
+            character: character.id,
+            guildId: BigInt(replyInstance.guildId!),
+        });
+
+        replyInstance.reply(
+            `Alias **${createdAlias.name}** criado para o personagem **${character.name}** com o valor de **${input.value}** de mana.`,
+        );
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        const o = interaction.options;
+
+        const input = {
+            playerId: o.getUser('player')?.id ?? interaction.user.id,
+            value: o.getNumber('value', true),
+            aliasName: o.getString('name', true),
+        };
+
+        await this.handleInput(input, interaction);
+    }
+
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const character = await getCharacter(message, messageAsList);
 
@@ -25,16 +64,6 @@ export default class CreateManaAliasStrategy implements Strategy {
             return;
         }
 
-        const createdAlias = await ManaAliasFactory.create({
-            name: aliasName,
-            value,
-            character: character.id,
-            guildId: BigInt(message.guildId),
-        });
-
-        message.reply(
-            `Alias **${createdAlias.name}** criado para o personagem **${character.name}** com o valor de **${value}** de mana.`,
-        );
-        return;
+        await this.handleInput({ playerId: `${character.player}`, value, aliasName }, message);
     }
 }

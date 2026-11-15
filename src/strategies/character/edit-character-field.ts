@@ -1,19 +1,28 @@
-import { Message } from 'discord.js';
+import { ChatInputCommandInteraction, Message } from 'discord.js';
 import { eq, InferInsertModel } from 'drizzle-orm';
 import db from '../../db/db';
 import { character } from '../../db/schema';
+import { CharacterFactory } from '../../factories';
 import { getCharacter } from '../../utils';
-import Strategy from '../base-strategy';
+import { IStrategy } from '../base-strategy';
 
-export default class EditCharacterFieldStrategy implements Strategy {
+type Input = {
+    playerId: string;
+    value: string;
+};
+
+export default class EditCharacterFieldStrategy implements IStrategy<Input> {
     constructor(private readonly field: keyof InferInsertModel<typeof character>) {}
 
-    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
-        const char = await getCharacter(message, messageAsList);
+    async handleInput(
+        input: Input,
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void> {
+        const char = await CharacterFactory.getFromPlayerId(input.playerId, replyInstance.guildId!);
 
-        const newValue = messageAsList.join(' ').replaceAll('"', '').replaceAll("'", '');
+        const newValue = input.value.replaceAll('"', '').replaceAll("'", '');
         if (newValue.length === 0) {
-            message.reply('Você não forneceu um valor válido');
+            replyInstance.reply('Você não forneceu um valor válido');
             return;
         }
 
@@ -24,6 +33,24 @@ export default class EditCharacterFieldStrategy implements Strategy {
             })
             .where(eq(character.id, char.id));
 
-        await message.reply('Personagem editado com sucesso.');
+        await replyInstance.reply('Personagem editado com sucesso.');
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        const o = interaction.options;
+
+        const input = {
+            playerId: o.getUser('player')?.id ?? interaction.user.id,
+            value: o.getString('value', true),
+        };
+
+        await this.handleInput(input, interaction);
+    }
+
+    async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
+        const char = await getCharacter(message, messageAsList);
+        const value = messageAsList.join(' ');
+
+        await this.handleInput({ playerId: `${char.player}`, value }, message);
     }
 }
