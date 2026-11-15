@@ -14,16 +14,7 @@ import {
 } from '../../strategies';
 import { ItemFactory } from '../../factories';
 
-const createItemStrategy = new CreateItemStrategy();
 const editBuyableStrategy = new EditFieldStrategy(item, ItemFactory, 'canBuy');
-const editStrategy = new EditStrategy({
-    image: new EditImageStrategy(ItemFactory, item),
-    name: new EditFieldStrategy(item, ItemFactory, 'name'),
-    buyable: editBuyableStrategy,
-    description: new EditFieldStrategy(item, ItemFactory, 'description'),
-    price: new EditFieldStrategy(item, ItemFactory, 'price'),
-    durability: new EditFieldStrategy(item, ItemFactory, 'durability'),
-});
 const listStrategy = new ListStrategy(
     ItemFactory,
     'Loja',
@@ -44,11 +35,25 @@ const listStrategy = new ListStrategy(
     },
     7,
 );
-const deleteStrategy = new DeleteStrategy(ItemFactory, 'item');
-const infoStrategy = new InfoStrategy(ItemFactory);
-const buyStrategy = new BuyStrategy();
-const giveStrategy = new GiveItemStrategy();
-const useStrategy = new UseStrategy();
+
+const strategies = {
+    create: new CreateItemStrategy(),
+    list: listStrategy,
+    shop: listStrategy,
+    delete: new DeleteStrategy(ItemFactory, 'item'),
+    info: new InfoStrategy(ItemFactory),
+    buy: new BuyStrategy(),
+    give: new GiveItemStrategy(),
+    use: new UseStrategy(),
+    edit: new EditStrategy({
+        image: new EditImageStrategy(ItemFactory, item),
+        name: new EditFieldStrategy(item, ItemFactory, 'name'),
+        buyable: editBuyableStrategy,
+        description: new EditFieldStrategy(item, ItemFactory, 'description'),
+        price: new EditFieldStrategy(item, ItemFactory, 'price'),
+        durability: new EditFieldStrategy(item, ItemFactory, 'durability'),
+    }),
+} as const;
 
 export default {
     data: new SlashCommandBuilder()
@@ -293,36 +298,12 @@ export default {
                 ),
         ),
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-        const subcommandGroup = interaction.options.getSubcommandGroup();
-        const subcommand = interaction.options.getSubcommand();
+        const group = interaction.options.getSubcommandGroup();
+        const subcommand = group ?? interaction.options.getSubcommand();
 
-        if (subcommandGroup === 'edit') {
-            return editStrategy.executeSlashCommand(interaction);
-        }
-
-        switch (subcommand) {
-            case 'create': {
-                return createItemStrategy.executeSlashCommand(interaction);
-            }
-            case 'list':
-            case 'shop': {
-                return listStrategy.executeSlashCommand(interaction);
-            }
-            case 'delete': {
-                return deleteStrategy.executeSlashCommand(interaction);
-            }
-            case 'info': {
-                return infoStrategy.executeSlashCommand(interaction);
-            }
-            case 'buy': {
-                return buyStrategy.executeSlashCommand(interaction);
-            }
-            case 'give': {
-                return giveStrategy.executeSlashCommand(interaction);
-            }
-            case 'use': {
-                return useStrategy.executeSlashCommand(interaction);
-            }
+        const strategy = strategies[subcommand as keyof typeof strategies];
+        if (strategy) {
+            return strategy.executeSlashCommand(interaction);
         }
     },
 };
