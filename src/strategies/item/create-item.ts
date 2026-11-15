@@ -15,7 +15,7 @@ type CreateItemInput = {
 };
 
 export default class CreateItemStrategy implements IStrategy<CreateItemInput> {
-    async createFromInput(
+    async handleInput(
         input: CreateItemInput,
         replyInstance: ChatInputCommandInteraction | Message<true>,
     ): Promise<void> {
@@ -98,7 +98,7 @@ export default class CreateItemStrategy implements IStrategy<CreateItemInput> {
             .trim();
         const image = message.attachments.first();
 
-        await this.createFromInput(
+        await this.handleInput(
             {
                 name: itemName,
                 durability,
@@ -125,6 +125,6 @@ export default class CreateItemStrategy implements IStrategy<CreateItemInput> {
             guildId: interaction.guildId!,
         };
 
-        await this.createFromInput(item, interaction);
+        await this.handleInput(item, interaction);
     }
 }

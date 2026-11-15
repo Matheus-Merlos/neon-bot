@@ -1,7 +1,28 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { CreateItemStrategy } from '../../strategies';
+import { ChatInputCommandInteraction, Colors, SlashCommandBuilder } from 'discord.js';
+import { CreateItemStrategy, ListStrategy } from '../../strategies';
+import { ItemFactory } from '../../factories';
 
 const createItemStrategy = new CreateItemStrategy();
+const listStrategy = new ListStrategy(
+    ItemFactory,
+    'Loja',
+    Colors.Gold,
+    (entry) => {
+        return [
+            {
+                name: `$${entry.price} - ${entry.name}`,
+                value: `Durabilidade: ${entry.durability} usos.`,
+                inline: false,
+            },
+            {
+                name: ' ',
+                value: ' ',
+                inline: false,
+            },
+        ];
+    },
+    7,
+);
 
 export default {
     data: new SlashCommandBuilder()
@@ -38,12 +59,22 @@ export default {
                 .addAttachmentOption((option) =>
                     option.setName('image').setDescription('A imagem do item.'),
                 ),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand.setName('list').setDescription('Listar todos os itens.'),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand.setName('shop').setDescription('Listar todos os itens.'),
         ),
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const subcommand = interaction.options.getSubcommand();
         switch (subcommand) {
             case 'create': {
                 return createItemStrategy.executeSlashCommand(interaction);
+            }
+            case 'list':
+            case 'shop': {
+                return listStrategy.executeSlashCommand(interaction);
             }
         }
     },

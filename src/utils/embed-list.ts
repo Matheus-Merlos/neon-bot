@@ -1,9 +1,16 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Message } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    Message,
+} from 'discord.js';
 
 export default async function embedList<T extends object>(
     list: Array<T>,
     itemsPerPage: number,
-    message: Message,
+    replyInstance: Message<true> | ChatInputCommandInteraction,
     embedBuilderFn: (
         matrix: Array<Array<T>>,
         currentIndex: number,
@@ -41,7 +48,7 @@ export default async function embedList<T extends object>(
 
     let embed: EmbedBuilder = await embedBuilderFn(matrix, currentIndex);
 
-    const msg = await message.reply({ embeds: [embed], components: [optionsRow] });
+    const msg = await replyInstance.reply({ embeds: [embed], components: [optionsRow] });
 
     try {
         const collector = msg.createMessageComponentCollector({ time: 120_000 });

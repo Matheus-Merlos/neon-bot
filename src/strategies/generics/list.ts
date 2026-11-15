@@ -1,10 +1,16 @@
-import { ColorResolvable, EmbedBuilder, EmbedField, Message } from 'discord.js';
+import {
+    ChatInputCommandInteraction,
+    ColorResolvable,
+    EmbedBuilder,
+    EmbedField,
+    Message,
+} from 'discord.js';
 import { InferSelectModel, Table } from 'drizzle-orm';
 import Factory from '../../factories/base-factory';
 import embedList from '../../utils/embed-list';
-import Strategy from '../base-strategy';
+import Strategy, { IStrategy } from '../base-strategy';
 
-export default class ListStrategy<T extends Table> implements Strategy {
+export default class ListStrategy<T extends Table> implements IStrategy<{}> {
     constructor(
         protected readonly factoryInstance: Factory<T>,
         protected readonly listName: string,
@@ -14,19 +20,21 @@ export default class ListStrategy<T extends Table> implements Strategy {
         ) => EmbedField | Array<EmbedField> | Promise<EmbedField> | Promise<Array<EmbedField>>,
         protected readonly itemsPerPage = 5,
     ) {}
-
-    async execute(message: Message): Promise<void> {
-        const entries = await this.factoryInstance.getAll(message.guildId!);
+    async handleInput(
+        input: {},
+        replyInstance: ChatInputCommandInteraction | Message<true>,
+    ): Promise<void> {
+        const entries = await this.factoryInstance.getAll(replyInstance.guildId!);
 
         if (entries.length === 0) {
-            await message.reply('Nenhum registro encontrado no servidor.');
+            await replyInstance.reply('Nenhum registro encontrado no servidor.');
             return;
         }
 
         await embedList(
             entries,
             this.itemsPerPage,
-            message,
+            replyInstance,
             async (matrix: Array<typeof entries>, currentIndex: number) => {
                 const embed = new EmbedBuilder()
                     .setTitle(this.listName)
@@ -44,5 +52,13 @@ export default class ListStrategy<T extends Table> implements Strategy {
                 return embed;
             },
         );
+    }
+
+    async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+        await this.handleInput({}, interaction);
+    }
+
+    async execute(message: Message<true>): Promise<void> {
+        await this.handleInput({}, message);
     }
 }

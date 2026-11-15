@@ -9,7 +9,7 @@ export default interface Strategy {
 export interface IStrategy<T> {
     execute(message: Message<true>, messageAsList: Array<string>): Promise<void>;
 
-    createFromInput(
+    handleInput(
         input: T,
         replyInstance: ChatInputCommandInteraction | Message<true>,
     ): Promise<void>;
