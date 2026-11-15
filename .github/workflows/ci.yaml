@@ -63,7 +63,8 @@ jobs:
       - name: Validate Code
         run: |
           semgrep scan \
-            --config auto \
+            --config p/default \
+            --config p/secrets \
             --severity ERROR \
             --error \
             --metrics=off \
