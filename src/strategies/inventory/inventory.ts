@@ -5,6 +5,7 @@ import { inventory, item, rank, reachedRank } from '../../db/schema';
 import CharacterFactory from '../../factories/character-factory';
 import embedList from '../../utils/embed-list';
 import getLeaderboardPlacement from '../../utils/leaderboard';
+import { safeDeferReply } from '../../utils/safe-reply';
 import { IStrategy } from '../base-strategy';
 
 type Input = {
@@ -16,6 +17,8 @@ export default class InventoryStrategy implements IStrategy<Input> {
         input: Input,
         replyInstance: ChatInputCommandInteraction | Message<true>,
     ): Promise<void> {
+        await safeDeferReply(replyInstance);
+
         const char = await CharacterFactory.getFromPlayerId(input.playerId, replyInstance.guildId!);
 
         let [actualRank]: Array<{ id: number; name: string }> | undefined = await db

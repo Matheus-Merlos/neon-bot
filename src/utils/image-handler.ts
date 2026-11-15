@@ -3,7 +3,7 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { NodeHttpHandler } from '@aws-sdk/node-http-handler';
 import { randomBytes } from 'crypto';
 import { IncomingMessage } from 'http';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 
 function toSlug(str: string): string {
     //Removes words with diacritics in them

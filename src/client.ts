@@ -199,7 +199,6 @@ export default class Client {
             execute: (interaction: ChatInputCommandInteraction) => Promise<void> | void;
         }>,
     ): Promise<void> {
-        const commands = slashCommands.map((c) => c.data.toJSON());
         const commandMap = new Map(slashCommands.map((c) => [c.data.name, c]));
 
         this.client.on(Events.InteractionCreate, async (interaction) => {
@@ -212,11 +211,14 @@ export default class Client {
                 await command.execute(interaction);
             } catch (err) {
                 console.error(err);
-                const msg = {
-                    content: 'Deu erro ao executar o comando!',
-                };
-                if (interaction.replied || interaction.deferred) await interaction.followUp(msg);
-                else await interaction.reply(msg);
+                const msg = { content: 'Deu erro ao executar o comando!' };
+                try {
+                    if (interaction.replied || interaction.deferred)
+                        await interaction.followUp(msg);
+                    else await interaction.reply(msg);
+                } catch {
+                    // Interaction expired, nothing we can do
+                }
             }
         });
 
@@ -225,35 +227,17 @@ export default class Client {
         }
 
         const rest = new REST().setToken(this.token!);
+        const commands = slashCommands.map((c) => c.data.toJSON());
 
-        const registered: string[] = [];
-        const failed: { name: string; error: string }[] = [];
-
-        for (const command of commands) {
-            try {
-                await rest.post(Routes.applicationCommands(this.client.application!.id), {
-                    body: command,
-                });
-                registered.push(command.name);
-            } catch (err) {
-                const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-                failed.push({ name: command.name, error: errorMessage });
-            }
-        }
-
-        if (registered.length > 0) {
-            console.log(`Successfully registered slash commands: ${registered.join(', ')}`);
-        }
-
-        if (failed.length > 0) {
-            console.error('Failed to register slash commands:');
-            for (const { name, error } of failed) {
-                console.error(`  - ${name}: ${error}`);
-            }
-        }
-
-        if (registered.length === 0 && failed.length === 0) {
-            console.log('No slash commands to register.');
+        try {
+            await rest.put(Routes.applicationCommands(this.client.application!.id), {
+                body: commands,
+            });
+            console.log(
+                `Successfully registered ${commands.length} slash commands: ${commands.map((c) => c.name).join(', ')}`,
+            );
+        } catch (err) {
+            console.error('Failed to register slash commands:', err);
         }
     }
 }

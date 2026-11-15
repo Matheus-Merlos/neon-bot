@@ -16,6 +16,12 @@ export default async function embedList<T extends object>(
         currentIndex: number,
     ) => EmbedBuilder | Promise<EmbedBuilder>,
 ) {
+    const isInteraction = !('author' in replyInstance);
+
+    if (isInteraction && !replyInstance.deferred && !replyInstance.replied) {
+        await replyInstance.deferReply();
+    }
+
     const matrix: Array<Array<T>> = [];
 
     for (let i = 0; i < list.length; i += itemsPerPage) {
@@ -48,7 +54,12 @@ export default async function embedList<T extends object>(
 
     let embed: EmbedBuilder = await embedBuilderFn(matrix, currentIndex);
 
-    const msg = await replyInstance.reply({ embeds: [embed], components: [optionsRow] });
+    let msg: Message;
+    if (isInteraction) {
+        msg = await replyInstance.editReply({ embeds: [embed], components: [optionsRow] });
+    } else {
+        msg = await replyInstance.reply({ embeds: [embed], components: [optionsRow] });
+    }
 
     try {
         const collector = msg.createMessageComponentCollector({ time: 120_000 });
