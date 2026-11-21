@@ -6,7 +6,7 @@ import { IStrategy } from '../base-strategy';
 
 type Input = {
     playerId: string;
-    value: string;
+    values: Array<string>;
 };
 
 export default class UseManaStrategy implements IStrategy<Input> {
@@ -24,60 +24,65 @@ export default class UseManaStrategy implements IStrategy<Input> {
             return;
         }
 
-        const isPercentage = input.value.includes('%');
-        if (isPercentage) {
-            const manaToUse = Math.trunc((parseInt(input.value) / 100) * character.baseMana!);
+        let totalManaUsed = 0;
+        const usedValues: string[] = [];
 
-            await CharacterFactory.edit(character.id, {
-                currentMana: character.currentMana - manaToUse,
-            });
+        for (const value of input.values) {
+            const isPercentage = value.includes('%');
+            if (isPercentage) {
+                const manaToUse = Math.trunc((parseInt(value) / 100) * character.baseMana!);
+                totalManaUsed += manaToUse;
+                usedValues.push(`${value} (${manaToUse})`);
+                continue;
+            }
 
-            replyInstance.reply(
-                `**${character.name}** consumiu \`${manaToUse}\` de mana.\nMana atual: \`${character.currentMana - manaToUse}/${character.baseMana}\``,
-            );
-            return;
-        }
+            const isAlias = isNaN(parseInt(value));
 
-        const isAlias = isNaN(parseInt(input.value));
+            if (!isAlias) {
+                const numValue = parseInt(value);
+                totalManaUsed += numValue;
+                usedValues.push(`${numValue}`);
+                continue;
+            }
 
-        if (!isAlias) {
-            const value = parseInt(input.value);
-            await CharacterFactory.edit(character.id, {
-                currentMana: character.currentMana - value,
-            });
-            replyInstance.reply(
-                `**${character.name}** consumiu \`${value}\` de mana.\nMana atual: ${character.currentMana - value}/${character.baseMana}`,
-            );
-            return;
-        }
-
-        try {
-            const alias = await ManaAliasFactory.getByName(input.value, replyInstance.guildId!);
-
-            await CharacterFactory.edit(character.id, {
-                currentMana: character.currentMana - alias.value,
-            });
-
-            replyInstance.reply(
-                `**${character.name}** consumiu \`${alias.value}\` de mana.\nMana atual: ${character.currentMana - alias.value}/${character.baseMana}`,
-            );
-        } catch (error) {
-            if (error instanceof EntryNotFoundError) {
-                replyInstance.reply(
-                    `Não foi encontrado um alias com o nome **${input.value}** no seu personagem.`,
-                );
+            try {
+                const alias = await ManaAliasFactory.getByName(value, replyInstance.guildId!);
+                totalManaUsed += alias.value;
+                usedValues.push(`${value} (${alias.value})`);
+            } catch (error) {
+                if (error instanceof EntryNotFoundError) {
+                    replyInstance.reply(
+                        `Não foi encontrado um alias com o nome **${value}** no seu personagem.`,
+                    );
+                    return;
+                }
+                replyInstance.reply(`Erro encontrado: ${error}`);
                 return;
             }
-            replyInstance.reply(`Erro encontrado: ${error}`);
         }
+
+        await CharacterFactory.edit(character.id, {
+            currentMana: character.currentMana - totalManaUsed,
+        });
+
+        const valuesDisplay = usedValues.join(' + ');
+        replyInstance.reply(
+            `**${character.name}** consumiu \`${valuesDisplay}\` = \`${totalManaUsed}\` de mana.\nMana atual: \`${character.currentMana - totalManaUsed}/${character.baseMana}\``,
+        );
     }
 
     async executeSlashCommand(interaction: ChatInputCommandInteraction): Promise<void> {
         const o = interaction.options;
 
+        const values: string[] = [];
+        for (let i = 1; i <= 10; i++) {
+            const value = o.getString(`value${i}`);
+            if (value) values.push(value);
+        }
+
         const input = {
             playerId: o.getUser('player')?.id ?? interaction.user.id,
-            value: o.getString('value', true),
+            values,
         };
 
         await this.handleInput(input, interaction);
@@ -85,9 +90,6 @@ export default class UseManaStrategy implements IStrategy<Input> {
 
     async execute(message: Message<true>, messageAsList: Array<string>): Promise<void> {
         const character = await getCharacter(message, messageAsList);
-        await this.handleInput(
-            { playerId: `${character.player}`, value: messageAsList.join(' ') },
-            message,
-        );
+        await this.handleInput({ playerId: `${character.player}`, values: messageAsList }, message);
     }
 }
