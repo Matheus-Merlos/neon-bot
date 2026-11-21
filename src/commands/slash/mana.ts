@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import {
     CreateManaAliasStrategy,
+    CurrentManaStrategy,
     DisableCharacterManaStrategy,
     ManaRegenStrategy,
     SetBaseManaStrategy,
@@ -13,6 +14,7 @@ const strategies = {
     use: new UseManaStrategy(),
     regen: new ManaRegenStrategy(),
     alias: new CreateManaAliasStrategy(),
+    current: new CurrentManaStrategy(),
 } as const;
 
 export default {
@@ -51,11 +53,74 @@ export default {
                 .setDescription('Usar mana de um personagem')
                 .addStringOption((option) =>
                     option
-                        .setName('value')
+                        .setName('value1')
                         .setDescription(
                             'Quantidade de mana a ser usada (número, porcentagem ou alias).',
                         )
                         .setRequired(true),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value2')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value3')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value4')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value5')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value6')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value7')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value8')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value9')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
+                )
+                .addStringOption((option) =>
+                    option
+                        .setName('value10')
+                        .setDescription(
+                            'Quantidade de mana a ser usada (número, porcentagem ou alias).',
+                        ),
                 )
                 .addUserOption((option) =>
                     option
@@ -75,6 +140,16 @@ export default {
                         )
                         .setRequired(true),
                 )
+                .addUserOption((option) =>
+                    option
+                        .setName('player')
+                        .setDescription('Jogador que regenerará a mana (default: você mesmo)'),
+                ),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName('current')
+                .setDescription('Mostra a mana atual do personagem')
                 .addUserOption((option) =>
                     option
                         .setName('player')

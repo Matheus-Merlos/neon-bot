@@ -46,6 +46,7 @@ import TurnListStrategy from './rpg/turn-list';
 import CreateRuleStrategy from './rules/create-rule';
 import ImageSearchStrategy from './search/image';
 import CreateSystemStrategy from './systems/create-system';
+import CurrentManaStrategy from './mana/current';
 
 export {
     ApproveStrategy,
@@ -94,4 +95,5 @@ export {
     TurnListStrategy,
     UseManaStrategy,
     UseStrategy,
+    CurrentManaStrategy,
 };
