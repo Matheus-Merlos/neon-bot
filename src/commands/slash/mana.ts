@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import {
     CreateManaAliasStrategy,
+    CurrentManaStrategy,
     DisableCharacterManaStrategy,
     ManaRegenStrategy,
     SetBaseManaStrategy,
@@ -13,6 +14,7 @@ const strategies = {
     use: new UseManaStrategy(),
     regen: new ManaRegenStrategy(),
     alias: new CreateManaAliasStrategy(),
+    current: new CurrentManaStrategy(),
 } as const;
 
 export default {
@@ -75,6 +77,16 @@ export default {
                         )
                         .setRequired(true),
                 )
+                .addUserOption((option) =>
+                    option
+                        .setName('player')
+                        .setDescription('Jogador que regenerará a mana (default: você mesmo)'),
+                ),
+        )
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName('current')
+                .setDescription('Mostra a mana atual do personagem')
                 .addUserOption((option) =>
                     option
                         .setName('player')

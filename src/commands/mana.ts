@@ -1,5 +1,6 @@
 import {
     CreateManaAliasStrategy,
+    CurrentManaStrategy,
     DefaultStrategy,
     DisableCharacterManaStrategy,
     ManaRegenStrategy,
@@ -27,6 +28,7 @@ export default class Mana extends StrategyCommand {
                         alias: 'Cria um "apelido" para um valor de mana, útil para lidar com habilidades.\nUso: `;mana alias create <valor> <nome>`',
                     }),
                 ),
+                current: new CurrentManaStrategy(),
             },
             new DefaultStrategy('mana', {
                 disable:
@@ -35,6 +37,7 @@ export default class Mana extends StrategyCommand {
                     'Habilita o sistema de mana e define o valor de mana base (máxima) do personagem.\nUso: `;mana set-base <@menção(opcional)> <valor>`',
                 use: 'Consome uma quantidade de mana. Aceita um valor numérico, uma porcentagem (ex: 20%) ou um alias definido.\nUso: `;mana use <@menção(opcional)> <valor(alias, porcentagem ou número)>`',
                 regen: "Regenera mana. Aceita um valor numérico, uma porcentagem (ex: 20%) ou 'full' para restaurar ao máximo.\nUso: `;mana use <@menção(opcional)> <valor(full, porcentagem ou número)>`",
+                current: 'Mostra a mana atual do seu personagem',
             }),
         );
     }
